@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.p1nero.p1nero_ec.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "p1nero_ec.refmap.json",
+  "mixins": [
+    "CeraunusMixin",
+    "DodgeLocationIndicatorMixin",
+    "Soul_RenderMixin",
+    "TakeDamageEventAttackMixin"
+  ],
+  "client": [
+    "CursedBowClientMixin",
+    "CeraunusClientMixin",
+    "LocalPlayerPatchAccessor",
+    "Player_Ceraunus_RendererMixin",
+    "Soul_RenderClientMixin",
+    "Wrath_of_the_desertClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

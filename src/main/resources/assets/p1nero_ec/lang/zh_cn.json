@@ -1,0 +1,17 @@
+{
+  "key.categories.p1nero_ec": "P1nero 的 史诗战斗灾变联动",
+  "key.p1nero_ec.skill_1": "技能 1",
+  "key.p1nero_ec.skill_2": "技能 2",
+  "key.p1nero_ec.skill_3": "技能 3",
+    "info.p1nero_ec.skill_point_lack": "释放该技能需 %d 技能点",
+  "skill.p1nero_ec.desc": "§6完美闪避§7或§6完美招架§7以获取技能点",
+  "skill.p1nero_ec.ceraunus.desc1": "按下 %s 以向前投掷 %s， 消耗 %d 技能点",
+  "skill.p1nero_ec.ceraunus.desc2": "按下 %s 以向前召唤扇形波浪， 消耗 %d 技能点",
+  "skill.p1nero_ec.ceraunus.desc3": "按下 %s 以向前跃起，向四周发射闪电并召唤波浪， 消耗 %d 技能点",
+  "skill.p1nero_ec.soul_render.desc1": "按下 %s 后向前突刺，沿途留下幻影戟， 消耗 %d 技能点",
+  "skill.p1nero_ec.soul_render.desc2": "按下 %s 后奋力振地，对周围生物造成大量伤害并给予眩晕， 消耗 %d 技能点",
+  "skill.p1nero_ec.soul_render.desc3": "按下 %s 以在四周召唤大量幻影戟， 消耗 %d 技能点",
+  "skill.p1nero_ec.wrath_of_the_desert.desc1": "按下 %s 以向前射出三个沙暴弹， 消耗 %d 技能点",
+  "skill.p1nero_ec.wrath_of_the_desert.desc2": "按下 %s 以向前射出三个诅咒的沙暴弹， 消耗 %d 技能点",
+  "skill.p1nero_ec.wrath_of_the_desert.desc3": "按下 %s ，向前连续射出沙暴弹后，召唤远古沙漠碑在四周落下。 消耗 %d 技能点"
+}

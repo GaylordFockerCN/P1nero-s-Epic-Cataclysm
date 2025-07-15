@@ -1,0 +1,14 @@
+{
+    "trail_effects": [
+        {
+            "start_time": 0.0,
+            "end_time": 3.5,
+            "joint": "Tool_R",
+            "item_skin_hand": "main_hand",
+            "interpolations": 4,
+            "lifetime": 10,
+            "texture_path": "efn:textures/particle/fire.png",
+            "particle_type": "epicfight:swing_trail"
+        }
+    ]
+}

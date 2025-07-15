@@ -1,0 +1,9 @@
+{
+  "attributes": {
+    "common": {
+      "impact": 0.7,
+      "damage_bonus": 2.0
+    }
+  },
+  "type": "p1nero_ec:cursed_bow"
+}

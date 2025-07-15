@@ -1,0 +1,12 @@
+{
+    "gain_ability_points": {
+        "category": "master",
+        "subtitle": "gain_ability_points",
+        "sounds": [
+        	{
+        		"name":"p1nero_ec:gain_ability_points",
+        		"stream":false
+        	}
+        ]
+    }
+}

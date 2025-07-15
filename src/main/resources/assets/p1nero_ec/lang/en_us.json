@@ -1,0 +1,17 @@
+{
+  "key.categories.p1nero_ec": "P1nero's Epic Fight x Cataclysm",
+  "key.p1nero_ec.skill_1": "Skill 1",
+  "key.p1nero_ec.skill_2": "Skill 2",
+  "key.p1nero_ec.skill_3": "Skill 3",
+  "info.p1nero_ec.skill_point_lack": "%d skill points are required",
+  "skill.p1nero_ec.desc": "§6Perfect Dodge§7 or §6Perfect Parry§7 to gain Skill Points",
+  "skill.p1nero_ec.ceraunus.desc1": "Press %s to throw %s forward, consuming %d Skill Points",
+  "skill.p1nero_ec.ceraunus.desc2": "Press %s to summon a sector-shaped wave forward, consuming %d Skill Points",
+  "skill.p1nero_ec.ceraunus.desc3": "Press %s to leap forward, release lightning in all directions, and summon waves, consuming %d Skill Points",
+  "skill.p1nero_ec.soul_render.desc1": "Press %s to dash forward, leaving phantom halberds along the path, consuming %d Skill Points",
+  "skill.p1nero_ec.soul_render.desc2": "Press %s to slam the ground with force, dealing heavy damage and inflicting stun to surrounding entities, consuming %d Skill Points",
+  "skill.p1nero_ec.soul_render.desc3": "Press %s to summon numerous phantom halberds around you, consuming %d Skill Points",
+  "skill.p1nero_ec.wrath_of_the_desert.desc1": "Press %s to shoot three sandstorm forward, consuming %d Skill Points",
+  "skill.p1nero_ec.wrath_of_the_desert.desc2": "Press %s to shoot three cursed sandstorm forward, consuming %d Skill Points",
+  "skill.p1nero_ec.wrath_of_the_desert.desc3": "Press %s to continuously shoot sandstorm forward, then summon Ancient Desert Steles to crash down around you, consuming %d Skill Points"
+}
