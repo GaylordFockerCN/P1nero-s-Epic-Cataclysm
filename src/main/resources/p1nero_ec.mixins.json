@@ -8,14 +8,17 @@
     "CeraunusMixin",
     "DodgeLocationIndicatorMixin",
     "Soul_RenderMixin",
-    "TakeDamageEventAttackMixin"
+    "TakeDamageEventAttackMixin",
+    "TidalClawsMixin"
   ],
   "client": [
-    "CursedBowClientMixin",
     "CeraunusClientMixin",
+    "CursedBowClientMixin",
     "LocalPlayerPatchAccessor",
     "Player_Ceraunus_RendererMixin",
     "Soul_RenderClientMixin",
+    "TidalHookRendererMixin",
+    "TidalTentacleRendererMixin",
     "Wrath_of_the_desertClientMixin"
   ],
   "injectors": {

@@ -1,7 +1,7 @@
 {
   "type": "epicfight:sword",
   "attributes": {
-    "two_hand": {
+    "common": {
       "impact": 4.5,
       "armor_negation":10.0,
       "max_strikes":3,

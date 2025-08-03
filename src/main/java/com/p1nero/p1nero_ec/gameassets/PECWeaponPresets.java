@@ -3,6 +3,7 @@ package com.p1nero.p1nero_ec.gameassets;
 import com.hm.efn.animations.EFNAnimations;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.capability.item.CursedBowCapability;
+import com.p1nero.p1nero_ec.capability.item.TidalClawCapability;
 import com.p1nero.p1nero_ec.capability.item.WrathOfTheDesertCapability;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -25,6 +26,28 @@ import java.util.function.Function;
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECWeaponPresets {
     public static final Collider BOW_SCAN = new MultiOBBCollider(2, 8, 4D, 8, 0.0D, 1, -8.5);
+
+    public static final Function<Item, CapabilityItem.Builder> TIDAL_CLAW = (item) ->
+            WeaponCapability.builder().category(CapabilityItem.WeaponCategories.FIST)
+                    .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
+                    .collider(new OBBCollider(0.75F, 1.4F, 1.4F, 0.0F, 0.0F, -1.0F))
+                    .swingSound(EpicFightSounds.WHOOSH.get())
+                    .hitSound(EpicFightSounds.BLADE_HIT.get())
+                    .hitParticle(EpicFightParticles.HIT_BLADE.get())
+                    .canBePlacedOffhand(false)
+                    .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
+                            EFNAnimations.NF_CLAW_AUTO1,
+                            EFNAnimations.NF_CLAW_AUTO2,
+                            EFNAnimations.NF_CLAW_AUTO3,
+                            EFNAnimations.NF_CLAW_DASH,
+                            EFNAnimations.NF_CLAW_AIRSLASH)
+                    .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.CERAUNUS_INNATE))
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, PECAnimations.CLAW_SHOOT)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNAnimations.NF_CLAW_IDLE)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNAnimations.NF_CLAW_WALK)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNAnimations.NF_CLAW_RUN)
+                    .comboCancel((style) -> false)
+                    .constructor(TidalClawCapability::new);
 
     public static final Function<Item, CapabilityItem.Builder> CERAUNUS = (item) ->
             WeaponCapability.builder().category(CapabilityItem.WeaponCategories.SWORD)
@@ -110,6 +133,7 @@ public class PECWeaponPresets {
 
     @SubscribeEvent
     public static void register(WeaponCapabilityPresetRegistryEvent event) {
+        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "tidal_claw"), TIDAL_CLAW);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "ceraunus"), CERAUNUS);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "soul_render"), SOUL_RENDER);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_incinerator"), THE_INCINERATOR);

@@ -1,7 +1,7 @@
 {
   "type": "p1nero_ec:the_incinerator",
   "attributes": {
-    "two_hand": {
+    "common": {
       "impact": 2.5,
       "armor_negation":20.0,
       "max_strikes":4,

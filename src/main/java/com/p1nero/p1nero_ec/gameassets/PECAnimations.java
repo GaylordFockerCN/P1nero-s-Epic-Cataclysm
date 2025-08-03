@@ -76,6 +76,7 @@ import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECAnimations {
+    public static AnimationManager.AnimationAccessor<StaticAnimation> CLAW_SHOOT;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_2;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_3;
@@ -97,6 +98,9 @@ public class PECAnimations {
     @SubscribeEvent
     public static void registerAnimations(AnimationManager.AnimationRegistryEvent event) {
         event.newBuilder(PECMod.MOD_ID, (builder) -> {
+
+            CLAW_SHOOT = builder.nextAccessor("living/claw_shoot", (accessor) -> new StaticAnimation(0.15F, true, accessor, Armatures.BIPED));
+
             BOW_1 = builder.nextAccessor("bow/bow_auto1", (accessor) ->
                     new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 0.5F, 0.5F,
                             InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)

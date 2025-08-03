@@ -1,7 +1,7 @@
 {
   "type": "p1nero_ec:soul_render",
   "attributes": {
-    "two_hand": {
+    "common": {
       "impact": 1.0,
       "armor_negation":20.0,
       "max_strikes":3
