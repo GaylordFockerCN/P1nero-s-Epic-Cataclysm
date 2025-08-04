@@ -12,7 +12,8 @@ import yesman.epicfight.api.client.forgeevent.PatchedRenderersEvent;
 public class ClientModEvents {
 
     @SubscribeEvent
-    public static void EFNSheath(PatchedRenderersEvent.RegisterItemRenderer event) {
+    public static void registerItemRenderer(PatchedRenderersEvent.RegisterItemRenderer event) {
         event.addItemRenderer(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID,"tidal_claw"), RenderTidalClaw::new);
     }
+
 }

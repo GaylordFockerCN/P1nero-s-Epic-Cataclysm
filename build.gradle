@@ -156,8 +156,8 @@ dependencies {
     implementation fg.deobf("curse.maven:curios-309927:6418456")
     implementation fg.deobf("curse.maven:lionfish-api-1001614:5922047")
 
-    implementation fg.deobf("curse.maven:embeddium-908741:5681725")
-    implementation fg.deobf("curse.maven:oculus-581495:6020952")
+//    implementation fg.deobf("curse.maven:embeddium-908741:5681725")
+//    implementation fg.deobf("curse.maven:oculus-581495:6020952")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

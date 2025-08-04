@@ -6,9 +6,7 @@
             "joint": "Tool_R",
             "item_skin_hand": "main_hand",
             "interpolations": 4,
-            "lifetime": 10,
-            "texture_path": "efn:textures/particle/fire.png",
-            "particle_type": "epicfight:swing_trail"
+            "lifetime": 10
         }
     ]
 }

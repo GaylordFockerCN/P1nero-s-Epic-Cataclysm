@@ -28,7 +28,7 @@ public class PECPlayer {
     private boolean isClientLockOn;
 
     public static boolean isValidWeapon(ItemStack itemStack) {
-        return itemStack.is(ModItems.CERAUNUS.get()) || itemStack.is(ModItems.THE_INCINERATOR.get()) || itemStack.is(ModItems.SOUL_RENDER.get()) || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get());
+        return itemStack.is(ModItems.CERAUNUS.get()) || itemStack.is(ModItems.THE_INCINERATOR.get()) || itemStack.is(ModItems.SOUL_RENDER.get()) || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get()) || itemStack.is(ModItems.TIDAL_CLAWS.get());
     }
 
     public static void addSkillPoint(ServerPlayer serverPlayer) {

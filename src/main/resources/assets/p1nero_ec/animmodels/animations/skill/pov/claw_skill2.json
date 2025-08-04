@@ -1,0 +1,8 @@
+{
+    "format": "attributes",
+    "root": "world",
+    "limited_view_degrees": {
+    	"xRot": [-0.2, 0.2],
+    	"yRot": [-0.2, 0.2]
+    }
+}

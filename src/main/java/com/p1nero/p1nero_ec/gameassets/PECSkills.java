@@ -15,6 +15,7 @@ public class PECSkills {
     public static Skill WRATH_OF_THE_DESERT_INNATE;
     public static Skill THE_INCINERATOR_INNATE;
     public static Skill SOUL_RENDER_INNATE;
+    public static Skill TIDAL_CLAW_INNATE;
     @SubscribeEvent
     public static void buildSkills(SkillBuildEvent event) {
         SkillBuildEvent.ModRegistryWorker registryWorker = event.createRegistryWorker(PECMod.MOD_ID);
@@ -25,5 +26,6 @@ public class PECSkills {
         WRATH_OF_THE_DESERT_INNATE = registryWorker.build("wrath_of_the_desert_innate", Wrath_of_the_desertInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         SOUL_RENDER_INNATE = registryWorker.build("soul_render_innate", SoulRenderInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         THE_INCINERATOR_INNATE = registryWorker.build("the_incinerator_innate", TheIncineratorInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
+        TIDAL_CLAW_INNATE = registryWorker.build("tidal_claw_innate", TidalClawsInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
     }
 }

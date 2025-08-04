@@ -5,8 +5,11 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "p1nero_ec.refmap.json",
   "mixins": [
+    "AbyssBlastEntityMixin",
     "CeraunusMixin",
     "DodgeLocationIndicatorMixin",
+    "IgnisAbyssFireBallEntityMixin",
+    "IgnisFireBallEntityMixin",
     "Soul_RenderMixin",
     "TakeDamageEventAttackMixin",
     "TidalClawsMixin"
@@ -17,6 +20,7 @@
     "LocalPlayerPatchAccessor",
     "Player_Ceraunus_RendererMixin",
     "Soul_RenderClientMixin",
+    "TidalClawClientMixin",
     "TidalHookRendererMixin",
     "TidalTentacleRendererMixin",
     "Wrath_of_the_desertClientMixin"
