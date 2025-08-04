@@ -15,5 +15,7 @@
   "skill.p1nero_ec.wrath_of_the_desert.desc2": "按下 %s 以向前射出三个诅咒的沙暴弹， 消耗 %d 技能点",
   "skill.p1nero_ec.wrath_of_the_desert.desc3": "按下 %s ，向前连续射出沙暴弹后，召唤远古沙漠碑在四周落下。 消耗 %d 技能点",
   "skill.p1nero_ec.tidal_claw.desc2": "按下 %s 以向前蓄力并发射 %s， 消耗 %d 技能点",
-  "skill.p1nero_ec.tidal_claw.desc3": "按下 %s 在周围半径10米内的实体脚下生成 %s，消耗 %d 技能点"
+  "skill.p1nero_ec.tidal_claw.desc3": "按下 %s 在周围半径10米内的实体脚下生成 %s，消耗 %d 技能点",
+  "skill.p1nero_ec.the_incinerator.desc2": "按下 %s 以向前蓄力并发射五个火球， 消耗 %d 技能点",
+  "skill.p1nero_ec.the_incinerator.desc3": "按下 %s 向前释放炎魂斩，消耗 %d 技能点"
 }
