@@ -8,14 +8,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
+import yesman.epicfight.world.entity.eventlistener.AbstractPlayerEvent;
 import yesman.epicfight.world.entity.eventlistener.TakeDamageEvent;
-import yesman.epicfight.world.entity.eventlistener.PlayerEvent;
 
 /**
  * 招架计数
  */
 @Mixin(value = TakeDamageEvent.Attack.class)
-public abstract class TakeDamageEventAttackMixin extends PlayerEvent<ServerPlayerPatch> {
+public abstract class TakeDamageEventAttackMixin extends AbstractPlayerEvent<ServerPlayerPatch> {
 
     @Shadow(remap = false)
     protected boolean parried;

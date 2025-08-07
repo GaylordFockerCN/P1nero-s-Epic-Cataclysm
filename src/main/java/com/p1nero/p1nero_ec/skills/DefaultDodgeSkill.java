@@ -9,7 +9,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import yesman.epicfight.main.EpicFightMod;
-import yesman.epicfight.network.client.CPExecuteSkill;
+import yesman.epicfight.network.client.CPSkillRequest;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.skill.SkillSlots;
 import yesman.epicfight.skill.dodge.StepSkill;
@@ -63,7 +63,7 @@ public class DefaultDodgeSkill extends StepSkill {
             animation = vertic >= 0 ? 0 : 1;
         }
 
-        CPExecuteSkill packet = new CPExecuteSkill(SkillSlots.DODGE.universalOrdinal());
+        CPSkillRequest packet = new CPSkillRequest(SkillSlots.DODGE);
         packet.getBuffer().writeInt(animation);
         packet.getBuffer().writeFloat((vertic == 0 && horizon != 0) ? yRot : degree);
         return packet;

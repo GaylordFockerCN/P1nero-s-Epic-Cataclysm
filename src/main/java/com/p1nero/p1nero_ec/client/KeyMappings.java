@@ -14,10 +14,10 @@ import org.lwjgl.glfw.GLFW;
 import yesman.epicfight.client.ClientEngine;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.network.EpicFightNetworkManager;
-import yesman.epicfight.network.client.CPExecuteSkill;
+import yesman.epicfight.network.client.CPSkillRequest;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.skill.SkillSlots;
-import yesman.epicfight.world.entity.eventlistener.SkillExecuteEvent;
+import yesman.epicfight.world.entity.eventlistener.SkillCastEvent;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = {Dist.CLIENT})
 public class KeyMappings {
@@ -64,11 +64,11 @@ public class KeyMappings {
 			}
 		}
 
-		public static SkillExecuteEvent sendExecuteRequest(LocalPlayerPatch executor, int skillId) {
+		public static SkillCastEvent sendExecuteRequest(LocalPlayerPatch executor, int skillId) {
 			SkillContainer container = executor.getSkill(SkillSlots.WEAPON_INNATE);
-			SkillExecuteEvent event = new SkillExecuteEvent(executor, container);
-			if (container.canExecute(executor, event)) {
-				CPExecuteSkill packet = new CPExecuteSkill(container.getSlotId());
+			SkillCastEvent event = new SkillCastEvent(executor, container, null);
+			if (container.canUse(executor, event)) {
+				CPSkillRequest packet = new CPSkillRequest(container.getSlot());
 				packet.getBuffer().writeInt(skillId);
 				EpicFightNetworkManager.sendToServer(packet);
 			}
