@@ -42,7 +42,7 @@ public class PECWeaponPresets {
                             EFNAnimations.NF_CLAW_DASH,
                             EFNAnimations.NF_CLAW_AIRSLASH)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.TIDAL_CLAW_INNATE))
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, PECAnimations.CLAW_SHOOT)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SHOT, PECAnimations.CLAW_SHOOT)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNAnimations.NF_CLAW_IDLE)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNAnimations.NF_CLAW_WALK)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNAnimations.NF_CLAW_RUN)
