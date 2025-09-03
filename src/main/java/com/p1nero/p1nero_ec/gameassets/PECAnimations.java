@@ -10,7 +10,7 @@ import com.github.L_Ender.cataclysm.entity.effect.*;
 import com.github.L_Ender.cataclysm.entity.projectile.*;
 import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
-import com.hm.efn.animations.EFNAnimations;
+import com.hm.efn.gameasset.EFNAnimations;
 import com.hm.efn.registries.NightFallEffectsRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
 import com.hm.efn.util.WeaponTrailGroundSplitter;
@@ -68,8 +68,8 @@ import yesman.epicfight.world.damagesource.StunType;
 
 import java.util.Set;
 
-import static com.hm.efn.animations.EFNAnimations.MEEN_LANCE_1;
-import static com.hm.efn.animations.EFNAnimations.MEEN_LANCE_CHARGE3;
+import static com.hm.efn.gameasset.EFNAnimations.MEEN_LANCE_1;
+import static com.hm.efn.gameasset.EFNAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

@@ -1,6 +1,6 @@
 package com.p1nero.p1nero_ec.gameassets;
 
-import com.hm.efn.animations.EFNAnimations;
+import com.hm.efn.gameasset.EFNAnimations;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.capability.item.CursedBowCapability;
 import com.p1nero.p1nero_ec.capability.item.TidalClawCapability;
