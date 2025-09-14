@@ -18,6 +18,7 @@
     "CeraunusClientMixin",
     "CursedBowClientMixin",
     "LocalPlayerPatchAccessor",
+    "MixinMinecraft",
     "Player_Ceraunus_RendererMixin",
     "Soul_RenderClientMixin",
     "TheIncineratorClientMixin",

@@ -19,7 +19,7 @@ import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 
 @Mixin(Ignis_Abyss_Fireball_Entity.class)
 public abstract class IgnisAbyssFireBallEntityMixin extends AbstractHurtingProjectile {
-    @Shadow private int timer;
+    @Shadow(remap = false) private int timer;
 
     public IgnisAbyssFireBallEntityMixin(EntityType<? extends AbstractHurtingProjectile> p_36817_, double p_36818_, double p_36819_, double p_36820_, double p_36821_, double p_36822_, double p_36823_, Level p_36824_) {
         super(p_36817_, p_36818_, p_36819_, p_36820_, p_36821_, p_36822_, p_36823_, p_36824_);

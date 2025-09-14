@@ -1,6 +1,9 @@
 package com.p1nero.p1nero_ec.gameassets;
 
 import com.hm.efn.gameasset.EFNAnimations;
+import com.hm.efn.gameasset.animations.EFNClawAnimations;
+import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
+import com.hm.efn.gameasset.animations.EFNLanceAnimations;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.capability.item.CursedBowCapability;
 import com.p1nero.p1nero_ec.capability.item.TidalClawCapability;
@@ -36,16 +39,16 @@ public class PECWeaponPresets {
                     .hitParticle(EpicFightParticles.HIT_BLADE.get())
                     .canBePlacedOffhand(false)
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
-                            EFNAnimations.NF_CLAW_AUTO1,
-                            EFNAnimations.NF_CLAW_AUTO2,
-                            EFNAnimations.NF_CLAW_AUTO3,
-                            EFNAnimations.NF_CLAW_DASH,
-                            EFNAnimations.NF_CLAW_AIRSLASH)
+                            EFNClawAnimations.NF_CLAW_AUTO1,
+                            EFNClawAnimations.NF_CLAW_AUTO2,
+                            EFNClawAnimations.NF_CLAW_AUTO3,
+                            EFNClawAnimations.NF_CLAW_DASH,
+                            EFNClawAnimations.NF_CLAW_AIRSLASH)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.TIDAL_CLAW_INNATE))
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SHOT, PECAnimations.CLAW_SHOOT)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNAnimations.NF_CLAW_IDLE)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNAnimations.NF_CLAW_WALK)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNAnimations.NF_CLAW_RUN)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNClawAnimations.NF_CLAW_IDLE)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNClawAnimations.NF_CLAW_WALK)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNClawAnimations.NF_CLAW_RUN)
                     .comboCancel((style) -> false)
                     .constructor(TidalClawCapability::new);
 
@@ -80,11 +83,11 @@ public class PECWeaponPresets {
                     .canBePlacedOffhand(false)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.SOUL_RENDER_INNATE))
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
-                            EFNAnimations.NF_MEEN_AUTO1,
-                            EFNAnimations.NF_MEEN_AUTO2,
-                            EFNAnimations.NF_MEEN_AUTO3,
+                            EFNLanceAnimations.NF_MEEN_AUTO1,
+                            EFNLanceAnimations.NF_MEEN_AUTO2,
+                            EFNLanceAnimations.NF_MEEN_AUTO3,
                             Animations.SPEAR_DASH,
-                            EFNAnimations.NF_MEEN_AIRSLASH)
+                            EFNLanceAnimations.NF_MEEN_AIRSLASH)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SPEAR_GUARD)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, Animations.BIPED_HOLD_SPEAR)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, Animations.BIPED_WALK_SPEAR)
@@ -101,15 +104,15 @@ public class PECWeaponPresets {
                     .canBePlacedOffhand(false)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.THE_INCINERATOR_INNATE))
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
-                            EFNAnimations.NG_GREATSWORD_AUTO1,
-                            EFNAnimations.NG_GREATSWORD_AUTO2,
-                            EFNAnimations.NG_GREATSWORD_AUTO3,
-                            EFNAnimations.NG_GREATSWORD_DASH,
-                            EFNAnimations.NG_GREATSWORD_AIRSLASH)
+                            EFNGreatSwordAnimations.NG_GREATSWORD_AUTO1,
+                            EFNGreatSwordAnimations.NG_GREATSWORD_AUTO2,
+                            EFNGreatSwordAnimations.NG_GREATSWORD_AUTO3,
+                            EFNGreatSwordAnimations.NG_GREATSWORD_DASH,
+                            EFNGreatSwordAnimations.NG_GREATSWORD_AIRSLASH)
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.GREATSWORD_GUARD)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNAnimations.NG_GREATSWORD_IDLE)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNAnimations.NG_GREATSWOED_WALK)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNAnimations.NG_GREATSWORD_RUN)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNGreatSwordAnimations.NG_GREATSWORD_IDLE)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNGreatSwordAnimations.NG_GREATSWOED_WALK)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNGreatSwordAnimations.NG_GREATSWORD_RUN)
                     .comboCancel((style) -> false);
 
     public static final Function<Item, CapabilityItem.Builder> WRATH_OF_THE_DESERT = (item) ->

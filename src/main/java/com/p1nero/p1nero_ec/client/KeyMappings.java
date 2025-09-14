@@ -40,27 +40,43 @@ public class KeyMappings {
 	@Mod.EventBusSubscriber(modid = PECMod.MOD_ID, value = Dist.CLIENT)
 	public static class KeyPressHandler {
 
+        public static void handleKeyPress() {
+            if(ClientEngine.getInstance().getPlayerPatch() == null) {
+                return;
+            }
+            LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
+            if(localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase && PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
+                if (SKILL_1.consumeClick()){
+                    if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
+                        sendExecuteRequest(localPlayerPatch, 1);
+                    }
+                    lockHotkeys();
+                }
+                if (SKILL_2.consumeClick()){
+                    if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
+                        sendExecuteRequest(localPlayerPatch, 2);
+                    }
+                    lockHotkeys();
+                }
+                if (SKILL_3.consumeClick()){
+                    if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
+                        sendExecuteRequest(localPlayerPatch, 3);
+                    }
+                    lockHotkeys();
+                }
+            }
+        }
+
+        public static void lockHotkeys() {
+            for (int i = 0; i < 9; ++i) {
+                while (Minecraft.getInstance().options.keyHotbarSlots[i].consumeClick());
+            }
+        }
+
 		@SubscribeEvent
 		public static void onClientTick(TickEvent.ClientTickEvent event) {
 			if(event.phase.equals(TickEvent.Phase.END)){
-				LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-				if(localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase && PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
-					while (SKILL_1.consumeClick()){
-						if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-							sendExecuteRequest(localPlayerPatch, 1);
-						}
-					}
-					while (SKILL_2.consumeClick()){
-						if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-							sendExecuteRequest(localPlayerPatch, 2);
-						}
-					}
-					while (SKILL_3.consumeClick()){
-						if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-							sendExecuteRequest(localPlayerPatch, 3);
-						}
-					}
-				}
+
 			}
 		}
 

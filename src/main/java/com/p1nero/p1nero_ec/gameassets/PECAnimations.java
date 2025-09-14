@@ -11,6 +11,7 @@ import com.github.L_Ender.cataclysm.entity.projectile.*;
 import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.hm.efn.gameasset.EFNAnimations;
+import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.registries.NightFallEffectsRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
 import com.hm.efn.util.WeaponTrailGroundSplitter;
@@ -68,8 +69,8 @@ import yesman.epicfight.world.damagesource.StunType;
 
 import java.util.Set;
 
-import static com.hm.efn.gameasset.EFNAnimations.MEEN_LANCE_1;
-import static com.hm.efn.gameasset.EFNAnimations.MEEN_LANCE_CHARGE3;
+import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
+import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -794,7 +795,7 @@ public class PECAnimations {
                                     .addState(EntityState.TURNING_LOCKED, true)
                                     .addState(EntityState.MOVEMENT_LOCKED, true)
                                     .addState(EntityState.INACTION, false)
-                                    .addEvents(AnimationProperty.ActionAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(((livingEntityPatch, staticAnimation, objects) -> livingEntityPatch.reserveAnimation(EFNAnimations.NG_GREATSWORD_CHARG1MAX_FIRST)), AnimationEvent.Side.SERVER))
+                                    .addEvents(AnimationProperty.ActionAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(((livingEntityPatch, staticAnimation, objects) -> livingEntityPatch.reserveAnimation(EFNGreatSwordAnimations.NG_GREATSWORD_CHARG1MAX_FIRST)), AnimationEvent.Side.SERVER))
                                     .addEvents(AnimationEvent.InTimeEvent.create(0.2F, summonFireBall(), AnimationEvent.Side.SERVER))
                     );
 
