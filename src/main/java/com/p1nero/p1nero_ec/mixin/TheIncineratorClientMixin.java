@@ -6,16 +6,23 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
 @Mixin(The_Incinerator.class)
 public class TheIncineratorClientMixin {
+
+    @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
+    private void releaseUsing(ItemStack p_77661_1_, CallbackInfoReturnable<UseAnim> cir) {
+        cir.setReturnValue(UseAnim.NONE);
+    }
 
     @Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
     public void pec$appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn, CallbackInfo ci) {
