@@ -30,7 +30,7 @@ public class WrathOfTheDesertCapability extends RangedWeaponCapability {
 
     public WrathOfTheDesertCapability(CapabilityItem.Builder builder) {
         super(builder);
-        this.attackMotion = List.of(PECAnimations.BOW_1, PECAnimations.BOW_2, PECAnimations.BOW_3, PECAnimations.BOW_2, PECAnimations.BOW_2);
+        this.attackMotion = List.of(PECAnimations.BOW_1, PECAnimations.BOW_2, PECAnimations.BOW_3, PECAnimations.BOW_DASH_ATTACK, PECAnimations.BOW_2);
         this.mountAttackMotion = List.of(Animations.SWORD_MOUNT_ATTACK);
     }
 

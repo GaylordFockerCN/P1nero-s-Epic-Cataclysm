@@ -2,7 +2,12 @@
   "attributes": {
     "common": {
       "impact": 0.7,
-      "damage_bonus": 2.0
+      "damage_bonus": 2.0,
+      "speed_bonus": -3.4,
+      "max_strikes": 5
+    },
+    "ranged": {
+      "max_strikes": 2
     }
   },
   "type": "p1nero_ec:wrath_of_the_desert"

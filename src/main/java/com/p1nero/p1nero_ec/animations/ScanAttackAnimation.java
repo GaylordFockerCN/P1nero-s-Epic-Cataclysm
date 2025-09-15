@@ -1,6 +1,5 @@
 package com.p1nero.p1nero_ec.animations;
 
-import com.p1nero.p1nero_ec.capability.DataManager;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,23 +19,22 @@ import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.HitEntityList;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
-import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 
 import java.util.List;
 
 /**
- * 适合给弓之类的，碰撞箱给大，可自动转向且最近的设为Target
+ * 适合给弓之类的，碰撞箱给大，可自动转向且最近的Target
  */
 public class ScanAttackAnimation extends AttackAnimation {
     public ScanAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, InteractionHand hand, @Nullable Collider collider, Joint colliderJoint, String path, AssetAccessor<? extends Armature> armature) {
         super(convertTime, antic, preDelay, contact, recovery, hand, collider, colliderJoint, path, armature);
     }
 
-    public ScanAttackAnimation(float convertTime, String path, AssetAccessor<? extends Armature> armature, AttackAnimation.Phase... phases) {
+    public ScanAttackAnimation(float convertTime, String path, AssetAccessor<? extends Armature> armature, Phase... phases) {
         super(convertTime, path, armature, phases);
     }
 
-    public ScanAttackAnimation(float transitionTime, AnimationManager.AnimationAccessor<? extends AttackAnimation> accessor, AssetAccessor<? extends Armature> armature, AttackAnimation.Phase... phases) {
+    public ScanAttackAnimation(float transitionTime, AnimationManager.AnimationAccessor<? extends AttackAnimation> accessor, AssetAccessor<? extends Armature> armature, Phase... phases) {
         super(transitionTime, accessor, armature, phases);
     }
 
@@ -50,13 +48,18 @@ public class ScanAttackAnimation extends AttackAnimation {
 
     @Override
     public void begin(LivingEntityPatch<?> entitypatch) {
-        if(entitypatch instanceof ServerPlayerPatch serverPlayerPatch) {
-            if(!DataManager.isLockOn.get(serverPlayerPatch.getOriginal())) {
-                serverPlayerPatch.setAttackTarget(null);
-                serverPlayerPatch.removeHurtEntities();
-            }
-        }
+        entitypatch.removeHurtEntities();
         super.begin(entitypatch);
+    }
+
+    @Override
+    protected Vec3 getCoordVector(LivingEntityPatch<?> entitypatch, AssetAccessor<? extends DynamicAnimation> dynamicAnimation) {
+        Vec3 vec3 = super.getCoordVector(entitypatch, dynamicAnimation);
+        if (entitypatch.shouldBlockMoving() && this.getProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE).orElse(false)) {
+            vec3 = vec3.scale(0.0F);
+        }
+
+        return vec3;
     }
 
     @Override
@@ -72,16 +75,10 @@ public class ScanAttackAnimation extends AttackAnimation {
         Phase phase = this.getPhaseByTime(animation.get().isLinkAnimation() ? 0.0F : elapsedTime);
 
         LivingEntity target = entityPatch.getTarget();
-        if(target == null && !entityPatch.getCurrentlyAttackTriedEntities().isEmpty()) {
-            Entity nearest = entityPatch.getCurrentlyAttackTriedEntities().get(0);
-            if(entityPatch instanceof ServerPlayerPatch serverPlayerPatch && nearest instanceof LivingEntity nearestLiving) {
-                entityPatch.getCurrentlyAttackTriedEntities().sort((e1, e2) -> Float.compare(e1.distanceTo(entityPatch.getOriginal()), e2.distanceTo(entityPatch.getOriginal())));
-                if(!DataManager.isLockOn.get(serverPlayerPatch.getOriginal())) {
-                    serverPlayerPatch.setAttackTarget(nearestLiving);
-                }
-            }
+        if(target == null) {
+            target = getNearestScannedTarget(entityPatch);
         }
-        if (target != null && elapsedTime < phase.recovery) {
+        if (target != null && elapsedTime < phase.contact) {
             Vec3 playerPosition = entityPatch.getOriginal().position();
             Vec3 targetPosition = target.position();
             float yaw = (float) MathUtils.getYRotOfVector(targetPosition.subtract(playerPosition));
@@ -94,13 +91,29 @@ public class ScanAttackAnimation extends AttackAnimation {
                 entityPatch.removeHurtEntities();
             }
 
-            this.hurtCollidingEntities(entityPatch, prevElapsedTime, elapsedTime, prevState, state, phase);
+            this.searchNearestEntity(entityPatch, prevElapsedTime, elapsedTime, prevState, state, phase);
         }
 
     }
 
-    @Override
-    protected void hurtCollidingEntities(LivingEntityPatch<?> entityPatch, float prevElapsedTime, float elapsedTime, EntityState prevState, EntityState state, Phase phase) {
+    @Nullable
+    public static LivingEntity getTarget(LivingEntityPatch<?> entityPatch) {
+        if(entityPatch.getTarget() != null) {
+            return entityPatch.getTarget();
+        }
+        return getNearestScannedTarget(entityPatch);
+    }
+
+    @Nullable
+    public static LivingEntity getNearestScannedTarget(LivingEntityPatch<?> entityPatch) {
+        if(entityPatch.getCurrentlyAttackTriedEntities().isEmpty()) {
+            return null;
+        }
+        Entity entity = entityPatch.getCurrentlyAttackTriedEntities().get(0);
+        return entity instanceof LivingEntity living ? living : null;
+    }
+
+    protected void searchNearestEntity(LivingEntityPatch<?> entityPatch, float prevElapsedTime, float elapsedTime, EntityState prevState, EntityState state, Phase phase) {
         LivingEntity entity = entityPatch.getOriginal();
         float prevPoseTime = prevState.attacking() ? prevElapsedTime : phase.preDelay;
         float poseTime = state.attacking() ? elapsedTime : phase.contact;
@@ -112,13 +125,7 @@ public class ScanAttackAnimation extends AttackAnimation {
                 LivingEntity trueEntity = this.getTrueEntity(target);
                 if (trueEntity != null && trueEntity.isAlive() && !entityPatch.getCurrentlyAttackTriedEntities().contains(trueEntity) && !entityPatch.isTargetInvulnerable(target) && (target instanceof LivingEntity || target instanceof PartEntity) && entity.hasLineOfSight(target)) {
                     entityPatch.getCurrentlyAttackTriedEntities().add(trueEntity);
-                    if(entityPatch instanceof ServerPlayerPatch serverPlayerPatch) {
-                        entityPatch.getCurrentlyAttackTriedEntities().sort((e1, e2) -> Float.compare(e1.distanceTo(entity), e2.distanceTo(entity)));
-                        Entity nearest = entityPatch.getCurrentlyAttackTriedEntities().get(0);
-                        if(!DataManager.isLockOn.get(serverPlayerPatch.getOriginal()) && nearest instanceof LivingEntity living) {
-                            serverPlayerPatch.setAttackTarget(living);
-                        }
-                    }
+                    entityPatch.getCurrentlyAttackTriedEntities().sort((e1, e2) -> Float.compare(e1.distanceTo(entity), e2.distanceTo(entity)));
                 }
             }
         }

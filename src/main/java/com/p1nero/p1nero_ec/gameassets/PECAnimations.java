@@ -10,7 +10,8 @@ import com.github.L_Ender.cataclysm.entity.effect.*;
 import com.github.L_Ender.cataclysm.entity.projectile.*;
 import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
-import com.hm.efn.gameasset.EFNAnimations;
+import com.github.L_Ender.cataclysm.items.Cursed_bow;
+import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.registries.NightFallEffectsRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
@@ -28,7 +29,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -39,6 +39,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -50,6 +51,7 @@ import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.property.AnimationEvent;
 import yesman.epicfight.api.animation.property.AnimationProperty;
 import yesman.epicfight.api.animation.types.*;
+import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.collider.OBBCollider;
 import yesman.epicfight.api.model.Armature;
@@ -82,7 +84,8 @@ public class PECAnimations {
 
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
-    public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL3;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_SKILL3;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_DASH_ATTACK;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CERAUNUS_SKILL1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> CERAUNUS_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> CERAUNUS_SKILL3;
@@ -105,64 +108,96 @@ public class PECAnimations {
             CLAW_SHOOT = builder.nextAccessor("living/claw_shoot", (accessor) -> new StaticAnimation(0.15F, true, accessor, Armatures.BIPED));
 
             BOW_1 = builder.nextAccessor("bow/bow_auto1", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 0.5F, 0.5F,
+                    new ScanAttackAnimation(0.15F, 0, 0.15F, 65 / 60F, 65 / 60F,
                             InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.49F,
-                                    shootPhantomArrow(1.0F), AnimationEvent.Side.SERVER))
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.0F)));
-            BOW_2 = builder.nextAccessor("bow/bow_auto2", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 1.1F, 1.2F,
-                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
-                            .addEvents(AnimationEvent.InTimeEvent.create(1.1F,
-                                    shootPhantomArrow(1.5F), AnimationEvent.Side.SERVER))
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 2.0F)));
-            BOW_3 = builder.nextAccessor("bow/bow_auto3", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 1.5F, 1.5F,
-                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.7F,
-                                            shootPhantomArrow(0.7F, false), AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(0.85F,
-                                            shootPhantomArrow(0.7F, false), AnimationEvent.Side.SERVER),
+                            .addEvents(setFullBowUseTime(20 / 60F), AnimationEvent.InTimeEvent.create(0.49F,
+                                    shootPhantomArrow(1.0F), AnimationEvent.Side.SERVER),
+                                    resetBowUseTime(0.6F),
+                                    setFullBowUseTime(50 / 60F),
+                                    resetBowUseTime(1.1F),
                                     AnimationEvent.InTimeEvent.create(1.0F,
-                                            shootPhantomArrow(0.7F), AnimationEvent.Side.SERVER))
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.2F)));
+                                            shootPhantomArrow(1.0F), AnimationEvent.Side.SERVER))
+                            .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, true)
+            );
+            BOW_2 = builder.nextAccessor("bow/bow_auto2", (accessor) ->
+                    new ScanAttackAnimation(0.15F, 0, 0.15F, 65 / 60F, 65 / 60F,
+                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
+                            .addEvents(setFullBowUseTime(20 / 60F), AnimationEvent.InTimeEvent.create(0.49F,
+                                            shootPhantomArrow(1.5F), AnimationEvent.Side.SERVER),
+                                    resetBowUseTime(0.6F),
+                                    setFullBowUseTime(50 / 60F),
+                                    resetBowUseTime(1.1F),
+                                    AnimationEvent.InTimeEvent.create(1.0F,
+                                            shootPhantomArrow(1.5F), AnimationEvent.Side.SERVER))
+                            .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, true)
+            );
+            BOW_3 = builder.nextAccessor("bow/bow_auto3", (accessor) ->
+                    new ScanAttackAnimation(0.15F, 0, 0.15F, 100 / 60F, 120 / 60F,
+                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
+                            .addEvents(
+                                    setFullBowUseTime(1.0F),
+                                    AnimationEvent.InTimeEvent.create(80F / 60F,
+                                            shootPhantomArrow(0.7F, false), AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(90F / 60F,
+                                            shootPhantomArrow(0.7F, false), AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(100F / 60F,
+                                            shootPhantomArrow(0.7F), AnimationEvent.Side.SERVER)
+                                    , resetBowUseTime(110F / 60F))
+                            .addProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE, true)
+            );
 
             BOW_SKILL1 = builder.nextAccessor("skill/bow_skill1", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 0.5F, 0.5F,
+                    new ScanAttackAnimation(0.15F, 0, 0.15F, 65 / 60F, 65 / 60F,
                             InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
                             .newTimePair(0.0F, 1.1F)
                             .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.49F,
-                                    shootSandstorm(0.8F, true), AnimationEvent.Side.SERVER))
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.0F)));
+                            .addEvents(
+                                    setFullBowUseTime(0.33F),
+                                    AnimationEvent.InTimeEvent.create(0.49F,
+                                    shootSandstorm(0.8F, true), AnimationEvent.Side.SERVER),
+                                    resetBowUseTime(0.6F),
+                                    setFullBowUseTime(0.8F),
+                                    AnimationEvent.InTimeEvent.create(1.0F,
+                                            shootSandstorm(0.8F, true), AnimationEvent.Side.SERVER),
+                                    resetBowUseTime(1.1F)));
 
             BOW_SKILL2 = builder.nextAccessor("skill/bow_skill2", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 1.1F, 1.2F,
+                    new ScanAttackAnimation(0.15F, 0, 0.15F, 65 / 60F, 65 / 60F,
                             InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
                             .newTimePair(0.0F, 1.1F)
                             .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                            .addEvents(AnimationEvent.InTimeEvent.create(1.1F,
-                                    shootCursedSandstorm(1.1F, true), AnimationEvent.Side.SERVER))
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.6F)));
+                            .addEvents(
+                                    setFullBowUseTime(0.33f),
+                                    AnimationEvent.InTimeEvent.create(0.5F,
+                                    shootCursedSandstorm(1.1F, true), AnimationEvent.Side.SERVER),
+                                    resetBowUseTime(0.6F),
+                                    setFullBowUseTime(0.9F),
+                                    resetBowUseTime(1.1F),
+                                    AnimationEvent.InTimeEvent.create(1.0F,
+                                            shootCursedSandstorm(1.1F, true), AnimationEvent.Side.SERVER)));
 
             BOW_SKILL3 = builder.nextAccessor("skill/bow_skill3", (accessor) ->
-                    new ScanAttackAnimation(0.15F, 0.0F, 0.15F, 4.0F, 5.0F,
-                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
-                            .newTimePair(0.0F, 3.0F)
+                    new AttackAnimation(0.15F, 20 / 60F, 20 / 60F, 40 / 60F, 50 / 60F,
+                            InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_ELBOW, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED) {
+                        @Override
+                        protected Vec3 getCoordVector(LivingEntityPatch<?> entitypatch, AssetAccessor<? extends DynamicAnimation> animation) {
+                            return super.getCoordVector(entitypatch, animation).scale(0);
+                        }
+                    }
+                            .newTimePair(0.0F, 1.0F)
                             .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                            .addEvents(AnimationEvent.InTimeEvent.create(1.0F,
-                                            shootSandstormByView(1.0F, false), AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(1.6F,
-                                            shootCursedSandstorm(1.0F, false), AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(2.2F,
-                                            shootThreeStorm(false), AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(2.1F,
-                                            shootSandstormByView(1.0F, false), AnimationEvent.Side.SERVER),
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.2F, shootThreeStorm(false), AnimationEvent.Side.SERVER),
                                     AvalonEventUtils.simpleCameraShake((int) (2.2 * 60), 60, 7, 6, 6),
-                                    AnimationEvent.InTimeEvent.create(3.0F,
+                                    AnimationEvent.InTimeEvent.create(0.2F,
                                             shootRain(true), AnimationEvent.Side.BOTH)
-                            )
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.0F)));
+                            ));
+
+            BOW_DASH_ATTACK = builder.nextAccessor("bow/bow_dash_attack", accessor ->
+                    new AttackAnimation(0.15F, 0, 0, 40 / 60F, 60 / 60F,
+                            PECWeaponPresets.BOW_DASH, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.KNOCKDOWN)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(2.0f))
+                            .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true));
 
             CERAUNUS_SKILL1 = builder.nextAccessor("skill/ceraunus_skill1", (accessor) ->
                     new ActionAnimation(0.15F, 1.5F, accessor, Armatures.BIPED)
@@ -1171,6 +1206,30 @@ public class PECAnimations {
 
 
         });
+    }
+
+    public static AnimationEvent.InTimeEvent<?> setFullBowUseTime(float time) {
+        return AnimationEvent.InTimeEvent.create(time, (livingEntityPatch, assetAccessor, animationParameters) -> {
+            ItemStack itemStack = livingEntityPatch.getOriginal().getMainHandItem();
+            if(itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())){
+                Wrath_of_the_desert.setUseTime(itemStack, 20);
+            }
+            if(itemStack.is(ModItems.CURSED_BOW.get())) {
+                Cursed_bow.setUseTime(itemStack, 20);
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    public static AnimationEvent.InTimeEvent<?> resetBowUseTime(float time) {
+        return AnimationEvent.InTimeEvent.create(time, (livingEntityPatch, assetAccessor, animationParameters) -> {
+            ItemStack itemStack = livingEntityPatch.getOriginal().getMainHandItem();
+            if(itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())){
+                Wrath_of_the_desert.setUseTime(itemStack, 0);
+            }
+            if(itemStack.is(ModItems.CURSED_BOW.get())) {
+                Cursed_bow.setUseTime(itemStack, 0);
+            }
+        }, AnimationEvent.Side.CLIENT);
     }
 
     private static boolean spawnFlameStrike(double x, double z, double minY, double maxY, float rotation, int duration, int wait, int delay, Level world, float radius, LivingEntity player) {

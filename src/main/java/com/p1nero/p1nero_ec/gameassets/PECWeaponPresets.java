@@ -28,6 +28,8 @@ import java.util.function.Function;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECWeaponPresets {
+    public static final Collider BOW_DASH = new MultiOBBCollider(2, 1, 1.5, 1, 0, 0, 0);
+    public static final Collider BOW_ELBOW = new MultiOBBCollider(2, 1, 1, 1, 0, 1, 0);
     public static final Collider BOW_SCAN = new MultiOBBCollider(2, 8, 4D, 8, 0.0D, 1, -8.5);
 
     public static final Function<Item, CapabilityItem.Builder> TIDAL_CLAW = (item) ->

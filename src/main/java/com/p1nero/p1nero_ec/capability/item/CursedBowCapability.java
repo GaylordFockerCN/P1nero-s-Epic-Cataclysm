@@ -30,7 +30,7 @@ public class CursedBowCapability extends RangedWeaponCapability {
 
     public CursedBowCapability(CapabilityItem.Builder builder) {
         super(builder);
-        this.attackMotion = List.of(PECAnimations.BOW_1, PECAnimations.BOW_1, PECAnimations.BOW_1);
+        this.attackMotion = List.of(PECAnimations.BOW_1, PECAnimations.BOW_2, PECAnimations.BOW_1, PECAnimations.BOW_1);
         this.mountAttackMotion = List.of(Animations.SWORD_MOUNT_ATTACK);
     }
 
