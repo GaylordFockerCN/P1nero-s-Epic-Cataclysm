@@ -20,7 +20,7 @@ import java.util.List;
 public class TheIncineratorClientMixin {
 
     @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
-    private void releaseUsing(ItemStack p_77661_1_, CallbackInfoReturnable<UseAnim> cir) {
+    private void pec$releaseUsing(ItemStack p_77661_1_, CallbackInfoReturnable<UseAnim> cir) {
         cir.setReturnValue(UseAnim.NONE);
     }
 
