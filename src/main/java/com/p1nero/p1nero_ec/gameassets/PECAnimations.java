@@ -13,7 +13,7 @@ import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
-import com.hm.efn.registries.NightFallEffectsRegistry;
+import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
 import com.hm.efn.util.WeaponTrailGroundSplitter;
 import com.merlin204.avalon.epicfight.animations.AvalonAttackAnimation;
@@ -385,7 +385,7 @@ public class PECAnimations {
                     .addEvents(
                             EffectEntityInvoker.clearFireWind(75),
                             AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, self, params) -> {
-                                entityPatch.getOriginal().addEffect(new MobEffectInstance(NightFallEffectsRegistry.SIN_STUN_IMMUNITY.get(), 20, 10, false, false, false));
+                                entityPatch.getOriginal().addEffect(new MobEffectInstance(EFNMobEffectRegistry.SIN_STUN_IMMUNITY.get(), 20, 10, false, false, false));
                             }, AnimationEvent.Side.SERVER),
                             AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, animation, params) -> {
                                 LivingEntity entity = entityPatch.getOriginal();
@@ -424,7 +424,7 @@ public class PECAnimations {
                                 entity.level().addParticle(AvalonParticles.AVALON_ENTITY_AFTER_IMAGE.get(), entity.getX(), entity.getY(), entity.getZ(), Double.longBitsToDouble(entity.getId()), 0, 0);
                             }, AnimationEvent.Side.CLIENT),
                             AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, self, params) -> {
-                                entityPatch.getOriginal().addEffect(new MobEffectInstance(NightFallEffectsRegistry.SIN_STUN_IMMUNITY.get(), 20, 10, false, false, false));
+                                entityPatch.getOriginal().addEffect(new MobEffectInstance(EFNMobEffectRegistry.SIN_STUN_IMMUNITY.get(), 20, 10, false, false, false));
                             }, AnimationEvent.Side.SERVER),
                             AvalonEventUtils.simpleCameraShake(53, 70, 7, 6, 6),
                             PECEffectConditionParticleTrail.buffedParticleTrail(56, 70, InteractionHand.MAIN_HAND
