@@ -1,7 +1,7 @@
 package com.p1nero.p1nero_ec.gameassets;
 
 import com.hm.efn.gameasset.EFNAnimations;
-import com.hm.efn.gameasset.animations.EFNClawAnimations;
+import com.hm.efn.gameasset.animations.EFNClawAnimations_N;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.gameasset.animations.EFNLanceAnimations;
 import com.p1nero.p1nero_ec.PECMod;
@@ -41,16 +41,16 @@ public class PECWeaponPresets {
                     .hitParticle(EpicFightParticles.HIT_BLADE.get())
                     .canBePlacedOffhand(false)
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
-                            EFNClawAnimations.NF_CLAW_AUTO1,
-                            EFNClawAnimations.NF_CLAW_AUTO2,
-                            EFNClawAnimations.NF_CLAW_AUTO3,
-                            EFNClawAnimations.NF_CLAW_DASH,
-                            EFNClawAnimations.NF_CLAW_AIRSLASH)
+                            EFNClawAnimations_N.NF_CLAW_AUTO1,
+                            EFNClawAnimations_N.NF_CLAW_AUTO2,
+                            EFNClawAnimations_N.NF_CLAW_AUTO3,
+                            EFNClawAnimations_N.NF_CLAW_DASH,
+                            EFNClawAnimations_N.NF_CLAW_AIRSLASH)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.TIDAL_CLAW_INNATE))
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SHOT, PECAnimations.CLAW_SHOOT)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNClawAnimations.NF_CLAW_IDLE)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNClawAnimations.NF_CLAW_WALK)
-                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNClawAnimations.NF_CLAW_RUN)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNClawAnimations_N.NF_CLAW_IDLE)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNClawAnimations_N.NF_CLAW_WALK)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNClawAnimations_N.NF_CLAW_RUN)
                     .comboCancel((style) -> false)
                     .constructor(TidalClawCapability::new);
 
