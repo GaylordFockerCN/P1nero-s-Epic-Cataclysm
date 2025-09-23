@@ -10,8 +10,9 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-import yesman.epicfight.client.gui.screen.config.PreferredItemsScreen;
 import yesman.epicfight.main.EpicFightSharedConstants;
+
+import static yesman.epicfight.client.gui.screen.config.ItemsPreferenceScreen.registerWeaponCategorizedItemClasses;
 
 @Mod(PECMod.MOD_ID)
 public class PECMod {
@@ -25,7 +26,7 @@ public class PECMod {
         bus.addListener(this::commonSetup);
         context.registerConfig(ModConfig.Type.COMMON, PECConfig.SPEC);
         if(EpicFightSharedConstants.isPhysicalClient()) {
-            PreferredItemsScreen.registerWeaponCategorizedItemClasses(Tidal_Claws.class, Soul_Render.class, The_Incinerator.class, Ceraunus.class, Wrath_of_the_desert.class);
+            registerWeaponCategorizedItemClasses(Tidal_Claws.class, Soul_Render.class, The_Incinerator.class, Ceraunus.class, Wrath_of_the_desert.class);
         }
     }
 

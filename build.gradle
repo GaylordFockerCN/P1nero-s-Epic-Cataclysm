@@ -147,9 +147,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-//    implementation fg.deobf("curse.maven:epic-fight-mod-405076:6854306")
-
-    implementation fg.deobf("curse.maven:epic-fight-mod-405076:6921772")
+    implementation fg.deobf("curse.maven:epic-fight-mod-405076:7025236")
     implementation fg.deobf("curse.maven:epic-fight-skill-tree-1295882:6854381")
     implementation fg.deobf("curse.maven:epic-fight-invincible-1184379:6992153")
     implementation fg.deobf("libs:epic_fight_avalon:20.12.2.4.1")
