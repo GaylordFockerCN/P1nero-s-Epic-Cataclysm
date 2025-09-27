@@ -29,6 +29,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -38,6 +39,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,10 +67,13 @@ import yesman.epicfight.gameasset.Armatures;
 import yesman.epicfight.gameasset.EpicFightSounds;
 import yesman.epicfight.particle.EpicFightParticles;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
+import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 import yesman.epicfight.world.damagesource.EpicFightDamageTypeTags;
 import yesman.epicfight.world.damagesource.ExtraDamageInstance;
 import yesman.epicfight.world.damagesource.StunType;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
@@ -817,6 +822,7 @@ public class PECAnimations {
             CLAW_SKILL3 = builder.nextAccessor("skill/claw_skill3", accessor ->
                     new ActionAnimation(0.15F, accessor, Armatures.BIPED)
                             .newTimePair(0.0F, Float.MAX_VALUE)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
                             .addStateRemoveOld(EntityState.TURNING_LOCKED, true)
                             .addEvents(AnimationEvent.InTimeEvent.create(0.3F, summonAbyssPortal(), AnimationEvent.Side.SERVER))
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.0F))
@@ -830,6 +836,8 @@ public class PECAnimations {
                                     .addState(EntityState.TURNING_LOCKED, true)
                                     .addState(EntityState.MOVEMENT_LOCKED, true)
                                     .addState(EntityState.INACTION, false)
+                                    .newTimePair(0.0F, Float.MAX_VALUE)
+                                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
                                     .addEvents(AnimationProperty.ActionAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(((livingEntityPatch, staticAnimation, objects) -> livingEntityPatch.reserveAnimation(EFNGreatSwordAnimations.NG_GREATSWORD_CHARG1MAX_FIRST)), AnimationEvent.Side.SERVER))
                                     .addEvents(AnimationEvent.InTimeEvent.create(0.2F, summonFireBall(), AnimationEvent.Side.SERVER))
                     );
@@ -850,6 +858,7 @@ public class PECAnimations {
                     .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
                     .newTimePair(0.9F, Float.MAX_VALUE)
                     .addStateRemoveOld(EntityState.TURNING_LOCKED, true)
+                    .newTimePair(0.0F, Float.MAX_VALUE)
                     .addState(EntityState.ATTACK_RESULT, (damageSource) -> AttackResult.ResultType.BLOCKED)
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                     .addEvents(AnimationEvent.InTimeEvent.create(2.6F, (entityPatch, self, params) -> {
@@ -1268,6 +1277,16 @@ public class PECAnimations {
         return (entityPatch, animation, params) -> {
             entityPatch.playSound(ModSounds.ABYSS_BLAST_ONLY_CHARGE.get(), 4.0F, 1.0F, 1.0F);
             LivingEntity entity = entityPatch.getOriginal();
+            if(entityPatch instanceof ServerPlayerPatch serverPlayerPatch) {
+                if(serverPlayerPatch.getTarget() == null) {
+                    ServerPlayer serverPlayer = serverPlayerPatch.getOriginal();
+                    List<LivingEntity> list = serverPlayer.serverLevel().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, serverPlayer, new AABB(serverPlayer.position(), serverPlayer.position()).inflate(10));
+                    if(!list.isEmpty()) {
+                        list.sort(Comparator.comparingDouble((e) -> e.distanceTo(serverPlayer)));
+                        serverPlayerPatch.setAttackTarget(list.get(0));
+                    }
+                }
+            }
             entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.EVOKER_PREPARE_SUMMON, entity.getSoundSource(), 5.0F, 1.4F + entity.getRandom().nextFloat() * 0.1F, false);
             switch (entity.getRandom().nextInt(5)) {
                 case 0:

@@ -5,6 +5,7 @@ import com.p1nero.p1nero_ec.capability.PECPlayer;
 import com.p1nero.p1nero_ec.skills.PECWeaponInnateSkillBase;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -45,24 +46,31 @@ public class KeyMappings {
                 return;
             }
             LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-            if(localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase && PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
+            if(localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase pecWeaponInnateSkillBase && PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
+                LocalPlayer player = localPlayerPatch.getOriginal();
                 if (SKILL_1.consumeClick()){
                     if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
                         sendExecuteRequest(localPlayerPatch, 1);
                     }
-                    lockHotkeys();
+                    if(pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_1)) {
+                        lockHotkeys();
+                    }
                 }
                 if (SKILL_2.consumeClick()){
                     if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
                         sendExecuteRequest(localPlayerPatch, 2);
                     }
-                    lockHotkeys();
+                    if(pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_2)) {
+                        lockHotkeys();
+                    }
                 }
                 if (SKILL_3.consumeClick()){
                     if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
                         sendExecuteRequest(localPlayerPatch, 3);
                     }
-                    lockHotkeys();
+                    if(pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_3)) {
+                        lockHotkeys();
+                    }
                 }
             }
         }

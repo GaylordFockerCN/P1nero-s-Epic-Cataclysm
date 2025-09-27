@@ -28,7 +28,11 @@ public class PECPlayer {
     private boolean isClientLockOn;
 
     public static boolean isValidWeapon(ItemStack itemStack) {
-        return itemStack.is(ModItems.CERAUNUS.get()) || itemStack.is(ModItems.THE_INCINERATOR.get()) || itemStack.is(ModItems.SOUL_RENDER.get()) || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get()) || itemStack.is(ModItems.TIDAL_CLAWS.get());
+        return itemStack.is(ModItems.CERAUNUS.get())
+                || itemStack.is(ModItems.THE_INCINERATOR.get())
+                || itemStack.is(ModItems.SOUL_RENDER.get())
+                || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())
+                || itemStack.is(ModItems.TIDAL_CLAWS.get());
     }
 
     public static void addSkillPoint(ServerPlayer serverPlayer) {
@@ -51,6 +55,10 @@ public class PECPlayer {
         }
     }
 
+    public static boolean hasSkillPoint(Player player, int count) {
+        return DataManager.skillPoint.get(player) > count;
+    }
+
     public static boolean consumeSkillPoint(ServerPlayer serverPlayer, int consumeValue) {
         if(serverPlayer.isCreative()) {
             return true;
@@ -63,8 +71,8 @@ public class PECPlayer {
         return false;
     }
 
-    public static int getSkillPoint(Player serverPlayer) {
-        return DataManager.skillPoint.get(serverPlayer).intValue();
+    public static int getSkillPoint(Player player) {
+        return DataManager.skillPoint.get(player).intValue();
     }
 
     public boolean getBoolean(String key) {

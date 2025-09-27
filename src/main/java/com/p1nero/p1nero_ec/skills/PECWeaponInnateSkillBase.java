@@ -2,9 +2,13 @@ package com.p1nero.p1nero_ec.skills;
 
 import com.google.common.collect.Lists;
 import com.p1nero.p1nero_ec.capability.PECPlayer;
+import com.p1nero.p1nero_ec.client.KeyMappings;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import yesman.epicfight.skill.Skill;
 import yesman.epicfight.skill.SkillBuilder;
 import yesman.epicfight.skill.SkillCategories;
@@ -29,11 +33,6 @@ public abstract class PECWeaponInnateSkillBase extends Skill {
     }
 
     @Override
-    public boolean isExecutableState(PlayerPatch<?> executor) {
-        return super.isExecutableState(executor) && !executor.getEntityState().inaction();
-    }
-
-    @Override
     public void executeOnServer(SkillContainer container, FriendlyByteBuf args) {
         int skillId = args.readInt();
         ServerPlayerPatch serverPlayerPatch = container.getServerExecutor();
@@ -44,6 +43,33 @@ public abstract class PECWeaponInnateSkillBase extends Skill {
             case 1 -> tryExecuteSkill1(serverPlayerPatch, container);
             case 2 -> tryExecuteSkill2(serverPlayerPatch, container);
             case 3 -> tryExecuteSkill3(serverPlayerPatch, container);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public boolean hasSkillKeyIn(KeyMapping keyMapping) {
+        return getAvailableKeys().contains(keyMapping);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    protected List<KeyMapping> getAvailableKeys() {
+        return List.of(KeyMappings.SKILL_1, KeyMappings.SKILL_2, KeyMappings.SKILL_3);
+    }
+
+    public int getSkillRequired(int slot) {
+        return slot;
+    }
+
+    public boolean canExecute(PlayerPatch<?> playerPatch, int slot) {
+        return PECPlayer.hasSkillPoint(playerPatch.getOriginal(), slot) && isExecutableState(playerPatch);
+    }
+
+    protected void tryExecuteSkill(ServerPlayerPatch serverPlayerPatch, SkillContainer container, int slot) {
+        int skillRequired = this.getSkillRequired(slot);
+        if (PECPlayer.consumeSkillPoint(serverPlayerPatch.getOriginal(), skillRequired)) {
+            executeSkill1(serverPlayerPatch, container);
+        } else {
+            onSkillPointNotEnough(container, slot, skillRequired);
         }
     }
 
@@ -77,7 +103,13 @@ public abstract class PECWeaponInnateSkillBase extends Skill {
 
     public abstract void executeSkill3(ServerPlayerPatch serverPlayerPatch, SkillContainer container);
 
+    public void executeSkill(ServerPlayerPatch serverPlayerPatch, SkillContainer container, int slot){};
+
     public void onSkillPointNotEnough(SkillContainer container, int need) {
+        container.getExecutor().getOriginal().displayClientMessage(Component.translatable("info.p1nero_ec.skill_point_lack", need), true);
+    }
+
+    public void onSkillPointNotEnough(SkillContainer container, int slot, int need) {
         container.getExecutor().getOriginal().displayClientMessage(Component.translatable("info.p1nero_ec.skill_point_lack", need), true);
     }
 
