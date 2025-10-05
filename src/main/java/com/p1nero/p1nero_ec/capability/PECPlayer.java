@@ -29,6 +29,7 @@ public class PECPlayer {
 
     public static boolean isValidWeapon(ItemStack itemStack) {
         return itemStack.is(ModItems.CERAUNUS.get())
+                || itemStack.is(ModItems.INFERNAL_FORGE.get())
                 || itemStack.is(ModItems.THE_INCINERATOR.get())
                 || itemStack.is(ModItems.SOUL_RENDER.get())
                 || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())

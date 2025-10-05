@@ -12,6 +12,7 @@ public class PECSkills {
 
     public static Skill STEP;
     public static Skill CERAUNUS_INNATE;
+    public static Skill INFERNAL_INNATE;
     public static Skill WRATH_OF_THE_DESERT_INNATE;
     public static Skill THE_INCINERATOR_INNATE;
     public static Skill SOUL_RENDER_INNATE;
@@ -23,6 +24,7 @@ public class PECSkills {
 //                .setAnimations(PECAnimations.STEP_F, PECAnimations.STEP_B, PECAnimations.STEP_L, PECAnimations.STEP_R));
 
         CERAUNUS_INNATE = registryWorker.build("ceraunus_innate", CeraunusInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
+        INFERNAL_INNATE = registryWorker.build("infernal_innate", InfernalInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         WRATH_OF_THE_DESERT_INNATE = registryWorker.build("wrath_of_the_desert_innate", Wrath_of_the_desertInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         SOUL_RENDER_INNATE = registryWorker.build("soul_render_innate", SoulRenderInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         THE_INCINERATOR_INNATE = registryWorker.build("the_incinerator_innate", TheIncineratorInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());

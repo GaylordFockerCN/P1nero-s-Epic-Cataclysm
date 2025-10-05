@@ -15,6 +15,7 @@ import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
+import com.hm.efn.util.ParticleEffectInvoker;
 import com.hm.efn.util.WeaponTrailGroundSplitter;
 import com.merlin204.avalon.epicfight.animations.AvalonAttackAnimation;
 import com.merlin204.avalon.particle.AvalonParticles;
@@ -23,6 +24,7 @@ import com.merlin204.avalon.util.AvalonEventUtils;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.utils.PECEffectConditionParticleTrail;
+import com.p1nero.p1nero_ec.utils.PECParticleEffectInvoker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -72,13 +74,16 @@ import yesman.epicfight.world.damagesource.EpicFightDamageTypeTags;
 import yesman.epicfight.world.damagesource.ExtraDamageInstance;
 import yesman.epicfight.world.damagesource.StunType;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import static com.hm.efn.gameasset.animations.EFNGreatSwordAnimations.GREATSWORD_AIRSLASH_SECOND;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
+import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECAnimations {
@@ -97,12 +102,17 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL3;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> INFERNAL_SKILL1;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> INFERNAL_SKILL2;
     public static AnimationManager.AnimationAccessor<ActionAnimation> THE_INCINERATOR_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> THE_INCINERATOR_SKILL3;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL2;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL3;
 
     public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
+    public static final Collider INFERNAL_SKILL1_BOX = new OBBCollider(2, 2, 9.5, 0.0, 0.8, -8);
+    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
+
 
     public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
 
@@ -371,6 +381,65 @@ public class PECAnimations {
                             AvalonEventUtils.simpleCameraShake(80, 40, 4, 4, 4)
                     )
             );
+
+            INFERNAL_SKILL1 = builder.nextAccessor("skill/infernal_skill1",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(33,44,70, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint,INFERNAL_SKILL1_BOX))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND,EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.45F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                            ParticleEffectInvoker.simpleGroundSplit(33,2,0,0,0,3,true),
+                            ParticleEffectInvoker.simpleGroundSplit(33,6,0,0,0,2,true),
+                            ParticleEffectInvoker.simpleGroundSplit(33,10,0,0,0,2,true),
+                            ParticleEffectInvoker.simpleGroundSplit(33,14,0,0,0,2,true),
+                            AvalonEventUtils.simpleCameraShake(33,12,5,5,5),
+                            PECParticleEffectInvoker.createForwardFlameJetParticles(10,25),
+                            AnimationEvent.InTimeEvent.create(0.38F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                createForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
+                            }, AnimationEvent.Side.BOTH)
+                    )
+            );
+
+            INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", (accessor) -> (new AttackAnimation(0.1F, accessor, Armatures.BIPED,
+                    new AttackAnimation.Phase(0.0F, 0.8F, 1.16F, 1.16F, 1.8F, Armatures.BIPED.get().toolR, INFERNAL_SKILL2_BOX)))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG)
+                    .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.1F))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.setter(30.0F))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(3.0F))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.setter(5))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND,EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND,EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.AttackPhaseProperty.EXTRA_DAMAGE, Set.of(ExtraDamageInstance.SWEEPING_EDGE_ENCHANTMENT.create()))
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
+                    .addEvents(AvalonEventUtils.simpleCameraShake(60,40,4,4,7),
+                            PECParticleEffectInvoker.createLavaRingEffect(30,70),
+                            PECParticleEffectInvoker.createMagmaEruption(65),
+                            AnimationEvent.InTimeEvent.create(0.9F, FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.0F, 0.0F), Armatures.BIPED.get().toolR, 5D, 0F),
+                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.8F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+
+                                Vec3 lookVec = caster.getLookAngle();
+
+                                double spawnX = caster.getX() + lookVec.x * 1.15;
+                                double spawnY = caster.getY() + caster.getEyeHeight() * 0.8;
+                                double spawnZ = caster.getZ() + lookVec.z * 1.15;
+
+                                Flare_Bomb_Entity bomb = spawnFlareBomb(world, spawnX, spawnY, spawnZ, caster);
+
+                                if (bomb != null) {
+                                    bomb.setDeltaMovement(0, -0.35, 0);
+                                }
+                                createEnhancedFlameJetBurst(world, caster.getX(), caster.getY(), caster.getZ(), caster);
+                            }, AnimationEvent.Side.BOTH))
+
+                    );
 
             SOUL_RENDER_SKILL1 = builder.nextAccessor("skill/soul_render_skill1", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 1.1F, 1,
                     createSimplePhase(38, 56, 75, InteractionHand.MAIN_HAND, 1.5F, 1.5F, Armatures.BIPED.get().toolR, null))
@@ -1720,6 +1789,166 @@ public class PECAnimations {
                 entityPatch.removeHurtEntities();
             }
         };
+    }
+
+    public static boolean spawnFlameJet(Level world, double x, double y, double z, float rotation, int delay, float damage, @Nullable LivingEntity caster) {
+        if (world == null) {
+            return false;
+        }
+
+        world.addFreshEntity(new Flame_Jet_Entity(world, x, y, z, rotation, delay, damage, caster));
+        return true;
+    }
+
+    public static boolean spawnFlameJetOnGround(Level world, double x, double z, double minY, double maxY, float rotation, int delay, float damage, @Nullable LivingEntity caster) {
+        BlockPos blockpos = BlockPos.containing(x, maxY, z);
+        boolean flag = false;
+        double groundY = 0.0D;
+
+        do {
+            BlockPos belowPos = blockpos.below();
+            BlockState blockstate = world.getBlockState(belowPos);
+
+            if (blockstate.isFaceSturdy(world, belowPos, Direction.UP)) {
+                if (!world.isEmptyBlock(blockpos)) {
+                    BlockState currentState = world.getBlockState(blockpos);
+                    VoxelShape voxelshape = currentState.getCollisionShape(world, blockpos);
+                    if (!voxelshape.isEmpty()) {
+                        groundY = voxelshape.max(Direction.Axis.Y);
+                    }
+                }
+                flag = true;
+                break;
+            }
+            blockpos = blockpos.below();
+        } while(blockpos.getY() >= minY);
+
+        if (flag) {
+            world.addFreshEntity(new Flame_Jet_Entity(world, x, (double)blockpos.getY() + groundY, z, rotation, delay, damage, caster));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Flare_Bomb_Entity spawnFlareBomb(Level world, double x, double y, double z, @Nullable LivingEntity thrower) {
+        if (world == null) {
+            return null;
+        }
+
+        Flare_Bomb_Entity bomb = null;
+        if (thrower != null) {
+            bomb = new Flare_Bomb_Entity(ModEntities.FLARE_BOMB.get(), world, thrower);
+        }
+        bomb.setPos(x, y, z);
+        world.addFreshEntity(bomb);
+        return bomb;
+    }
+
+    public static Flare_Bomb_Entity spawnFlareBombWithMotion(Level world, double x, double y, double z, double motionX, double motionY, double motionZ, @Nullable LivingEntity thrower) {
+        if (world == null) {
+            return null;
+        }
+
+        Flare_Bomb_Entity bomb = null;
+        if (thrower != null) {
+            bomb = new Flare_Bomb_Entity(ModEntities.FLARE_BOMB.get(), world, thrower);
+        }
+        bomb.setPos(x, y, z);
+        bomb.setDeltaMovement(motionX, motionY, motionZ);
+        world.addFreshEntity(bomb);
+        return bomb;
+    }
+
+    private static void createEnhancedFlameJetBurst(Level world, double centerX, double centerY, double centerZ, LivingEntity caster) {
+        if (world.isClientSide()) return;
+
+        float damage = (float) CMConfig.FlareBombDamage;
+        float yaw = caster.getYRot();
+
+        for (int i = 0; i < 2; i++) {
+            spawnFlameJetOnGround(world, centerX, centerZ, centerY - 1, centerY + 3,
+                    yaw * ((float)Math.PI / 180F),
+                    i * 5, damage, caster);
+        }
+
+        createMultiAngleBurst(world, centerX, centerY, centerZ, yaw, 8, 2, damage, caster);
+    }
+
+    private static void createMultiAngleBurst(Level world, double centerX, double centerY, double centerZ,
+                                              float yaw, int directions, int rings, float damage, LivingEntity caster) {
+        for (int ring = 1; ring <= rings; ring++) {
+            for (int i = 0; i < directions; i++) {
+
+                float baseAngle = (float) (2 * Math.PI * i / directions);
+                float offsetAngle = baseAngle + (ring * 0.3f);
+
+                double distance = 0.8D + (ring * 0.8D);
+                int delay = ring * 2;
+
+                double jetX = centerX + Math.cos(offsetAngle) * distance;
+                double jetZ = centerZ + Math.sin(offsetAngle) * distance;
+
+                spawnFlameJetOnGround(world, jetX, jetZ, centerY - 1, centerY + 2,
+                        offsetAngle, delay, damage, caster);
+
+                if (ring == 2 && i % 2 == 0) {
+                    float midAngle = offsetAngle + (float)(Math.PI / directions);
+                    double midJetX = centerX + Math.cos(midAngle) * (distance * 0.9);
+                    double midJetZ = centerZ + Math.sin(midAngle) * (distance * 0.9);
+
+                    spawnFlameJetOnGround(world, midJetX, midJetZ, centerY - 1, centerY + 2,
+                            midAngle, delay + 1, damage, caster);
+                }
+            }
+        }
+    }
+
+    private static void createForwardFlameJet(Level world, double startX, double startY, double startZ,
+                                              LivingEntity caster, float yaw) {
+        if (world.isClientSide()) return;
+
+        float damage = (float) CMConfig.FlareBombDamage;
+
+        Vec3 lookVec = caster.getLookAngle();
+
+        int totalLength = 15;
+        double startDistance = 2.5;
+        double interval = 1;
+
+        int count = (int) ((totalLength - startDistance) / interval) + 1;
+
+        for (int i = 0; i < count; i++) {
+            double distance = startDistance + i * interval;
+
+            double jetX = startX + lookVec.x * distance;
+            double jetZ = startZ + lookVec.z * distance;
+
+            int delay = i * 2;
+
+            spawnFlameJetOnGround(world, jetX, jetZ, startY - 1, startY + 2,
+                    yaw * ((float)Math.PI / 180F), delay, damage, caster);
+
+            int sideCount = world.random.nextInt(2) + 1;
+
+            for (int j = 0; j < sideCount; j++) {
+
+                double sideOffset = (world.random.nextDouble()) + 0.5;
+
+                boolean isLeft = world.random.nextBoolean();
+                double offsetMultiplier = isLeft ? -1 : 1;
+
+                Vec3 perpendicularVec = new Vec3(-lookVec.z, 0, lookVec.x).normalize();
+
+                double sideJetX = jetX + perpendicularVec.x * sideOffset * offsetMultiplier;
+                double sideJetZ = jetZ + perpendicularVec.z * sideOffset * offsetMultiplier;
+
+                int sideDelay = delay + world.random.nextInt(3);
+
+                spawnFlameJetOnGround(world, sideJetX, sideJetZ, startY - 1, startY + 2,
+                        yaw * ((float)Math.PI / 180F), sideDelay, damage, caster);
+            }
+        }
     }
 
     public static Vec3 getJointWorldPos(LivingEntityPatch<?> entityPatch, Joint joint) {

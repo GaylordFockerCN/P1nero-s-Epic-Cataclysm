@@ -4,6 +4,7 @@ import com.hm.efn.gameasset.EFNAnimations;
 import com.hm.efn.gameasset.animations.EFNClawAnimations_N;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.gameasset.animations.EFNLanceAnimations;
+import com.hm.efn.gameasset.animations.EFNTachiAnimations;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.capability.item.CursedBowCapability;
 import com.p1nero.p1nero_ec.capability.item.TidalClawCapability;
@@ -75,6 +76,27 @@ public class PECWeaponPresets {
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, Animations.BIPED_RUN_GREATSWORD)
                     .comboCancel((style) -> false);
 
+    public static final Function<Item, CapabilityItem.Builder> INFERNAL_FORGE = (item) ->
+            WeaponCapability.builder().category(CapabilityItem.WeaponCategories.SWORD)
+                    .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
+                    .collider(new OBBCollider(0.75F, 1.4F, 1.4F, 0.0F, 0.0F, -1.0F))
+                    .swingSound(EpicFightSounds.WHOOSH_BIG.get())
+                    .hitSound(EpicFightSounds.BLUNT_HIT.get())
+                    .hitParticle(EpicFightParticles.HIT_BLUNT.get())
+                    .canBePlacedOffhand(false)
+                    .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
+                            Animations.GREATSWORD_AUTO1,
+                            Animations.GREATSWORD_AUTO2,
+                            Animations.GREATSWORD_DASH,
+                            EFNTachiAnimations.NF_TACHI_DASH,
+                            Animations.GREATSWORD_AIR_SLASH)
+                    .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.INFERNAL_INNATE))
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.GREATSWORD_GUARD)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNGreatSwordAnimations.NG_GREATSWORD_IDLE)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, Animations.BIPED_WALK_GREATSWORD)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, Animations.BIPED_RUN_GREATSWORD)
+                    .comboCancel((style) -> false);
+
     public static final Function<Item, CapabilityItem.Builder> SOUL_RENDER = (item) ->
             WeaponCapability.builder().category(CapabilityItem.WeaponCategories.SWORD)
                     .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
@@ -140,6 +162,7 @@ public class PECWeaponPresets {
     public static void register(WeaponCapabilityPresetRegistryEvent event) {
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "tidal_claw"), TIDAL_CLAW);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "ceraunus"), CERAUNUS);
+        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "infernal_forge"), INFERNAL_FORGE);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "soul_render"), SOUL_RENDER);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_incinerator"), THE_INCINERATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "wrath_of_the_desert"), WRATH_OF_THE_DESERT);

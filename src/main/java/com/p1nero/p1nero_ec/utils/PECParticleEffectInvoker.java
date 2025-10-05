@@ -1,0 +1,227 @@
+package com.p1nero.p1nero_ec.utils;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+import yesman.epicfight.api.animation.property.AnimationEvent;
+
+public class PECParticleEffectInvoker {
+
+    public static AnimationEvent.InPeriodEvent createLavaRingEffect(int startFrame, int endFrame) {
+        float start = startFrame / 60.0f;
+        float end = endFrame / 60.0f;
+
+        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+                Vec3 center = entity.position().add(0, 0.1, 0);
+
+                for (int i = 0; i < 50; i++) {
+                    float angle = (float)(2 * Math.PI * i / 36);
+                    float radius = 6.5f;
+
+                    level.addParticle(
+                            ParticleTypes.LAVA,
+                            center.x + radius * Mth.cos(angle),
+                            center.y,
+                            center.z + radius * Mth.sin(angle),
+                            0, 0.05f, 0  // 轻微上下浮动
+                    );
+
+                    if (i % 8 == 0) {
+                        level.addParticle(
+                                ParticleTypes.FLAME,
+                                center.x + radius * Mth.cos(angle),
+                                center.y + 0.1f,
+                                center.z + radius * Mth.sin(angle),
+                                0, 0.1f, 0
+                        );
+                    }
+                }
+
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    public static AnimationEvent.InTimeEvent createMagmaEruption(float startFrame) {
+        float time = startFrame / 60.0F;
+        return AnimationEvent.InTimeEvent.create(time, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+                Vec3 center = entity.position().add(0, 0.1, 0);
+
+                for (int i = 0; i < 12; i++) {
+                    double spread = 0.7;
+                    Vec3 spawnPos = new Vec3(
+                            center.x + (Math.random() - 0.5) * spread,
+                            center.y + (Math.random() - 0.5) * spread * 0.5,
+                            center.z + (Math.random() - 0.5) * spread
+                    );
+
+                    Vec3 velocity = new Vec3(
+                            (Math.random() - 0.5) * 0.25,
+                            Math.random() * 0.4 + 0.3,
+                            (Math.random() - 0.5) * 0.25
+                    );
+
+                    ParticleOptions type = Math.random() < 0.8 ?
+                            ParticleTypes.LAVA : ParticleTypes.FLAME;
+
+                    level.addParticle(
+                            type,
+                            spawnPos.x,
+                            spawnPos.y,
+                            spawnPos.z,
+                            velocity.x,
+                            velocity.y,
+                            velocity.z
+                    );
+                }
+
+                for (int spiral = 0; spiral < 8; spiral++) {
+                    float baseAngle = (float)(spiral * Math.PI * 0.25);
+                    for (int layer = 0; layer < 5; layer++) {
+                        float progress = layer / 4f;
+                        double angle = baseAngle + progress * Math.PI * 2;
+                        float radius = 0.3f + progress * 0.7f;
+                        float yPos = (float) (center.y + progress * 2.5f);
+
+                        Vec3 pos = new Vec3(
+                                center.x + radius * Math.cos(angle),
+                                yPos,
+                                center.z + radius * Math.sin(angle)
+                        );
+
+                        level.addParticle(
+                                ParticleTypes.FLAME,
+                                pos.x, pos.y, pos.z,
+                                Math.cos(angle) * 0.1f,
+                                0.2f,
+                                Math.sin(angle) * 0.1f
+                        );
+                    }
+                }
+
+                for (int i = 0; i < 24; i++) {
+                    double angle = Math.random() * 2 * Math.PI;
+                    double radius = Math.random() * 1.8;
+                    Vec3 pos = new Vec3(
+                            center.x + radius * Math.cos(angle),
+                            center.y,
+                            center.z + radius * Math.sin(angle)
+                    );
+
+                    level.addParticle(
+                            ParticleTypes.LAVA,
+                            pos.x, pos.y, pos.z,
+                            Math.cos(angle) * 0.05,
+                            0.02,
+                            Math.sin(angle) * 0.05
+                    );
+
+                    if (i % 3 == 0) {
+                        level.addParticle(
+                                ParticleTypes.SMALL_FLAME,
+                                pos.x, pos.y + 0.1, pos.z,
+                                Math.cos(angle) * 0.1,
+                                0.15,
+                                Math.sin(angle) * 0.1
+                        );
+                    }
+                }
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    public static AnimationEvent.InPeriodEvent createForwardFlameJetParticles(int startFrame, int endFrame) {
+        float start = startFrame / 60.0f;
+        float end = endFrame / 60.0f;
+
+        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+
+                Vec3 center = entity.position().add(0, 0.1, 0);
+                float yawRadians = entity.getYRot() * ((float)Math.PI / 180F);
+
+                float width = 5f;
+                float length = 12.0f;
+
+                Vec3[] corners = new Vec3[4];
+                corners[0] = new Vec3(-width/2, 0, 1.0);      // 近端左侧
+                corners[1] = new Vec3(width/2, 0, 1.0);       // 近端右侧
+                corners[2] = new Vec3(-width/2, 0, 1.0 + length); // 远端左侧
+                corners[3] = new Vec3(width/2, 0, 1.0 + length);  // 远端右侧
+
+                for (int i = 0; i < 4; i++) {
+                    double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
+                    double rotatedZ = corners[i].x * Math.sin(yawRadians) + corners[i].z * Math.cos(yawRadians);
+                    corners[i] = new Vec3(rotatedX, corners[i].y, rotatedZ).add(center);
+                }
+
+                generateRectangleParticles(level, corners, yawRadians);
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    private static void generateRectangleParticles(ClientLevel level, Vec3[] corners, float yawRadians) {
+        int particlesPerRow = 5;
+        int particlesPerColumn = 12;
+
+        for (int row = 0; row < particlesPerRow; row++) {
+            for (int col = 0; col < particlesPerColumn; col++) {
+                float u = (float) row / (particlesPerRow - 1);
+                float v = (float) col / (particlesPerColumn - 1);
+
+                Vec3 topPos = corners[0].add(corners[1].subtract(corners[0]).scale(u));
+                Vec3 bottomPos = corners[2].add(corners[3].subtract(corners[2]).scale(u));
+                Vec3 particlePos = topPos.add(bottomPos.subtract(topPos).scale(v));
+
+                double randomOffsetX = (Math.random() - 0.5) * 0.3;
+                double randomOffsetZ = (Math.random() - 0.5) * 0.3;
+
+                level.addParticle(
+                        ParticleTypes.LAVA,
+                        particlePos.x + randomOffsetX,
+                        particlePos.y,
+                        particlePos.z + randomOffsetZ,
+                        0, 0.05f, 0
+                );
+
+                if (col % 3 == 0 && row % 2 == 0) {
+                    level.addParticle(
+                            ParticleTypes.FLAME,
+                            particlePos.x + randomOffsetX,
+                            particlePos.y + 0.1f,
+                            particlePos.z + randomOffsetZ,
+                            0, 0.1f, 0
+                    );
+                }
+            }
+        }
+
+        for (int i = 0; i < 15; i++) {
+            float progress = (float) i / 14;
+            Vec3 centerPos = corners[0].add(corners[1].subtract(corners[0]).scale(0.5))
+                    .add(corners[2].subtract(corners[0]).scale(progress));
+
+            level.addParticle(
+                    ParticleTypes.FLAME,
+                    centerPos.x,
+                    centerPos.y + 0.2f,
+                    centerPos.z,
+                    (Math.random() - 0.5) * 0.05,
+                    0.15f,
+                    (Math.random() - 0.5) * 0.05
+            );
+        }
+    }
+
+
+}
