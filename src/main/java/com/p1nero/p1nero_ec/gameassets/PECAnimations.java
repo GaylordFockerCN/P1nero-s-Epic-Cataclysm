@@ -54,6 +54,7 @@ import net.minecraftforge.fml.common.Mod;
 import yesman.epicfight.api.animation.*;
 import yesman.epicfight.api.animation.property.AnimationEvent;
 import yesman.epicfight.api.animation.property.AnimationProperty;
+import yesman.epicfight.api.animation.property.MoveCoordFunctions;
 import yesman.epicfight.api.animation.types.*;
 import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.collider.Collider;
@@ -385,13 +386,13 @@ public class PECAnimations {
                     )
             );
 
-            INFERNAL_AUTO3 = builder.nextAccessor("skill/infernal_auto3", (accessor) -> new DashAttackAnimation(0.2F, 0.2F, 0.35F, 0.6F, 1.2F, null, Armatures.BIPED.get().toolR, accessor, Armatures.BIPED, false)
+            INFERNAL_AUTO3 = builder.nextAccessor("skill/infernal_auto3", (accessor) -> new DashAttackAnimation(0.25F, 0.2F, 0.35F, 0.6F, 1.2F, null, Armatures.BIPED.get().toolR, accessor, Armatures.BIPED, false)
                             .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
-                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.85F)
+                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.8F)
                             .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
                             .addEvents(AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
                                     PECParticleEffectInvoker.createForwardMagmaEruption(27),
-                                    ParticleEffectInvoker.createLavaRingEffect(20,30),
+                                    ParticleEffectInvoker.createLavaRingEffect(15,30),
                                     ParticleEffectInvoker.simpleGroundSplit(27,2,0,0,0,2,true),
                                     ParticleEffectInvoker.simpleGroundSplit(27,4,0,0,0,2,true),
                                     AnimationEvent.InTimeEvent.create(0.3F, (entityPatch, self, params) -> {
@@ -408,9 +409,16 @@ public class PECAnimations {
                     new AttackAnimation.Phase(1.0F, 1.0F, 1.0F, 1.2F, 2.55F, Float.MAX_VALUE, Armatures.BIPED.get().rootJoint, ColliderPreset.STEEL_WHIRLWIND))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
                     .addProperty(AnimationProperty.AttackAnimationProperty.EXTRA_COLLIDERS, 4)
-                    .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
-                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
                     .addProperty(AnimationProperty.StaticAnimationProperty.POSE_MODIFIER, Animations.ReusableSources.COMBO_ATTACK_DIRECTION_MODIFIER)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_BEGIN, (animation, entitypatch, transformSheet) -> {
+                        if (!animation.isLinkAnimation()) {
+                            transformSheet.readFrom(animation.getCoord().copyAll().extendsZCoord(1.8F, 0, 3));
+                        } else {
+                            MoveCoordFunctions.RAW_COORD.set(animation, entitypatch, transformSheet);
+                        }
+                    })
+                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.2F))
                     .addEvents(AnimationEvent.InTimeEvent.create(0.3F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
                             AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
@@ -422,9 +430,9 @@ public class PECAnimations {
 
                                 Vec3 lookVec = caster.getLookAngle();
 
-                                double spawnX = caster.getX() + lookVec.x * 2;
+                                double spawnX = caster.getX() + lookVec.x * 2.2;
                                 double spawnY = caster.getY() + caster.getEyeHeight() * 0.8;
-                                double spawnZ = caster.getZ() + lookVec.z * 2;
+                                double spawnZ = caster.getZ() + lookVec.z * 2.2;
 
                                 Flare_Bomb_Entity bomb = spawnFlareBomb(world, spawnX, spawnY, spawnZ, caster);
 
@@ -2014,7 +2022,7 @@ public class PECAnimations {
         Vec3 lookVec = caster.getLookAngle();
 
         int totalLength = 5;
-        double startDistance = 1.2;
+        double startDistance = 1.5;
         double interval = 1;
 
         int count = (int) ((totalLength - startDistance) / interval) + 1;
