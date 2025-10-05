@@ -81,7 +81,7 @@ public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializa
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if(event.phase.equals(TickEvent.Phase.END)) {
-            getTCRPlayer(event.player).tick(event.player);
+            getPlayer(event.player).tick(event.player);
         }
     }
 
@@ -90,7 +90,7 @@ public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializa
         event.register(PECPlayer.class);
     }
 
-    public static PECPlayer getTCRPlayer(Player player) {
+    public static PECPlayer getPlayer(Player player) {
         if(player == null) {
             return new PECPlayer();
         }
@@ -98,7 +98,7 @@ public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializa
     }
 
     public static void syncPlayerDataToClient(ServerPlayer serverPlayer) {
-        getTCRPlayer(serverPlayer).syncToClient(serverPlayer);
+        getPlayer(serverPlayer).syncToClient(serverPlayer);
     }
 
 }

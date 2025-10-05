@@ -49,7 +49,7 @@ public class PECClientHandler {
 
     public static void syncTCRPlayer(CompoundTag compoundTag) {
         if(Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
-            PECCapabilityProvider.getTCRPlayer(Minecraft.getInstance().player).loadNBTData(compoundTag);
+            PECCapabilityProvider.getPlayer(Minecraft.getInstance().player).loadNBTData(compoundTag);
         }
     }
 
