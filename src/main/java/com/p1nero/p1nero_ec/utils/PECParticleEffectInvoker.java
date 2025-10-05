@@ -138,6 +138,102 @@ public class PECParticleEffectInvoker {
         }, AnimationEvent.Side.CLIENT);
     }
 
+    public static AnimationEvent.InTimeEvent createForwardMagmaEruption(float startFrame) {
+        float time = startFrame / 60.0F;
+        return AnimationEvent.InTimeEvent.create(time, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+
+                Vec3 lookVec = entity.getLookAngle();
+
+                Vec3 center = entity.position()
+                        .add(0, 0.1, 0)
+                        .add(lookVec.x * 1.5, 0, lookVec.z * 1.5);
+
+                for (int i = 0; i < 12; i++) {
+                    double spread = 0.7;
+                    Vec3 spawnPos = new Vec3(
+                            center.x + (Math.random() - 0.5) * spread,
+                            center.y + (Math.random() - 0.5) * spread * 0.5,
+                            center.z + (Math.random() - 0.5) * spread
+                    );
+
+                    Vec3 velocity = new Vec3(
+                            (Math.random() - 0.5) * 0.25,
+                            Math.random() * 0.4 + 0.3,
+                            (Math.random() - 0.5) * 0.25
+                    );
+
+                    ParticleOptions type = Math.random() < 0.8 ?
+                            ParticleTypes.LAVA : ParticleTypes.FLAME;
+
+                    level.addParticle(
+                            type,
+                            spawnPos.x,
+                            spawnPos.y,
+                            spawnPos.z,
+                            velocity.x,
+                            velocity.y,
+                            velocity.z
+                    );
+                }
+
+                for (int spiral = 0; spiral < 8; spiral++) {
+                    float baseAngle = (float)(spiral * Math.PI * 0.25);
+                    for (int layer = 0; layer < 5; layer++) {
+                        float progress = layer / 4f;
+                        double angle = baseAngle + progress * Math.PI * 2;
+                        float radius = 0.3f + progress * 0.7f;
+                        float yPos = (float) (center.y + progress * 2.5f);
+
+                        Vec3 pos = new Vec3(
+                                center.x + radius * Math.cos(angle),
+                                yPos,
+                                center.z + radius * Math.sin(angle)
+                        );
+
+                        level.addParticle(
+                                ParticleTypes.FLAME,
+                                pos.x, pos.y, pos.z,
+                                Math.cos(angle) * 0.1f,
+                                0.2f,
+                                Math.sin(angle) * 0.1f
+                        );
+                    }
+                }
+
+                for (int i = 0; i < 24; i++) {
+                    double angle = Math.random() * 2 * Math.PI;
+                    double radius = Math.random() * 1.8;
+                    Vec3 pos = new Vec3(
+                            center.x + radius * Math.cos(angle),
+                            center.y,
+                            center.z + radius * Math.sin(angle)
+                    );
+
+                    level.addParticle(
+                            ParticleTypes.LAVA,
+                            pos.x, pos.y, pos.z,
+                            Math.cos(angle) * 0.05,
+                            0.02,
+                            Math.sin(angle) * 0.05
+                    );
+
+                    if (i % 3 == 0) {
+                        level.addParticle(
+                                ParticleTypes.SMALL_FLAME,
+                                pos.x, pos.y + 0.1, pos.z,
+                                Math.cos(angle) * 0.1,
+                                0.15,
+                                Math.sin(angle) * 0.1
+                        );
+                    }
+                }
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
     public static AnimationEvent.InPeriodEvent createForwardFlameJetParticles(int startFrame, int endFrame) {
         float start = startFrame / 60.0f;
         float end = endFrame / 60.0f;
@@ -222,6 +318,4 @@ public class PECParticleEffectInvoker {
             );
         }
     }
-
-
 }

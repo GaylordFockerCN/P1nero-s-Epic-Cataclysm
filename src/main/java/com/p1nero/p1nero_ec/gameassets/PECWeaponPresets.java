@@ -87,7 +87,7 @@ public class PECWeaponPresets {
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
                             Animations.GREATSWORD_AUTO1,
                             Animations.GREATSWORD_AUTO2,
-                            Animations.GREATSWORD_DASH,
+                            PECAnimations.INFERNAL_AUTO3,
                             EFNTachiAnimations.NF_TACHI_DASH,
                             Animations.GREATSWORD_AIR_SLASH)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.INFERNAL_INNATE))

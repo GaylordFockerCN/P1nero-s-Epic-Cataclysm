@@ -23,5 +23,6 @@ public class InfernalInnateSkill extends PECWeaponInnateSkillBase {
 
     @Override
     public void executeSkill3(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
+        serverPlayerPatch.playAnimationSynchronized(PECAnimations.INFERNAL_SKILL3, 0.1F);
     }
 }

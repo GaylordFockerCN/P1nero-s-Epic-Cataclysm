@@ -66,6 +66,7 @@ import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.api.utils.math.Vec3f;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
+import yesman.epicfight.gameasset.ColliderPreset;
 import yesman.epicfight.gameasset.EpicFightSounds;
 import yesman.epicfight.particle.EpicFightParticles;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -79,7 +80,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import static com.hm.efn.gameasset.animations.EFNGreatSwordAnimations.GREATSWORD_AIRSLASH_SECOND;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
@@ -92,6 +92,8 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_2;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_3;
 
+    public static AnimationManager.AnimationAccessor<DashAttackAnimation> INFERNAL_AUTO3;
+
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
     public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_SKILL3;
@@ -102,16 +104,17 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> SOUL_RENDER_SKILL3;
-    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> INFERNAL_SKILL1;
-    public static AnimationManager.AnimationAccessor<AttackAnimation> INFERNAL_SKILL2;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> INFERNAL_SKILL1;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> INFERNAL_SKILL2;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> INFERNAL_SKILL3;
     public static AnimationManager.AnimationAccessor<ActionAnimation> THE_INCINERATOR_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> THE_INCINERATOR_SKILL3;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL2;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL3;
 
     public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
-    public static final Collider INFERNAL_SKILL1_BOX = new OBBCollider(2, 2, 9.5, 0.0, 0.8, -8);
-    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
+    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 9.5, 0.0, 0.8, -8);
+    public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
 
 
     public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
@@ -382,12 +385,63 @@ public class PECAnimations {
                     )
             );
 
-            INFERNAL_SKILL1 = builder.nextAccessor("skill/infernal_skill1",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(33,44,70, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint,INFERNAL_SKILL1_BOX))
+            INFERNAL_AUTO3 = builder.nextAccessor("skill/infernal_auto3", (accessor) -> new DashAttackAnimation(0.2F, 0.2F, 0.35F, 0.6F, 1.2F, null, Armatures.BIPED.get().toolR, accessor, Armatures.BIPED, false)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
+                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.85F)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
+                                    PECParticleEffectInvoker.createForwardMagmaEruption(27),
+                                    ParticleEffectInvoker.createLavaRingEffect(20,30),
+                                    ParticleEffectInvoker.simpleGroundSplit(27,2,0,0,0,2,true),
+                                    ParticleEffectInvoker.simpleGroundSplit(27,4,0,0,0,2,true),
+                                    AnimationEvent.InTimeEvent.create(0.3F, (entityPatch, self, params) -> {
+                                        Level world = entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        createMiniForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
+                                    }, AnimationEvent.Side.BOTH))
+            );
+
+            INFERNAL_SKILL1 = builder.nextAccessor("skill/infernal_skill1", (accessor) -> new AttackAnimation(0.15F, accessor, Armatures.BIPED,
+                    new AttackAnimation.Phase(0.0F, 0.0F, 0.0F, 0.2F, 0.45F, 0.45F, Armatures.BIPED.get().rootJoint, ColliderPreset.STEEL_WHIRLWIND),
+                    new AttackAnimation.Phase(0.45F, 0.45F, 0.45F, 0.65F, 1.0F, 1.0F, Armatures.BIPED.get().rootJoint, ColliderPreset.STEEL_WHIRLWIND),
+                    new AttackAnimation.Phase(1.0F, 1.0F, 1.0F, 1.2F, 2.55F, Float.MAX_VALUE, Armatures.BIPED.get().rootJoint, ColliderPreset.STEEL_WHIRLWIND))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
+                    .addProperty(AnimationProperty.AttackAnimationProperty.EXTRA_COLLIDERS, 4)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.POSE_MODIFIER, Animations.ReusableSources.COMBO_ATTACK_DIRECTION_MODIFIER)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.2F))
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.3F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                            AvalonEventUtils.particleTrail(20,75,InteractionHand.MAIN_HAND,new Vec3(0,0,-1.5F),new Vec3(0,0,-1.8F),6,4,ParticleTypes.SMALL_FLAME,0.6F),
+                            ParticleEffectInvoker.createLavaRingEffect(0,50),
+                            AnimationEvent.InTimeEvent.create(0.95F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+
+                                Vec3 lookVec = caster.getLookAngle();
+
+                                double spawnX = caster.getX() + lookVec.x * 2;
+                                double spawnY = caster.getY() + caster.getEyeHeight() * 0.8;
+                                double spawnZ = caster.getZ() + lookVec.z * 2;
+
+                                Flare_Bomb_Entity bomb = spawnFlareBomb(world, spawnX, spawnY, spawnZ, caster);
+
+                                if (bomb != null) {
+                                    bomb.setDeltaMovement(0, -0.35, 0);
+                                }
+                            }, AnimationEvent.Side.BOTH))
+            );
+
+            INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(33,44,70, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, INFERNAL_SKILL2_BOX))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
                     .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
                     .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND,EpicFightSounds.BLADE_RUSH_FINISHER.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    .addEvents(AnimationEvent.InTimeEvent.create(0.45F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.GENERIC_EXPLODE,0,0);}, AnimationEvent.Side.CLIENT),
                             ParticleEffectInvoker.simpleGroundSplit(33,2,0,0,0,3,true),
                             ParticleEffectInvoker.simpleGroundSplit(33,6,0,0,0,2,true),
                             ParticleEffectInvoker.simpleGroundSplit(33,10,0,0,0,2,true),
@@ -403,8 +457,8 @@ public class PECAnimations {
                     )
             );
 
-            INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", (accessor) -> (new AttackAnimation(0.1F, accessor, Armatures.BIPED,
-                    new AttackAnimation.Phase(0.0F, 0.8F, 1.16F, 1.16F, 1.8F, Armatures.BIPED.get().toolR, INFERNAL_SKILL2_BOX)))
+            INFERNAL_SKILL3 = builder.nextAccessor("skill/infernal_skill3", (accessor) -> (new AttackAnimation(0.1F, accessor, Armatures.BIPED,
+                    new AttackAnimation.Phase(0.0F, 0.8F, 1.16F, 1.16F, 1.8F, Armatures.BIPED.get().toolR, INFERNAL_SKILL3_BOX)))
                     .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.LONG)
                     .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(1.1F))
                     .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.setter(30.0F))
@@ -1914,6 +1968,53 @@ public class PECAnimations {
 
         int totalLength = 15;
         double startDistance = 2.5;
+        double interval = 1;
+
+        int count = (int) ((totalLength - startDistance) / interval) + 1;
+
+        for (int i = 0; i < count; i++) {
+            double distance = startDistance + i * interval;
+
+            double jetX = startX + lookVec.x * distance;
+            double jetZ = startZ + lookVec.z * distance;
+
+            int delay = i * 2;
+
+            spawnFlameJetOnGround(world, jetX, jetZ, startY - 1, startY + 2,
+                    yaw * ((float)Math.PI / 180F), delay, damage, caster);
+
+            int sideCount = world.random.nextInt(2) + 1;
+
+            for (int j = 0; j < sideCount; j++) {
+
+                double sideOffset = (world.random.nextDouble()) + 0.5;
+
+                boolean isLeft = world.random.nextBoolean();
+                double offsetMultiplier = isLeft ? -1 : 1;
+
+                Vec3 perpendicularVec = new Vec3(-lookVec.z, 0, lookVec.x).normalize();
+
+                double sideJetX = jetX + perpendicularVec.x * sideOffset * offsetMultiplier;
+                double sideJetZ = jetZ + perpendicularVec.z * sideOffset * offsetMultiplier;
+
+                int sideDelay = delay + world.random.nextInt(3);
+
+                spawnFlameJetOnGround(world, sideJetX, sideJetZ, startY - 1, startY + 2,
+                        yaw * ((float)Math.PI / 180F), sideDelay, damage, caster);
+            }
+        }
+    }
+
+    private static void createMiniForwardFlameJet(Level world, double startX, double startY, double startZ,
+                                              LivingEntity caster, float yaw) {
+        if (world.isClientSide()) return;
+
+        float damage = (float) CMConfig.FlareBombDamage;
+
+        Vec3 lookVec = caster.getLookAngle();
+
+        int totalLength = 5;
+        double startDistance = 1.2;
         double interval = 1;
 
         int count = (int) ((totalLength - startDistance) / interval) + 1;
