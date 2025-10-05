@@ -12,6 +12,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import yesman.epicfight.client.ClientEngine;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 
@@ -26,6 +28,22 @@ public class PECPlayer {
     private CompoundTag data = new CompoundTag();
     private int lastSkillPoints;
     private boolean isClientLockOn;
+
+    public int getLastSkillPoints() {
+        return lastSkillPoints;
+    }
+
+    public void setLastSkillPoints(int lastSkillPoints) {
+        this.lastSkillPoints = lastSkillPoints;
+    }
+
+    public boolean isClientLockOn() {
+        return isClientLockOn;
+    }
+
+    public void setClientLockOn(boolean clientLockOn) {
+        isClientLockOn = clientLockOn;
+    }
 
     public static boolean isValidWeapon(ItemStack itemStack) {
         return itemStack.is(ModItems.CERAUNUS.get())
@@ -113,7 +131,9 @@ public class PECPlayer {
 
     public void loadNBTData(CompoundTag tag) {
         lastSkillPoints = 0;
-        CustomGuiRenderer.reset();
+        if(FMLEnvironment.dist == Dist.CLIENT) {
+            CustomGuiRenderer.reset();
+        }
         data = tag.getCompound("customDataManager");
     }
 
@@ -128,29 +148,7 @@ public class PECPlayer {
 
     public void tick(Player player) {
         if(player.isLocalPlayer()) {
-            LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-            if(localPlayerPatch != null) {
-                boolean currentLockOn = localPlayerPatch.isTargetLockedOn();
-                if(isClientLockOn != currentLockOn) {
-                    DataManager.isLockOn.put(player, currentLockOn);
-                    isClientLockOn = currentLockOn;
-                }
-            }
-
-            CustomGuiRenderer.update();
-            int currentSkillPoint = DataManager.skillPoint.get(player).intValue();
-            if(lastSkillPoints != currentSkillPoint) {
-                lastSkillPoints = currentSkillPoint;
-                for(int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
-                    if(i < currentSkillPoint) {
-                        if(CustomGuiRenderer.isSkillPointEmpty(i)) {
-                            CustomGuiRenderer.addPoint(i);
-                        }
-                    } else if(!CustomGuiRenderer.isSkillPointEmpty(i)){
-                        CustomGuiRenderer.remove(i);
-                    }
-                }
-            }
+            //move to ClientForgeEvents
         }
     }
 
