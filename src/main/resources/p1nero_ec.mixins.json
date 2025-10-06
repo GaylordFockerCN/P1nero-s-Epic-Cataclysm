@@ -10,6 +10,8 @@
     "DodgeLocationIndicatorMixin",
     "IgnisAbyssFireBallEntityMixin",
     "IgnisFireBallEntityMixin",
+    "InfernalForgeClientMixin",
+    "InfernalForgeMixin",
     "Soul_RenderMixin",
     "TakeDamageEventAttackMixin",
     "TidalClawsMixin"
