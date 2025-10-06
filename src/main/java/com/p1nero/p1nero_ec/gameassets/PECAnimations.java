@@ -440,6 +440,8 @@ public class PECAnimations {
                                     bomb.setDeltaMovement(0, -0.35, 0);
                                 }
                             }, AnimationEvent.Side.BOTH))
+                    .newTimePair(0.0F, 1.5F)
+                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
             INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,1F,1
@@ -463,6 +465,8 @@ public class PECAnimations {
                                 createForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
                             }, AnimationEvent.Side.BOTH)
                     )
+                    .newTimePair(0.0F, 1.5F)
+                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
             INFERNAL_SKILL3 = builder.nextAccessor("skill/infernal_skill3", (accessor) -> (new AttackAnimation(0.1F, accessor, Armatures.BIPED,
@@ -500,7 +504,8 @@ public class PECAnimations {
                                 }
                                 createEnhancedFlameJetBurst(world, caster.getX(), caster.getY(), caster.getZ(), caster);
                             }, AnimationEvent.Side.BOTH))
-
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
                     );
 
             SOUL_RENDER_SKILL1 = builder.nextAccessor("skill/soul_render_skill1", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 1.1F, 1,
