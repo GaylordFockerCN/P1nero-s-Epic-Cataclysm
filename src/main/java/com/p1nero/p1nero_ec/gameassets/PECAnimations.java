@@ -114,7 +114,7 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL3;
 
     public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
-    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 9.5, 0.0, 0.8, -8);
+    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 5.5, 0.0, 0.8, -4);
     public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
 
 
