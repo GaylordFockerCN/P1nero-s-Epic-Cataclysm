@@ -8,6 +8,8 @@
     "AbyssBlastEntityMixin",
     "CeraunusMixin",
     "DodgeLocationIndicatorMixin",
+    "GauntletOfGuardClientMixin",
+    "GauntletOfGuardMixin",
     "IgnisAbyssFireBallEntityMixin",
     "IgnisFireBallEntityMixin",
     "InfernalForgeClientMixin",

@@ -1,14 +1,167 @@
 package com.p1nero.p1nero_ec.utils;
 
+import com.github.L_Ender.cataclysm.init.ModParticle;
+import com.hm.efn.particle.EFNParticles;
+import com.merlin204.avalon.util.AvalonAnimationUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import yesman.epicfight.api.animation.AnimationPlayer;
+import yesman.epicfight.api.animation.Joint;
 import yesman.epicfight.api.animation.property.AnimationEvent;
+import yesman.epicfight.api.asset.AssetAccessor;
+import yesman.epicfight.api.utils.math.Vec3f;
+import yesman.epicfight.gameasset.Armatures;
+import yesman.epicfight.model.armature.HumanoidArmature;
+
+import javax.annotation.Nullable;
+
+import static com.hm.efn.util.ParticleEffectInvoker.spawnCustomParticle;
 
 public class PECParticleEffectInvoker {
+
+    public static AnimationEvent.InTimeEvent spawnExpParticle(
+            int startFrame,
+            double forwardOffset,
+            double rightOffset,
+            double upOffset) {
+        return spawnCustomParticle(startFrame, forwardOffset, rightOffset, upOffset, ModParticle.IGNIS_ABYSS_EXPLODE.get());
+    }
+
+    public static AnimationEvent.InPeriodEvent createVoidRingEffect(int startFrame, int endFrame) {
+        float start = startFrame / 60.0f;
+        float end = endFrame / 60.0f;
+
+        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+                Vec3 center = entity.position().add(0, 0.1, 0);
+
+                for (int i = 0; i < 50; i++) {
+                    float angle = (float)(2 * Math.PI * i / 36);
+                    float radius = 4f;
+
+                    level.addParticle(
+                            ParticleTypes.FALLING_OBSIDIAN_TEAR,
+                            center.x + radius * Mth.cos(angle),
+                            center.y,
+                            center.z + radius * Mth.sin(angle),
+                            0, 0.05f, 0  // 轻微上下浮动
+                    );
+
+                    if (i % 8 == 0) {
+                        level.addParticle(
+                                ParticleTypes.END_ROD,
+                                center.x + radius * Mth.cos(angle),
+                                center.y + 0.1f,
+                                center.z + radius * Mth.sin(angle),
+                                0, 0.1f, 0
+                        );
+                    }
+                }
+
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    public static AnimationEvent.InPeriodEvent createHexagramRitualEffect(int startFrame, int endFrame) {
+        float start = startFrame / 60.0f;
+        float end = endFrame / 60.0f;
+
+        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+                Vec3 center = entity.position().add(0, 0.1, 0);
+
+                // 六芒星参数
+                double radius = 5.0;
+                int points = 6;
+
+                // 生成六芒星顶点
+                for (int i = 0; i < points; i++) {
+                    double angle = Math.PI * i / 3;
+
+                    // 外圈顶点
+                    double outerX = center.x + radius * Math.cos(angle);
+                    double outerZ = center.z + radius * Math.sin(angle);
+
+                    // 内圈顶点（交错形成六芒星）
+                    double innerAngle = angle + Math.PI / 6;
+                    double innerX = center.x + radius * 0.4 * Math.cos(innerAngle);
+                    double innerZ = center.z + radius * 0.4 * Math.sin(innerAngle);
+
+                    // 外圈顶点粒子 - END_ROD
+                    level.addParticle(
+                            ParticleTypes.END_ROD,
+                            outerX, center.y, outerZ,
+                            0, 0.05f, 0
+                    );
+
+                    // 内圈顶点粒子 - PORTAL
+                    level.addParticle(
+                            ParticleTypes.PORTAL,
+                            innerX, center.y, innerZ,
+                            0, 0.03f, 0
+                    );
+
+                    // 连接线粒子 - FALLING_OBSIDIAN_TEAR
+                    if (i % 2 == 0) {
+                        int connectionIndex = (i + 3) % points;
+                        double connectionAngle = Math.PI * connectionIndex / 3;
+                        double connectionX = center.x + radius * Math.cos(connectionAngle);
+                        double connectionZ = center.z + radius * Math.sin(connectionAngle);
+
+                        // 在连接线上生成粒子
+                        for (int j = 0; j <= 5; j++) {
+                            double progress = j / 5.0;
+                            double lineX = outerX + (connectionX - outerX) * progress;
+                            double lineZ = outerZ + (connectionZ - outerZ) * progress;
+
+                            level.addParticle(
+                                    ParticleTypes.FALLING_OBSIDIAN_TEAR,
+                                    lineX, center.y + 0.05, lineZ,
+                                    0, 0.02f, 0
+                            );
+                        }
+                    }
+                }
+
+                // 中心区域特效
+                level.addParticle(
+                        ParticleTypes.END_ROD,
+                        center.x, center.y + 0.5, center.z,
+                        0, 0.1f, 0
+                );
+
+                level.addParticle(
+                        ParticleTypes.PORTAL,
+                        center.x, center.y + 0.3, center.z,
+                        0, 0.05f, 0
+                );
+
+                // 随机中心粒子
+                if (level.random.nextFloat() < 0.3f) {
+                    level.addParticle(
+                            ParticleTypes.FALLING_OBSIDIAN_TEAR,
+                            center.x + (level.random.nextDouble() - 0.5) * 0.5,
+                            center.y + 0.1,
+                            center.z + (level.random.nextDouble() - 0.5) * 0.5,
+                            0, 0.08f, 0
+                    );
+                }
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+
 
     public static AnimationEvent.InPeriodEvent createLavaRingEffect(int startFrame, int endFrame) {
         float start = startFrame / 60.0f;
@@ -317,5 +470,45 @@ public class PECParticleEffectInvoker {
                     (Math.random() - 0.5) * 0.05
             );
         }
+    }
+
+    public static AnimationEvent.InPeriodEvent particleTrail(int startFrame, int endFrame, InteractionHand hand, Vec3 startOffset, Vec3 endOffset, float timeInterpolation, int particleCount, ParticleOptions particleOptions) {
+        return particleTrail(startFrame, endFrame, hand, startOffset, endOffset, timeInterpolation, particleCount, particleOptions, 0.0F);
+    }
+
+    public static AnimationEvent.InPeriodEvent particleTrail(int startFrame, int endFrame, InteractionHand hand, Vec3 startOffset, Vec3 endOffset, float timeInterpolation, int particleCount, ParticleOptions particleOptions, float random) {
+        float start = (float)startFrame / 60.0F;
+        float end = (float)endFrame / 60.0F;
+        Joint joint = null;
+        switch (hand) {
+            case MAIN_HAND -> joint = ((HumanoidArmature) Armatures.BIPED.get()).handR;
+            case OFF_HAND -> joint = ((HumanoidArmature)Armatures.BIPED.get()).handL;
+        }
+
+        Joint finalJoint = joint;
+        return AnimationEvent.InPeriodEvent.create(start, end, (entityPatch, self, params) -> {
+            AnimationPlayer player = entityPatch.getAnimator().getPlayerFor((AssetAccessor)null);
+            float prevElapsedTime = player.getPrevElapsedTime();
+            float elapsedTime = player.getElapsedTime();
+            float step = (elapsedTime - prevElapsedTime) / timeInterpolation;
+            Vec3 trailStartOffset = startOffset;
+            Vec3 trailEndOffset = endOffset;
+            Vec3f trailDirection = new Vec3f((float)(trailEndOffset.x - trailStartOffset.x), (float)(trailEndOffset.y - trailStartOffset.y), (float)(trailEndOffset.z - trailStartOffset.z));
+
+            for(float f = prevElapsedTime; f <= elapsedTime; f += step) {
+                for(int i = 0; i <= particleCount; ++i) {
+                    float ratio = (float)i / (float)particleCount;
+                    Vec3f pointOffset = new Vec3f((float)(trailStartOffset.x + (double)(trailDirection.x * ratio)), (float)(trailStartOffset.y + (double)(trailDirection.y * ratio)), (float)(trailStartOffset.z + (double)(trailDirection.z * ratio)));
+                    double randX = (Math.random() - 0.5) * (double)random;
+                    double randY = (Math.random() - 0.5) * (double)random;
+                    double randZ = (Math.random() - 0.5) * (double)random;
+                    Vec3 worldPos = AvalonAnimationUtils.getJointWorldRawPos(entityPatch, finalJoint, f + step, pointOffset);
+                    if (((LivingEntity)entityPatch.getOriginal()).level().isClientSide) {
+                        ((LivingEntity)entityPatch.getOriginal()).level().addParticle(particleOptions, worldPos.x + randX, worldPos.y + randY, worldPos.z + randZ, 0.0, 0.0, 0.0);
+                    }
+                }
+            }
+
+        }, AnimationEvent.Side.CLIENT);
     }
 }

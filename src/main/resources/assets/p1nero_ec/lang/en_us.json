@@ -11,6 +11,7 @@
   "skill.p1nero_ec.infernal_forge.desc1": "Press %s to swing the great hammer forward continuously, the final strike detonating lava energy, consuming %d Skill Points",
   "skill.p1nero_ec.infernal_forge.desc2": "Press %s to launch bombardment in front, igniting creatures ahead and dealing massive damage, consuming %d Skill Points",
   "skill.p1nero_ec.infernal_forge.desc3": "Press %s to leap forward and smash the ground with full force, erupting extreme lava energy for wide-range bombardment, consuming %d Skill Points",
+  "skill.p1nero_ec.gauntlet_of_guard.desc3": "Press %s to leap forward and smash the ground with full force, summoning wide-range void runes and generating abyssal lasers, consuming %d Skill Points",
   "skill.p1nero_ec.soul_render.desc1": "Press %s to dash forward, leaving phantom halberds along the path, consuming %d Skill Points",
   "skill.p1nero_ec.soul_render.desc2": "Press %s to slam the ground with force, dealing heavy damage and inflicting stun to surrounding entities, consuming %d Skill Points",
   "skill.p1nero_ec.soul_render.desc3": "Press %s to summon numerous phantom halberds around you, consuming %d Skill Points",

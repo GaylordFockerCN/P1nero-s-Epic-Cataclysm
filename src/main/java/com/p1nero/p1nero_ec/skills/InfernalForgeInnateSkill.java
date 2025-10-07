@@ -6,8 +6,8 @@ import yesman.epicfight.skill.SkillBuilder;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 
-public class InfernalInnateSkill extends PECWeaponInnateSkillBase {
-    public InfernalInnateSkill(SkillBuilder<? extends Skill> builder) {
+public class InfernalForgeInnateSkill extends PECWeaponInnateSkillBase {
+    public InfernalForgeInnateSkill(SkillBuilder<? extends Skill> builder) {
         super(builder);
     }
 

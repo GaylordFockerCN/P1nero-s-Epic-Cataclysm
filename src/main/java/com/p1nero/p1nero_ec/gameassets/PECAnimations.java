@@ -12,7 +12,12 @@ import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
+import com.hm.efn.animations.YamatoAnimationUtils;
+import com.hm.efn.animations.YamatoAttackAnimation;
+import com.hm.efn.comboevents.TimeEvents;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
+import com.hm.efn.gameasset.animations.EFNStunAnimations;
+import com.hm.efn.gameasset.animations.EFNYamatoAnimations;
 import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
 import com.hm.efn.util.ParticleEffectInvoker;
@@ -21,10 +26,12 @@ import com.merlin204.avalon.epicfight.animations.AvalonAttackAnimation;
 import com.merlin204.avalon.particle.AvalonParticles;
 import com.merlin204.avalon.util.AvalonAnimationUtils;
 import com.merlin204.avalon.util.AvalonEventUtils;
+import com.p1nero.invincible.api.skill.ComboNode;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.utils.PECEffectConditionParticleTrail;
 import com.p1nero.p1nero_ec.utils.PECParticleEffectInvoker;
+import com.p1nero.p1nero_ec.utils.VoidEffectInvoker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,11 +47,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -61,6 +71,7 @@ import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.collider.OBBCollider;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.AttackResult;
+import yesman.epicfight.api.utils.TimePairList;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.ValueModifier;
@@ -81,9 +92,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import static com.hm.efn.gameasset.animations.EFNClawAnimations_N.CLAW_AUTO3;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
+import static com.hm.efn.gameasset.animations.EFNYamatoAnimations.KILLERBEE;
+import static com.hm.efn.gameasset.animations.EFNYamatoAnimations.RAPIADSLASH;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
+import static com.p1nero.p1nero_ec.utils.VoidEffectInvoker.createForwardVoidRuneCluster;
+import static java.lang.Integer.MAX_VALUE;
 import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -94,6 +110,14 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_3;
 
     public static AnimationManager.AnimationAccessor<DashAttackAnimation> INFERNAL_AUTO3;
+
+    public static AnimationManager.AnimationAccessor<StaticAnimation> BEDIVERE_IDLE;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO1;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO2;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO3;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO4;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO5;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_SKILL_A;
 
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
@@ -116,6 +140,9 @@ public class PECAnimations {
     public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
     public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 5.5, 0.0, 0.8, -4);
     public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
+
+    public static final Collider BEDIVERE_1 = new OBBCollider(0.95, 0.95, 1, 0.0, 0.8, -0.8);
+    public static final Collider BEDIVERE_SKILL = new OBBCollider(3, 3, 3, 0.0, 0.0, 0.0);
 
 
     public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
@@ -211,12 +238,203 @@ public class PECAnimations {
                                             shootRain(true), AnimationEvent.Side.BOTH)
                             ));
 
+
+
             BOW_DASH_ATTACK = builder.nextAccessor("bow/bow_dash_attack", accessor ->
                     new AttackAnimation(0.15F, 0, 0, 40 / 60F, 60 / 60F,
                             PECWeaponPresets.BOW_DASH, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
                             .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.KNOCKDOWN)
                             .addProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER, ValueModifier.multiplier(2.0f))
                             .addProperty(AnimationProperty.AttackAnimationProperty.FIXED_MOVE_DISTANCE, true));
+
+            BEDIVERE_IDLE = builder.nextAccessor("living/bedivere_idle", (accessor) -> new StaticAnimation(true, accessor, Armatures.BIPED));
+
+            BEDIVERE_AUTO1 = builder.nextAccessor("combat/bedivere_auto1", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(26,35,45, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_1))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AvalonEventUtils.simpleCameraShake(26,5,3,1,3),
+                            AnimationEvent.InTimeEvent.create(0.7F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                caster.getLookAngle();
+                                VoidEffectInvoker.spawnVoidVortexInFront(world, caster, 3,50);
+                            }, AnimationEvent.Side.BOTH))
+            );
+            BEDIVERE_AUTO2 = builder.nextAccessor("combat/bedivere_auto2", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(31,40,50, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AvalonEventUtils.simpleCameraShake(40,7,2,2,3),
+                            ParticleEffectInvoker.simpleGroundSplit(40,-0.5,0,0F,0,3F,true),
+                            PECParticleEffectInvoker.createVoidRingEffect(31,40),
+                            AnimationEvent.InTimeEvent.create(0.65F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                createForwardVoidRuneCluster(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
+                            }, AnimationEvent.Side.BOTH))
+            );
+            BEDIVERE_AUTO3 = builder.nextAccessor("combat/bedivere_auto3", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(23,29,34, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().handR, CLAW))
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+            );
+            BEDIVERE_AUTO4 = builder.nextAccessor("combat/bedivere_auto4", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(23,28,42, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().handL, CLAW))
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+            );
+            BEDIVERE_AUTO5 = builder.nextAccessor("combat/bedivere_auto5", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(29,38,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AvalonEventUtils.simpleCameraShake(29,15,4,3,5),
+                            ParticleEffectInvoker.simpleGroundSplit(29,0.5,0,0F,0,3F,true),
+                            PECParticleEffectInvoker.createVoidRingEffect(22,40),
+                            AnimationEvent.InTimeEvent.create(0.85F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                VoidEffectInvoker.createSimpleVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster, 2, 5);
+                            }, AnimationEvent.Side.BOTH))
+            );
+            BEDIVERE_SKILL_A = builder.nextAccessor("skill/bedivere_skill", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(25,35,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL)
+                    , createSimplePhase(55,60,75, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.NO_GRAVITY_TIME, TimePairList.create(0.0F, 0.9F))
+                    .addEvents(AvalonEventUtils.simpleCameraShake(25,7,2,2,3),
+                            ParticleEffectInvoker.simpleGroundSplit(25,0.5,0,0F,0,3F,true),
+                            ParticleEffectInvoker.simpleGroundSplit(60,1,0,0F,0,6F,true),
+                            AnimationEvent.InTimeEvent.create(0.4F, (entitypatch, self, params) -> {
+                                if (!entitypatch.getOriginal().level().isClientSide()) {
+                                    LivingEntity attacker = entitypatch.getOriginal();
+                                    ServerLevel level = (ServerLevel) attacker.level();
+                                    // 强化冲击波参数
+                                    double centerX = attacker.getX();
+                                    double centerY = attacker.getY() + 0.2; // 稍微抬升中心点
+                                    double centerZ = attacker.getZ();
+                                    double baseRadius = 5.0; // 扩大基础半径
+                                    double maxRadius = 10.0; // 扩大最大半径
+                                    int waveCount = 6; // 增加波次
+                                    int particlesPerWave = 100; // 增加每波粒子数
+                                    double speed = 0.5; // 提高速度
+                                    // 多层冲击波
+                                    for (int wave = 0; wave < waveCount; wave++) {
+                                        double progress = wave / (double)(waveCount - 1);
+                                        double radius = Mth.lerp(progress, baseRadius, maxRadius);
+                                        double verticalScale = 1.8 * Math.sin(progress * Math.PI); // 增强垂直波动
+                                        for (int i = 0; i < particlesPerWave; i++) {
+                                            double angle = 2 * Math.PI * i / particlesPerWave;
+                                            double randomSpread = 0.5 * (level.random.nextDouble() - 0.5);
+                                            // 粒子位置计算（带螺旋效果）
+                                            Vec3 pos = new Vec3(
+                                                    radius * Math.cos(angle + progress * 1.5 * Math.PI) + randomSpread,
+                                                    verticalScale * Math.sin(angle * 3 + wave * 0.7),
+                                                    radius * Math.sin(angle + progress * 1.5 * Math.PI) + randomSpread
+                                            ).add(centerX, centerY, centerZ);
+                                            // 动态速度（向外扩散）
+                                            Vec3 motion = pos.subtract(centerX, centerY, centerZ).normalize()
+                                                    .scale(speed * (0.4 + 0.6 * (1 - progress)))
+                                                    .add(0, 0.2, 0);
+                                            // 紫色系粒子 - 主要效果
+                                            if (level.random.nextDouble() < 0.6) {
+                                                // 传送门粒子（紫色）
+                                                level.sendParticles(
+                                                        ParticleTypes.PORTAL,
+                                                        pos.x, pos.y, pos.z,
+                                                        2, // 每组2个粒子
+                                                        motion.x * 0.4, motion.y * 0.9, motion.z * 0.4,
+                                                        1.0
+                                                );
+                                            } else {
+                                                // 反转传送门粒子（深紫色）
+                                                level.sendParticles(
+                                                        ParticleTypes.REVERSE_PORTAL,
+                                                        pos.x, pos.y, pos.z,
+                                                        2,
+                                                        motion.x * 0.3, motion.y * 0.8, motion.z * 0.3,
+                                                        0.8
+                                                );
+                                            }
+                                            // 30%概率生成白色系附加粒子
+                                            if (level.random.nextDouble() < 0.3) {
+                                                if (level.random.nextBoolean()) {
+                                                    // END_ROD 粒子（白色光点）
+                                                    level.sendParticles(
+                                                            ParticleTypes.END_ROD,
+                                                            pos.x, pos.y + 0.3, pos.z,
+                                                            1,
+                                                            motion.x * 1.2, motion.y * 1.8, motion.z * 1.2,
+                                                            0.4
+                                                    );
+                                                } else {
+                                                    // 末影人粒子（紫色烟雾）
+                                                    level.sendParticles(
+                                                            ParticleTypes.DRAGON_BREATH,
+                                                            pos.x, pos.y + 0.2, pos.z,
+                                                            1,
+                                                            motion.x * 0.8, motion.y * 1.2, motion.z * 0.8,
+                                                            0.3
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    }
+                                    level.sendParticles(
+                                            ParticleTypes.END_ROD,
+                                            centerX, centerY + 0.5, centerZ,
+                                            50,
+                                            1.8, 0.8, 1.8,
+                                            1.2 // 提高速度
+                                    );
+                                    level.sendParticles(
+                                            ParticleTypes.PORTAL,
+                                            centerX, centerY + 0.5, centerZ,
+                                            60,
+                                            2.2, 1.2, 2.2,
+                                            1.0
+                                    );
+                                    level.sendParticles(
+                                            ParticleTypes.REVERSE_PORTAL,
+                                            centerX, centerY + 0.5, centerZ,
+                                            40,
+                                            1.5, 0.6, 1.5,
+                                            0.9
+                                    );
+                                    level.sendParticles(
+                                            ParticleTypes.DRAGON_BREATH,
+                                            centerX, centerY + 0.5, centerZ,
+                                            25,
+                                            1.2, 0.5, 1.2,
+                                            0.6
+                                    );
+                                    level.sendParticles(
+                                            ParticleTypes.SOUL,
+                                            centerX, centerY + 0.3, centerZ,
+                                            20,
+                                            0.8, 0.3, 0.8,
+                                            0.4
+                                    );
+                                }
+                            }, AnimationEvent.Side.SERVER),
+                            AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) ->
+                            {entitypatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(),1.5F,0,0);}, AnimationEvent.Side.SERVER),
+                            AnimationEvent.InTimeEvent.create(0.95F, (entitypatch, self, params) ->
+                            {entitypatch.playSound(SoundEvents.ENDER_DRAGON_GROWL,1.5F,0,0);}, AnimationEvent.Side.SERVER),
+                            AnimationEvent.InTimeEvent.create(1.15F, (entitypatch, self, params) ->
+                            {entitypatch.playSound(SoundEvents.GENERIC_EXPLODE,1F,0,0);}, AnimationEvent.Side.SERVER),
+                            AnimationEvent.InTimeEvent.create(0.95F, summonEnhanceAbyssPortal(), AnimationEvent.Side.SERVER),
+                            PECParticleEffectInvoker.spawnExpParticle(65,0.8F,0,-0.7F),
+                            AnimationEvent.InTimeEvent.create(0.95F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                VoidEffectInvoker.createVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster);
+                            }, AnimationEvent.Side.BOTH))
+            );
 
             CERAUNUS_SKILL1 = builder.nextAccessor("skill/ceraunus_skill1", (accessor) ->
                     new ActionAnimation(0.15F, 1.5F, accessor, Armatures.BIPED)
@@ -1514,6 +1732,51 @@ public class PECAnimations {
             });
         };
     }
+
+    public static AnimationEvent.E0 summonEnhanceAbyssPortal() {
+        return (entityPatch, animation, params) -> {
+            LivingEntity entity = entityPatch.getOriginal();
+            Level world = entity.level();
+
+            Vec3 lookVec = entity.getLookAngle();
+
+            double distance = 1.0;
+            Vec3 baseSpawnPos = entity.getEyePosition()
+                    .add(lookVec.x * distance, -1.0, lookVec.z * distance);
+
+            BlockPos spawnBlockPos = BlockPos.containing(baseSpawnPos);
+            BlockState blockState = world.getBlockState(spawnBlockPos.below());
+
+            if (!blockState.isFaceSturdy(world, spawnBlockPos.below(), Direction.UP)) {
+                for (int i = 0; i < 3; i++) {
+                    BlockPos checkPos = spawnBlockPos.below(i + 1);
+                    BlockState checkState = world.getBlockState(checkPos);
+                    if (checkState.isFaceSturdy(world, checkPos, Direction.UP)) {
+                        baseSpawnPos = new Vec3(baseSpawnPos.x, checkPos.getY() + 1.0, baseSpawnPos.z);
+                        break;
+                    }
+                }
+            }
+
+            float rotation = entity.getYRot() * ((float)Math.PI / 180F);
+
+            world.addFreshEntity(new Abyss_Blast_Portal_Entity(
+                    world,
+                    baseSpawnPos.x,
+                    baseSpawnPos.y,
+                    baseSpawnPos.z,
+                    rotation,
+                    0,
+                    (float) CMConfig.AbyssBlastdamage,
+                    (float) CMConfig.AbyssBlastHpdamage,
+                    entity
+            ));
+
+            entityPatch.playSound(SoundEvents.END_PORTAL_SPAWN, 0.5F, 1.0F, 1.0F);
+        };
+    }
+
+
 
     protected static void spawnLightning(LivingEntity entity, double x, double z, double minY, double maxY, float rotation, int delay, float size) {
         BlockPos blockpos = BlockPos.containing(x, maxY, z);
