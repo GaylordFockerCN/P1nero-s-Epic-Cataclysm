@@ -205,18 +205,18 @@ public class AxeBladeInvoker {
     }
 
     public static void createForwardAxeBlade(LivingEntity caster) {
-        createForwardAxeBlade(caster.level(), caster, 1.0);
+        createForwardAxeBlade(caster.level(), caster, 1.5);
     }
 
     public static void createClawAxeBlades(LivingEntity caster) {
-        createClawAxeBlades(caster.level(), caster, 1.0);
+        createClawAxeBlades(caster.level(), caster, 1.5);
     }
 
     public static void createRadialAxeBlades(LivingEntity caster) {
-        createRadialAxeBlades(caster.level(), caster, 1.0);
+        createRadialAxeBlades(caster.level(), caster, 1.5);
     }
 
     public static void createFiveClawAxeBlades(LivingEntity caster) {
-        createFiveClawAxeBlades(caster.level(), caster, 1.0);
+        createFiveClawAxeBlades(caster.level(), caster, 1.5);
     }
 }
