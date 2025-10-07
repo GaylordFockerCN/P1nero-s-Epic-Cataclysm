@@ -105,13 +105,10 @@ public class PECWeaponPresets {
                 .category(CapabilityItem.WeaponCategories.SWORD)
                 .swingSound(EpicFightSounds.WHOOSH.get())
                 .hitSound(EpicFightSounds.BLUNT_HIT.get())
-                .styleProvider((playerpatch) -> playerpatch.getHoldingItemCapability(InteractionHand.OFF_HAND).getWeaponCategory() == CapabilityItem.WeaponCategories.SWORD ? CapabilityItem.Styles.TWO_HAND : CapabilityItem.Styles.ONE_HAND)
+                .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
                 .collider(ColliderPreset.SWORD)
-                .newStyleCombo(CapabilityItem.Styles.ONE_HAND, Animations.SWORD_AUTO1, Animations.SWORD_AUTO2, Animations.SWORD_AUTO3, Animations.SWORD_DASH, Animations.SWORD_AIR_SLASH)
                 .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.BEDIVERE_AUTO1, PECAnimations.BEDIVERE_AUTO2, PECAnimations.BEDIVERE_AUTO3, PECAnimations.BEDIVERE_AUTO4, PECAnimations.BEDIVERE_AUTO5,EFNClawAnimations_N.NF_CLAW_AUTO1, Animations.FIST_AIR_SLASH)
-                .innateSkill(CapabilityItem.Styles.ONE_HAND, (itemstack) -> EpicFightSkills.SWEEPING_EDGE)
                 .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemstack) -> PECSkills.GAUNTLET_GUARD_INNATE)
-                .livingMotionModifier(CapabilityItem.Styles.ONE_HAND, LivingMotions.BLOCK, Animations.SWORD_GUARD)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SWORD_DUAL_GUARD)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, PECAnimations.BEDIVERE_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.KNEEL, PECAnimations.BEDIVERE_IDLE)
@@ -121,8 +118,7 @@ public class PECWeaponPresets {
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SNEAK, PECAnimations.BEDIVERE_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SWIM, PECAnimations.BEDIVERE_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FLOAT, PECAnimations.BEDIVERE_IDLE)
-                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FALL, PECAnimations.BEDIVERE_IDLE)
-                .weaponCombinationPredicator((entitypatch) -> EpicFightCapabilities.getItemStackCapability(entitypatch.getOriginal().getOffhandItem()).getWeaponCategory() == CapabilityItem.WeaponCategories.SWORD);
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FALL, PECAnimations.BEDIVERE_IDLE);
         return builder;
     };
 

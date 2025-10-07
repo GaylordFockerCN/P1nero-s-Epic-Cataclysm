@@ -1,5 +1,6 @@
 package com.p1nero.p1nero_ec.utils;
 
+import com.github.L_Ender.cataclysm.config.CMConfig;
 import com.github.L_Ender.cataclysm.init.ModParticle;
 import com.hm.efn.particle.EFNParticles;
 import com.merlin204.avalon.util.AvalonAnimationUtils;
@@ -70,97 +71,6 @@ public class PECParticleEffectInvoker {
             }
         }, AnimationEvent.Side.CLIENT);
     }
-
-    public static AnimationEvent.InPeriodEvent createHexagramRitualEffect(int startFrame, int endFrame) {
-        float start = startFrame / 60.0f;
-        float end = endFrame / 60.0f;
-
-        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
-            if (entitypatch.getOriginal().level().isClientSide()) {
-                LivingEntity entity = entitypatch.getOriginal();
-                ClientLevel level = (ClientLevel) entity.level();
-                Vec3 center = entity.position().add(0, 0.1, 0);
-
-                // 六芒星参数
-                double radius = 5.0;
-                int points = 6;
-
-                // 生成六芒星顶点
-                for (int i = 0; i < points; i++) {
-                    double angle = Math.PI * i / 3;
-
-                    // 外圈顶点
-                    double outerX = center.x + radius * Math.cos(angle);
-                    double outerZ = center.z + radius * Math.sin(angle);
-
-                    // 内圈顶点（交错形成六芒星）
-                    double innerAngle = angle + Math.PI / 6;
-                    double innerX = center.x + radius * 0.4 * Math.cos(innerAngle);
-                    double innerZ = center.z + radius * 0.4 * Math.sin(innerAngle);
-
-                    // 外圈顶点粒子 - END_ROD
-                    level.addParticle(
-                            ParticleTypes.END_ROD,
-                            outerX, center.y, outerZ,
-                            0, 0.05f, 0
-                    );
-
-                    // 内圈顶点粒子 - PORTAL
-                    level.addParticle(
-                            ParticleTypes.PORTAL,
-                            innerX, center.y, innerZ,
-                            0, 0.03f, 0
-                    );
-
-                    // 连接线粒子 - FALLING_OBSIDIAN_TEAR
-                    if (i % 2 == 0) {
-                        int connectionIndex = (i + 3) % points;
-                        double connectionAngle = Math.PI * connectionIndex / 3;
-                        double connectionX = center.x + radius * Math.cos(connectionAngle);
-                        double connectionZ = center.z + radius * Math.sin(connectionAngle);
-
-                        // 在连接线上生成粒子
-                        for (int j = 0; j <= 5; j++) {
-                            double progress = j / 5.0;
-                            double lineX = outerX + (connectionX - outerX) * progress;
-                            double lineZ = outerZ + (connectionZ - outerZ) * progress;
-
-                            level.addParticle(
-                                    ParticleTypes.FALLING_OBSIDIAN_TEAR,
-                                    lineX, center.y + 0.05, lineZ,
-                                    0, 0.02f, 0
-                            );
-                        }
-                    }
-                }
-
-                // 中心区域特效
-                level.addParticle(
-                        ParticleTypes.END_ROD,
-                        center.x, center.y + 0.5, center.z,
-                        0, 0.1f, 0
-                );
-
-                level.addParticle(
-                        ParticleTypes.PORTAL,
-                        center.x, center.y + 0.3, center.z,
-                        0, 0.05f, 0
-                );
-
-                // 随机中心粒子
-                if (level.random.nextFloat() < 0.3f) {
-                    level.addParticle(
-                            ParticleTypes.FALLING_OBSIDIAN_TEAR,
-                            center.x + (level.random.nextDouble() - 0.5) * 0.5,
-                            center.y + 0.1,
-                            center.z + (level.random.nextDouble() - 0.5) * 0.5,
-                            0, 0.08f, 0
-                    );
-                }
-            }
-        }, AnimationEvent.Side.CLIENT);
-    }
-
 
 
     public static AnimationEvent.InPeriodEvent createLavaRingEffect(int startFrame, int endFrame) {
@@ -469,6 +379,85 @@ public class PECParticleEffectInvoker {
                     0.15f,
                     (Math.random() - 0.5) * 0.05
             );
+        }
+    }
+
+    public static AnimationEvent.InPeriodEvent createForwardEnderJetParticles(int startFrame, int endFrame) {
+        float start = startFrame / 60.0f;
+        float end = endFrame / 60.0f;
+
+        return AnimationEvent.InPeriodEvent.create(start, end, (entitypatch, self, params) -> {
+            if (entitypatch.getOriginal().level().isClientSide()) {
+                LivingEntity entity = entitypatch.getOriginal();
+                ClientLevel level = (ClientLevel) entity.level();
+
+                Vec3 center = entity.position().add(0, 0.1, 0);
+                float yawRadians = entity.getYRot() * ((float)Math.PI / 180F);
+
+                float width = 5f;
+                float length = 5.0f;
+
+                Vec3[] corners = new Vec3[4];
+                corners[0] = new Vec3(-width/2, 0, 1.0);      // 近端左侧
+                corners[1] = new Vec3(width/2, 0, 1.0);       // 近端右侧
+                corners[2] = new Vec3(-width/2, 0, 1.0 + length); // 远端左侧
+                corners[3] = new Vec3(width/2, 0, 1.0 + length);  // 远端右侧
+
+                for (int i = 0; i < 4; i++) {
+                    double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
+                    double rotatedZ = corners[i].x * Math.sin(yawRadians) + corners[i].z * Math.cos(yawRadians);
+                    corners[i] = new Vec3(rotatedX, corners[i].y, rotatedZ).add(center);
+                }
+
+                generateEnderRectangleParticles(level, corners, yawRadians, entity);
+            }
+        }, AnimationEvent.Side.CLIENT);
+    }
+
+    private static void generateEnderRectangleParticles(ClientLevel level, Vec3[] corners, float yawRadians, LivingEntity entity) {
+        int particlesPerRow = 5;
+        int particlesPerColumn = 12;
+
+        for (int row = 0; row < particlesPerRow; row++) {
+            for (int col = 0; col < particlesPerColumn; col++) {
+                float u = (float) row / (particlesPerRow - 1);
+                float v = (float) col / (particlesPerColumn - 1);
+
+                Vec3 topPos = corners[0].add(corners[1].subtract(corners[0]).scale(u));
+                Vec3 bottomPos = corners[2].add(corners[3].subtract(corners[2]).scale(u));
+                Vec3 particlePos = topPos.add(bottomPos.subtract(topPos).scale(v));
+
+                double randomOffsetX = (Math.random() - 0.5) * 0.3;
+                double randomOffsetZ = (Math.random() - 0.5) * 0.3;
+
+                level.addParticle(
+                        ParticleTypes.PORTAL,
+                        particlePos.x + randomOffsetX,
+                        particlePos.y,
+                        particlePos.z + randomOffsetZ,
+                        0, 0.05f, 0
+                );
+
+                if (col % 3 == 0 && row % 2 == 0) {
+                    level.addParticle(
+                            ParticleTypes.END_ROD,
+                            particlePos.x + randomOffsetX,
+                            particlePos.y + 0.1f,
+                            particlePos.z + randomOffsetZ,
+                            0, 0.1f, 0
+                    );
+                }
+
+                if (col % 3 == 0 && row % 2 == 0) {
+                    level.addParticle(
+                            ParticleTypes.SCULK_SOUL,
+                            particlePos.x + randomOffsetX,
+                            particlePos.y + 0.1f,
+                            particlePos.z + randomOffsetZ,
+                            0, 0.1f, 0
+                    );
+                }
+            }
         }
     }
 

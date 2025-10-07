@@ -12,12 +12,7 @@ import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
-import com.hm.efn.animations.YamatoAnimationUtils;
-import com.hm.efn.animations.YamatoAttackAnimation;
-import com.hm.efn.comboevents.TimeEvents;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
-import com.hm.efn.gameasset.animations.EFNStunAnimations;
-import com.hm.efn.gameasset.animations.EFNYamatoAnimations;
 import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
 import com.hm.efn.util.ParticleEffectInvoker;
@@ -26,7 +21,6 @@ import com.merlin204.avalon.epicfight.animations.AvalonAttackAnimation;
 import com.merlin204.avalon.particle.AvalonParticles;
 import com.merlin204.avalon.util.AvalonAnimationUtils;
 import com.merlin204.avalon.util.AvalonEventUtils;
-import com.p1nero.invincible.api.skill.ComboNode;
 import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.utils.PECEffectConditionParticleTrail;
@@ -47,14 +41,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -95,11 +86,8 @@ import java.util.Set;
 import static com.hm.efn.gameasset.animations.EFNClawAnimations_N.CLAW_AUTO3;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
-import static com.hm.efn.gameasset.animations.EFNYamatoAnimations.KILLERBEE;
-import static com.hm.efn.gameasset.animations.EFNYamatoAnimations.RAPIADSLASH;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 import static com.p1nero.p1nero_ec.utils.VoidEffectInvoker.createForwardVoidRuneCluster;
-import static java.lang.Integer.MAX_VALUE;
 import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -118,6 +106,7 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO4;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO5;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_SKILL_A;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> BEDIVERE_SKILL_B;
 
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
@@ -142,7 +131,10 @@ public class PECAnimations {
     public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
 
     public static final Collider BEDIVERE_1 = new OBBCollider(0.95, 0.95, 1, 0.0, 0.8, -0.8);
-    public static final Collider BEDIVERE_SKILL = new OBBCollider(3, 3, 3, 0.0, 0.0, 0.0);
+    public static final Collider BEDIVERE_SKILL_A_HIT = new OBBCollider(3, 3, 3, 0.0, 0.0, 0.0);
+    public static final Collider BEDIVERE_SKILL_B_HIT = new OBBCollider(1.5, 1.5, 3, 0.0, 1.25, -2);
+
+
 
 
     public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
@@ -298,9 +290,9 @@ public class PECAnimations {
                                 VoidEffectInvoker.createSimpleVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster, 2, 5);
                             }, AnimationEvent.Side.BOTH))
             );
-            BEDIVERE_SKILL_A = builder.nextAccessor("skill/bedivere_skill", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(25,35,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL)
-                    , createSimplePhase(55,60,75, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL))
+            BEDIVERE_SKILL_A = builder.nextAccessor("skill/bedivere_skill_a", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
+                    , createSimplePhase(25,35,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT)
+                    , createSimplePhase(55,60,75, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                     .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
@@ -434,6 +426,26 @@ public class PECAnimations {
                                 caster.getLookAngle();
                                 VoidEffectInvoker.createVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster);
                             }, AnimationEvent.Side.BOTH))
+            );
+
+            BEDIVERE_SKILL_B = builder.nextAccessor("skill/bedivere_skill_b", (accessor) ->
+                    new AttackAnimation(0.05F, accessor, Armatures.BIPED,
+                            new AttackAnimation.Phase(0.0F, 0.016F, 0.066F, 0.133F, 0.133F, InteractionHand.OFF_HAND, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.133F, 0.133F, 0.183F, 0.25F, 0.25F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.25F, 0.25F, 0.3F, 0.366F, 0.366F, InteractionHand.OFF_HAND, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.366F, 0.366F, 0.416F, 0.483F, 0.483F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.483F, 0.483F, 0.533F, 0.6F, 0.6F, InteractionHand.OFF_HAND, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.6F, 0.6F, 0.65F, 0.716F, 0.716F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.716F, 0.716F, 0.766F, 0.833F, 0.833F, InteractionHand.OFF_HAND, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
+                            new AttackAnimation.Phase(0.833F, 0.833F, 0.883F, 1.1F, 1.1F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.5F))
+                            .addEvents(PECParticleEffectInvoker.createForwardEnderJetParticles(10,60),
+                                    AnimationEvent.InTimeEvent.create(0.25F, (entityPatch, self, params) -> {
+                                        Level world = entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        VoidEffectInvoker.createVoidRuneInGaps(world,caster);
+                                    }, AnimationEvent.Side.BOTH))
             );
 
             CERAUNUS_SKILL1 = builder.nextAccessor("skill/ceraunus_skill1", (accessor) ->

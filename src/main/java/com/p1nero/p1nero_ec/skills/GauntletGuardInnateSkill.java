@@ -22,15 +22,12 @@ public class GauntletGuardInnateSkill extends PECWeaponInnateSkillBase {
     }
 
     @Override
-    protected void tryExecuteSkill2(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
-    }
-
-    @Override
     public void executeSkill1(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
     }
 
     @Override
     public void executeSkill2(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
+        serverPlayerPatch.playAnimationSynchronized(PECAnimations.BEDIVERE_SKILL_B, 0.1F);
     }
 
     @Override
@@ -41,6 +38,6 @@ public class GauntletGuardInnateSkill extends PECWeaponInnateSkillBase {
     @OnlyIn(Dist.CLIENT)
     @Override
     protected List<KeyMapping> getAvailableKeys() {
-        return List.of(KeyMappings.SKILL_3);
+        return List.of(KeyMappings.SKILL_2, KeyMappings.SKILL_3);
     }
 }

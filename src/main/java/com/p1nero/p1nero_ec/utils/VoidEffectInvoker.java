@@ -7,8 +7,10 @@ import com.github.L_Ender.cataclysm.entity.projectile.Void_Howitzer_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Void_Rune_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Void_Shard_Entity;
 import com.github.L_Ender.cataclysm.init.ModEntities;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -150,6 +152,62 @@ public class VoidEffectInvoker {
             spawnVoidRuneOnGround(world, x, z, minY, maxY, angle, delay, (float) CMConfig.Voidrunedamage, caster);
         }
     }
+
+    public static void createVoidRuneInGaps(Level world, LivingEntity caster) {
+        if (world == null || world.isClientSide() || caster == null) return;
+
+        Vec3 center = caster.position().add(0, 0.1, 0);
+        float yawRadians = caster.getYRot() * ((float)Math.PI / 180F);
+
+        float width = 5f;
+        float length = 5.0f;
+        double startDistance = 1.0;
+
+        Vec3[] corners = new Vec3[4];
+        corners[0] = new Vec3(-width/2, 0, startDistance);                    // 近端左侧
+        corners[1] = new Vec3(width/2, 0, startDistance);                     // 近端右侧
+        corners[2] = new Vec3(-width/2, 0, startDistance + length);           // 远端左侧
+        corners[3] = new Vec3(width/2, 0, startDistance + length);            // 远端右侧
+
+        for (int i = 0; i < 4; i++) {
+            double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
+            double rotatedZ = corners[i].x * Math.sin(yawRadians) + corners[i].z * Math.cos(yawRadians);
+            corners[i] = new Vec3(rotatedX, corners[i].y, rotatedZ).add(center);
+        }
+
+        int runeRows = 3;
+        int runeCols = 6;
+
+        for (int row = 0; row < runeRows; row++) {
+            for (int col = 0; col < runeCols; col++) {
+                float u = (row + 0.5f) / runeRows;
+                float v = (col + 0.5f) / runeCols;
+
+                Vec3 topPos = corners[0].add(corners[1].subtract(corners[0]).scale(u));
+                Vec3 bottomPos = corners[2].add(corners[3].subtract(corners[2]).scale(u));
+                Vec3 runePos = topPos.add(bottomPos.subtract(topPos).scale(v));
+
+                double randomOffsetX = (world.random.nextDouble() - 0.5) * 0.8;
+                double randomOffsetZ = (world.random.nextDouble() - 0.5) * 0.8;
+
+                double finalX = runePos.x + randomOffsetX;
+                double finalZ = runePos.z + randomOffsetZ;
+
+                int delay = row * 3 + col * 2;
+
+                spawnVoidRuneOnGround(
+                        world,
+                        finalX, finalZ,
+                        caster.getY() - 1, caster.getY() + 2,
+                        0,
+                        delay,
+                        (float) CMConfig.Voidrunedamage * 0.6f,
+                        caster
+                );
+            }
+        }
+    }
+
 
     public static void spawnVoidRuneOnGround(Level world, double x, double z, double minY, double maxY,
                                              float rotation, int delay, float damage, @Nullable LivingEntity caster) {
