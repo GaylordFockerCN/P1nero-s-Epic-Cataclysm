@@ -18,7 +18,7 @@ public class PlayerEventListeners {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
         Level level = player.level();
-        if(player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             PECCapabilityProvider.syncPlayerDataToClient(serverPlayer);
             DataManager.skillPoint.put(serverPlayer, 0D);
         }
@@ -27,7 +27,7 @@ public class PlayerEventListeners {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         Player player = event.getEntity();
-        if(player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             PECCapabilityProvider.syncPlayerDataToClient(serverPlayer);
             DataManager.skillPoint.put(serverPlayer, 0D);
         }

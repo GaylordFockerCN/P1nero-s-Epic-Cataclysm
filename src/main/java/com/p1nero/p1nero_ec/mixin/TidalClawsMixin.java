@@ -23,7 +23,7 @@ public class TidalClawsMixin extends Item {
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void tcr$use(Level level, Player user, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        if(EpicFightCapabilities.getEntityPatch(user, PlayerPatch.class).getEntityState().inaction()) {
+        if (EpicFightCapabilities.getEntityPatch(user, PlayerPatch.class).getEntityState().inaction()) {
             cir.setReturnValue(super.use(level, user, hand));
         }
     }

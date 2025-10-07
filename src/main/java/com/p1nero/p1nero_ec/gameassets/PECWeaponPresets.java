@@ -102,7 +102,7 @@ public class PECWeaponPresets {
                 .hitSound(EpicFightSounds.BLUNT_HIT.get())
                 .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
                 .collider(ColliderPreset.SWORD)
-                .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.BEDIVERE_AUTO1, PECAnimations.BEDIVERE_AUTO2, PECAnimations.BEDIVERE_AUTO3, PECAnimations.BEDIVERE_AUTO4, PECAnimations.BEDIVERE_AUTO5,EFNClawAnimations_N.NF_CLAW_AUTO1, Animations.FIST_AIR_SLASH)
+                .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.BEDIVERE_AUTO1, PECAnimations.BEDIVERE_AUTO2, PECAnimations.BEDIVERE_AUTO3, PECAnimations.BEDIVERE_AUTO4, PECAnimations.BEDIVERE_AUTO5, EFNClawAnimations_N.NF_CLAW_AUTO1, Animations.FIST_AIR_SLASH)
                 .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemstack) -> PECSkills.GAUNTLET_GUARD_INNATE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SWORD_DUAL_GUARD)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, PECAnimations.BEDIVERE_IDLE)
@@ -186,12 +186,12 @@ public class PECWeaponPresets {
 
     public static final Function<Item, CapabilityItem.Builder> WRATH_OF_THE_DESERT = (item) ->
             RangedWeaponCapability.builder()
-            .zoomInType(CapabilityItem.ZoomInType.USE_TICK)
-            .addAnimationsModifier(LivingMotions.IDLE, Animations.BIPED_IDLE)
+                    .zoomInType(CapabilityItem.ZoomInType.USE_TICK)
+                    .addAnimationsModifier(LivingMotions.IDLE, Animations.BIPED_IDLE)
                     .addAnimationsModifier(LivingMotions.WALK, Animations.BIPED_WALK)
                     .addAnimationsModifier(LivingMotions.AIM, Animations.BIPED_BOW_AIM)
                     .addAnimationsModifier(LivingMotions.SHOT, Animations.BIPED_BOW_SHOT)
-            .constructor(WrathOfTheDesertCapability::new);
+                    .constructor(WrathOfTheDesertCapability::new);
 
 
     public static final Function<Item, CapabilityItem.Builder> CURSED_BOW = (item) ->

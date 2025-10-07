@@ -17,7 +17,6 @@ import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
 import yesman.epicfight.world.capabilities.item.CapabilityItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ public abstract class PECWeaponInnateSkillBase extends Skill {
     public void executeOnServer(SkillContainer container, FriendlyByteBuf args) {
         int skillId = args.readInt();
         ServerPlayerPatch serverPlayerPatch = container.getServerExecutor();
-        if(!PECPlayer.isValidWeapon(serverPlayerPatch.getOriginal().getMainHandItem())) {
+        if (!PECPlayer.isValidWeapon(serverPlayerPatch.getOriginal().getMainHandItem())) {
             return;
         }
         switch (skillId) {
@@ -103,7 +102,8 @@ public abstract class PECWeaponInnateSkillBase extends Skill {
 
     public abstract void executeSkill3(ServerPlayerPatch serverPlayerPatch, SkillContainer container);
 
-    public void executeSkill(ServerPlayerPatch serverPlayerPatch, SkillContainer container, int slot){};
+    public void executeSkill(ServerPlayerPatch serverPlayerPatch, SkillContainer container, int slot) {
+    }
 
     public void onSkillPointNotEnough(SkillContainer container, int need) {
         container.getExecutor().getOriginal().displayClientMessage(Component.translatable("info.p1nero_ec.skill_point_lack", need), true);

@@ -14,8 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import yesman.epicfight.client.ClientEngine;
-import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 
 import java.util.function.Consumer;
 
@@ -28,22 +26,6 @@ public class PECPlayer {
     private CompoundTag data = new CompoundTag();
     private int lastSkillPoints;
     private boolean isClientLockOn;
-
-    public int getLastSkillPoints() {
-        return lastSkillPoints;
-    }
-
-    public void setLastSkillPoints(int lastSkillPoints) {
-        this.lastSkillPoints = lastSkillPoints;
-    }
-
-    public boolean isClientLockOn() {
-        return isClientLockOn;
-    }
-
-    public void setClientLockOn(boolean clientLockOn) {
-        isClientLockOn = clientLockOn;
-    }
 
     public static boolean isValidWeapon(ItemStack itemStack) {
         return itemStack.is(ModItems.CERAUNUS.get())
@@ -59,19 +41,19 @@ public class PECPlayer {
     public static void addSkillPoint(ServerPlayer serverPlayer) {
         serverPlayer.heal(2);
         double current = DataManager.skillPoint.get(serverPlayer);
-        if(current < PECPlayer.MAX_SKILL_POINTS) {
+        if (current < PECPlayer.MAX_SKILL_POINTS) {
             DataManager.skillPoint.put(serverPlayer, current + 1);
-            serverPlayer.connection.send(new ClientboundSoundPacket(PECSounds.GAIN_ABILITY_POINTS.getHolder().orElseThrow(), SoundSource.PLAYERS, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), (float) (1.0F+ 0.1F * current), (float) (0.7F + 0.1F * current), serverPlayer.getRandom().nextInt()));
+            serverPlayer.connection.send(new ClientboundSoundPacket(PECSounds.GAIN_ABILITY_POINTS.getHolder().orElseThrow(), SoundSource.PLAYERS, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), (float) (1.0F + 0.1F * current), (float) (0.7F + 0.1F * current), serverPlayer.getRandom().nextInt()));
         }
     }
 
     public static void setSkillPoint(ServerPlayer serverPlayer, int point) {
-        if(point < PECPlayer.MAX_SKILL_POINTS && point >= 0) {
+        if (point < PECPlayer.MAX_SKILL_POINTS && point >= 0) {
             int current = DataManager.skillPoint.get(serverPlayer).intValue();
             DataManager.skillPoint.put(serverPlayer, (double) point);
             //增加就播音效
-            if(point > current) {
-                serverPlayer.connection.send(new ClientboundSoundPacket(PECSounds.GAIN_ABILITY_POINTS.getHolder().orElseThrow(), SoundSource.PLAYERS, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), 1.0F+ 0.1F * point, 0.7F + 0.1F * point, serverPlayer.getRandom().nextInt()));
+            if (point > current) {
+                serverPlayer.connection.send(new ClientboundSoundPacket(PECSounds.GAIN_ABILITY_POINTS.getHolder().orElseThrow(), SoundSource.PLAYERS, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), 1.0F + 0.1F * point, 0.7F + 0.1F * point, serverPlayer.getRandom().nextInt()));
             }
         }
     }
@@ -81,11 +63,11 @@ public class PECPlayer {
     }
 
     public static boolean consumeSkillPoint(ServerPlayer serverPlayer, int consumeValue) {
-        if(serverPlayer.isCreative()) {
+        if (serverPlayer.isCreative()) {
             return true;
         }
         int current = getSkillPoint(serverPlayer);
-        if(current >= consumeValue) {
+        if (current >= consumeValue) {
             setSkillPoint(serverPlayer, current - consumeValue);
             return true;
         }
@@ -94,6 +76,22 @@ public class PECPlayer {
 
     public static int getSkillPoint(Player player) {
         return DataManager.skillPoint.get(player).intValue();
+    }
+
+    public int getLastSkillPoints() {
+        return lastSkillPoints;
+    }
+
+    public void setLastSkillPoints(int lastSkillPoints) {
+        this.lastSkillPoints = lastSkillPoints;
+    }
+
+    public boolean isClientLockOn() {
+        return isClientLockOn;
+    }
+
+    public void setClientLockOn(boolean clientLockOn) {
+        isClientLockOn = clientLockOn;
     }
 
     public boolean getBoolean(String key) {
@@ -120,13 +118,14 @@ public class PECPlayer {
         data.putString(k, v);
     }
 
+    public CompoundTag getData() {
+        return data;
+    }
+
     public void setData(Consumer<CompoundTag> consumer) {
         consumer.accept(data);
     }
 
-    public CompoundTag getData() {
-        return data;
-    }
     public CompoundTag saveNBTData(CompoundTag tag) {
         tag.put("customDataManager", data);
         return tag;
@@ -134,7 +133,7 @@ public class PECPlayer {
 
     public void loadNBTData(CompoundTag tag) {
         lastSkillPoints = 0;
-        if(FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             CustomGuiRenderer.reset();
         }
         data = tag.getCompound("customDataManager");
@@ -150,7 +149,7 @@ public class PECPlayer {
     }
 
     public void tick(Player player) {
-        if(player.isLocalPlayer()) {
+        if (player.isLocalPlayer()) {
             //move to ClientForgeEvents
         }
     }

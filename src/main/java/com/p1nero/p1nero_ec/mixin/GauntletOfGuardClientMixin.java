@@ -1,7 +1,6 @@
 package com.p1nero.p1nero_ec.mixin;
 
 import com.github.L_Ender.cataclysm.items.Gauntlet_of_Guard;
-import com.github.L_Ender.cataclysm.items.infernal_forge;
 import com.p1nero.p1nero_ec.client.KeyMappings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

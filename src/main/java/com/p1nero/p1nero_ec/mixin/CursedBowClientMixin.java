@@ -26,17 +26,17 @@ public abstract class CursedBowClientMixin extends Item {
         super(p_41383_);
     }
 
-    @Shadow public abstract int getUseDuration(@NotNull ItemStack stack);
-
     @Shadow(remap = false)
     public static void setUseTime(ItemStack stack, int useTime) {
     }
-
 
     @Shadow(remap = false)
     private static int getMaxLoadTime() {
         return 0;
     }
+
+    @Shadow
+    public abstract int getUseDuration(@NotNull ItemStack stack);
 
     @Inject(method = "inventoryTick", at = @At("HEAD"), cancellable = true)
     private void pec$inventoryTick(ItemStack stack, Level level, Entity entity, int i, boolean held, CallbackInfo ci) {
@@ -51,9 +51,9 @@ public abstract class CursedBowClientMixin extends Item {
             }
 
             LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-            if(localPlayerPatch != null && localPlayerPatch.getEntityState().attacking()) {
+            if (localPlayerPatch != null && localPlayerPatch.getEntityState().attacking()) {
                 AnimationPlayer animationPlayer = localPlayerPatch.getAnimator().getPlayerFor(null);
-                if(animationPlayer != null && animationPlayer.getAnimation().get() instanceof ScanAttackAnimation) {
+                if (animationPlayer != null && animationPlayer.getAnimation().get() instanceof ScanAttackAnimation) {
                     setUseTime(stack, (int) (animationPlayer.getElapsedTime() * 40.0F));
                 }
             } else {

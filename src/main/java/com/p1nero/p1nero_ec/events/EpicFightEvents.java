@@ -13,7 +13,6 @@ import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.skill.guard.GuardSkill;
-import yesman.epicfight.world.capabilities.entitypatch.mob.DrownedPatch;
 import yesman.epicfight.world.capabilities.item.CapabilityItem.WeaponCategories;
 
 import java.util.List;

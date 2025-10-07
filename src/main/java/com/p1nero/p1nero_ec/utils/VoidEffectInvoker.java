@@ -7,10 +7,8 @@ import com.github.L_Ender.cataclysm.entity.projectile.Void_Howitzer_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Void_Rune_Entity;
 import com.github.L_Ender.cataclysm.entity.projectile.Void_Shard_Entity;
 import com.github.L_Ender.cataclysm.init.ModEntities;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -121,7 +119,7 @@ public class VoidEffectInvoker {
             }
         }
 
-        float rotation = caster.getYRot() * ((float)Math.PI / 180F);
+        float rotation = caster.getYRot() * ((float) Math.PI / 180F);
 
         return spawnVoidVortex(world, finalSpawnPos.x, finalSpawnPos.y, finalSpawnPos.z, rotation, caster, lifespan);
     }
@@ -157,17 +155,17 @@ public class VoidEffectInvoker {
         if (world == null || world.isClientSide() || caster == null) return;
 
         Vec3 center = caster.position().add(0, 0.1, 0);
-        float yawRadians = caster.getYRot() * ((float)Math.PI / 180F);
+        float yawRadians = caster.getYRot() * ((float) Math.PI / 180F);
 
         float width = 5f;
         float length = 5.0f;
         double startDistance = 1.0;
 
         Vec3[] corners = new Vec3[4];
-        corners[0] = new Vec3(-width/2, 0, startDistance);                    // 近端左侧
-        corners[1] = new Vec3(width/2, 0, startDistance);                     // 近端右侧
-        corners[2] = new Vec3(-width/2, 0, startDistance + length);           // 远端左侧
-        corners[3] = new Vec3(width/2, 0, startDistance + length);            // 远端右侧
+        corners[0] = new Vec3(-width / 2, 0, startDistance);                    // 近端左侧
+        corners[1] = new Vec3(width / 2, 0, startDistance);                     // 近端右侧
+        corners[2] = new Vec3(-width / 2, 0, startDistance + length);           // 远端左侧
+        corners[3] = new Vec3(width / 2, 0, startDistance + length);            // 远端右侧
 
         for (int i = 0; i < 4; i++) {
             double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
@@ -229,9 +227,9 @@ public class VoidEffectInvoker {
                 break;
             }
             blockpos = blockpos.below();
-        } while(blockpos.getY() >= Mth.floor(minY) - 1);
+        } while (blockpos.getY() >= Mth.floor(minY) - 1);
         if (foundGround) {
-            spawnVoidRune(world, x, (double)blockpos.getY() + groundY, z, rotation, delay, damage, caster);
+            spawnVoidRune(world, x, (double) blockpos.getY() + groundY, z, rotation, delay, damage, caster);
         }
     }
 
@@ -240,7 +238,7 @@ public class VoidEffectInvoker {
         if (world == null || world.isClientSide()) return;
         for (int ring = 1; ring <= rings; ring++) {
             int runeCount = 6 + ring * 2;
-            double radius = maxRadius * (ring / (float)rings);
+            double radius = maxRadius * (ring / (float) rings);
 
             for (int i = 0; i < runeCount; i++) {
                 float angle = (float) i * (float) Math.PI * 2.0F / runeCount;
@@ -274,12 +272,12 @@ public class VoidEffectInvoker {
 
             double angleRad = angle * (Math.PI / 180.0);
 
-            Vec3 clawDirection = lookVec.yRot((float)angleRad).normalize();
+            Vec3 clawDirection = lookVec.yRot((float) angleRad).normalize();
 
             int runesPerClaw = claw == 1 ? 5 : 4;
 
             for (int i = 0; i < runesPerClaw; i++) {
-                double progress = (double)i / (runesPerClaw - 1);
+                double progress = (double) i / (runesPerClaw - 1);
                 double easedProgress = 1 - Math.pow(1 - progress, 1.5);
                 double distance = baseDistance + (maxDistance - baseDistance) * easedProgress;
 
@@ -299,17 +297,16 @@ public class VoidEffectInvoker {
                 double runeX = finalPos.x + randomOffsetX;
                 double runeZ = finalPos.z + randomOffsetZ;
 
-                int delay = (int)(progress * 12) + world.random.nextInt(4);
-                float runeDamage = damage * (1.0f - (float)progress * 0.4f);
+                int delay = (int) (progress * 12) + world.random.nextInt(4);
+                float runeDamage = damage * (1.0f - (float) progress * 0.4f);
 
-                float rotation = (float)Math.atan2(runeZ - startZ, runeX - startX);
+                float rotation = (float) Math.atan2(runeZ - startZ, runeX - startX);
 
                 spawnVoidRuneOnGround(world, runeX, runeZ, startY - 1, startY + 2,
                         rotation, delay, runeDamage, caster);
             }
         }
     }
-
 
 
 }

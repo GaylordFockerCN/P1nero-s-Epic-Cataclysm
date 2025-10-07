@@ -18,12 +18,12 @@ public class CeraunusMixin {
      * 对use操作无效？
      */
     @Inject(method = "releaseUsing", at = @At("HEAD"), cancellable = true)
-    private void pec$releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_, CallbackInfo ci){
+    private void pec$releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_, CallbackInfo ci) {
         ci.cancel();
     }
 
     @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
-    private void pec$anim(ItemStack p_43417_, CallbackInfoReturnable<UseAnim> cir){
+    private void pec$anim(ItemStack p_43417_, CallbackInfoReturnable<UseAnim> cir) {
         cir.setReturnValue(UseAnim.NONE);
     }
 

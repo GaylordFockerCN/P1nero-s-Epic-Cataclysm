@@ -24,7 +24,7 @@ public class TheIncineratorInnateSkill extends PECWeaponInnateSkillBase {
 
     @Override
     public void executeSkill1(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
-        
+
     }
 
     @Override

@@ -21,7 +21,7 @@ public class DrownedHostPatch extends ZombiePatch<Drowned_Host_Entity> {
         CombatBehaviors.Builder<HumanoidMobPatch<?>> builder = this.getHoldingItemWeaponMotionBuilder();
         if (builder != null) {
             this.original.goalSelector.addGoal(0, new AnimatedAttackGoal(this, builder.build(this)));
-            this.original.goalSelector.addGoal(1, new DrownedTargetChasingGoal(this, this.getOriginal(), (double)1.0F, true));
+            this.original.goalSelector.addGoal(1, new DrownedTargetChasingGoal(this, this.getOriginal(), 1.0F, true));
         }
 
     }

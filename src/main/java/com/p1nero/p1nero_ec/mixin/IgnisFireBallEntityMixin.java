@@ -17,13 +17,15 @@ import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 
 @Mixin(Ignis_Fireball_Entity.class)
 public abstract class IgnisFireBallEntityMixin extends AbstractHurtingProjectile {
-    @Shadow(remap = false) private int timer;
-
-    @Shadow(remap = false) public abstract boolean isSoul();
+    @Shadow(remap = false)
+    private int timer;
 
     public IgnisFireBallEntityMixin(EntityType<? extends AbstractHurtingProjectile> p_36817_, double p_36818_, double p_36819_, double p_36820_, double p_36821_, double p_36822_, double p_36823_, Level p_36824_) {
         super(p_36817_, p_36818_, p_36819_, p_36820_, p_36821_, p_36822_, p_36823_, p_36824_);
     }
+
+    @Shadow(remap = false)
+    public abstract boolean isSoul();
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void pec$tick(CallbackInfo ci) {
@@ -35,20 +37,20 @@ public abstract class IgnisFireBallEntityMixin extends AbstractHurtingProjectile
                 float speed = this.isSoul() ? 0.25F : 0.2F;
                 if (target == null) {
                     Vec3 view = entity.getViewVector(1.0F).normalize();
-                    this.xPower = view.x * (double)speed;
-                    this.yPower = view.y * (double)speed;
-                    this.zPower = view.z * (double)speed;
+                    this.xPower = view.x * (double) speed;
+                    this.yPower = view.y * (double) speed;
+                    this.zPower = view.z * (double) speed;
                 } else {
                     double dx = target.getX() - this.getX();
-                    double dy = target.getY() + (double)(target.getBbHeight() * 0.5F) - this.getY();
+                    double dy = target.getY() + (double) (target.getBbHeight() * 0.5F) - this.getY();
                     double dz = target.getZ() - this.getZ();
                     double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
                     dx /= d;
                     dy /= d;
                     dz /= d;
-                    this.xPower = dx * (double)speed;
-                    this.yPower = dy * (double)speed;
-                    this.zPower = dz * (double)speed;
+                    this.xPower = dx * (double) speed;
+                    this.yPower = dy * (double) speed;
+                    this.zPower = dz * (double) speed;
                 }
             }
         }

@@ -21,14 +21,60 @@ import org.jetbrains.annotations.Nullable;
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID)
 public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
-    public static Capability<PECPlayer> TCR_PLAYER = CapabilityManager.get(new CapabilityToken<>() {});
+    public static Capability<PECPlayer> TCR_PLAYER = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
     private PECPlayer PECPlayer = null;
 
     private final LazyOptional<PECPlayer> optional = LazyOptional.of(this::createTCRPlayer);
 
+    @SubscribeEvent
+    public static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof Player player) {
+            if (!player.getCapability(PECCapabilityProvider.TCR_PLAYER).isPresent()) {
+                event.addCapability(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "pec_player"), new PECCapabilityProvider());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerCloned(PlayerEvent.Clone event) {
+        event.getOriginal().reviveCaps();
+        if (event.isWasDeath()) {
+            event.getOriginal().getCapability(PECCapabilityProvider.TCR_PLAYER).ifPresent(oldStore -> {
+                event.getEntity().getCapability(PECCapabilityProvider.TCR_PLAYER).ifPresent(newStore -> {
+                    newStore.copyFrom(oldStore);
+                    newStore.syncToClient(((ServerPlayer) event.getEntity()));
+                });
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase.equals(TickEvent.Phase.END)) {
+            getPlayer(event.player).tick(event.player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(PECPlayer.class);
+    }
+
+    public static PECPlayer getPlayer(Player player) {
+        if (player == null) {
+            return new PECPlayer();
+        }
+        return player.getCapability(PECCapabilityProvider.TCR_PLAYER).orElse(new PECPlayer());
+    }
+
+    public static void syncPlayerDataToClient(ServerPlayer serverPlayer) {
+        getPlayer(serverPlayer).syncToClient(serverPlayer);
+    }
+
     private PECPlayer createTCRPlayer() {
-        if(this.PECPlayer == null){
+        if (this.PECPlayer == null) {
             this.PECPlayer = new PECPlayer();
         }
 
@@ -37,7 +83,7 @@ public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializa
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction direction) {
-        if(capability == TCR_PLAYER){
+        if (capability == TCR_PLAYER) {
             return optional.cast();
         }
 
@@ -54,51 +100,6 @@ public class PECCapabilityProvider implements ICapabilityProvider, INBTSerializa
     @Override
     public void deserializeNBT(CompoundTag tag) {
         createTCRPlayer().loadNBTData(tag);
-    }
-
-    @SubscribeEvent
-    public static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player player) {
-            if(!player.getCapability(PECCapabilityProvider.TCR_PLAYER).isPresent()){
-                event.addCapability(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "pec_player"), new PECCapabilityProvider());
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerCloned(PlayerEvent.Clone event) {
-        event.getOriginal().reviveCaps();
-        if(event.isWasDeath()) {
-            event.getOriginal().getCapability(PECCapabilityProvider.TCR_PLAYER).ifPresent(oldStore -> {
-                event.getEntity().getCapability(PECCapabilityProvider.TCR_PLAYER).ifPresent(newStore -> {
-                    newStore.copyFrom(oldStore);
-                    newStore.syncToClient(((ServerPlayer) event.getEntity()));
-                });
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if(event.phase.equals(TickEvent.Phase.END)) {
-            getPlayer(event.player).tick(event.player);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(PECPlayer.class);
-    }
-
-    public static PECPlayer getPlayer(Player player) {
-        if(player == null) {
-            return new PECPlayer();
-        }
-        return player.getCapability(PECCapabilityProvider.TCR_PLAYER).orElse(new PECPlayer());
-    }
-
-    public static void syncPlayerDataToClient(ServerPlayer serverPlayer) {
-        getPlayer(serverPlayer).syncToClient(serverPlayer);
     }
 
 }

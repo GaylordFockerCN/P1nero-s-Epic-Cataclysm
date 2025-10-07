@@ -1,17 +1,13 @@
 package com.p1nero.p1nero_ec.utils;
 
-import com.github.L_Ender.cataclysm.config.CMConfig;
 import com.github.L_Ender.cataclysm.init.ModParticle;
-import com.hm.efn.particle.EFNParticles;
 import com.merlin204.avalon.util.AvalonAnimationUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import yesman.epicfight.api.animation.AnimationPlayer;
 import yesman.epicfight.api.animation.Joint;
@@ -20,8 +16,6 @@ import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.utils.math.Vec3f;
 import yesman.epicfight.gameasset.Armatures;
 import yesman.epicfight.model.armature.HumanoidArmature;
-
-import javax.annotation.Nullable;
 
 import static com.hm.efn.util.ParticleEffectInvoker.spawnCustomParticle;
 
@@ -46,7 +40,7 @@ public class PECParticleEffectInvoker {
                 Vec3 center = entity.position().add(0, 0.1, 0);
 
                 for (int i = 0; i < 50; i++) {
-                    float angle = (float)(2 * Math.PI * i / 36);
+                    float angle = (float) (2 * Math.PI * i / 36);
                     float radius = 4f;
 
                     level.addParticle(
@@ -84,7 +78,7 @@ public class PECParticleEffectInvoker {
                 Vec3 center = entity.position().add(0, 0.1, 0);
 
                 for (int i = 0; i < 50; i++) {
-                    float angle = (float)(2 * Math.PI * i / 36);
+                    float angle = (float) (2 * Math.PI * i / 36);
                     float radius = 6.5f;
 
                     level.addParticle(
@@ -147,7 +141,7 @@ public class PECParticleEffectInvoker {
                 }
 
                 for (int spiral = 0; spiral < 8; spiral++) {
-                    float baseAngle = (float)(spiral * Math.PI * 0.25);
+                    float baseAngle = (float) (spiral * Math.PI * 0.25);
                     for (int layer = 0; layer < 5; layer++) {
                         float progress = layer / 4f;
                         double angle = baseAngle + progress * Math.PI * 2;
@@ -243,7 +237,7 @@ public class PECParticleEffectInvoker {
                 }
 
                 for (int spiral = 0; spiral < 8; spiral++) {
-                    float baseAngle = (float)(spiral * Math.PI * 0.25);
+                    float baseAngle = (float) (spiral * Math.PI * 0.25);
                     for (int layer = 0; layer < 5; layer++) {
                         float progress = layer / 4f;
                         double angle = baseAngle + progress * Math.PI * 2;
@@ -307,16 +301,16 @@ public class PECParticleEffectInvoker {
                 ClientLevel level = (ClientLevel) entity.level();
 
                 Vec3 center = entity.position().add(0, 0.1, 0);
-                float yawRadians = entity.getYRot() * ((float)Math.PI / 180F);
+                float yawRadians = entity.getYRot() * ((float) Math.PI / 180F);
 
                 float width = 5f;
                 float length = 12.0f;
 
                 Vec3[] corners = new Vec3[4];
-                corners[0] = new Vec3(-width/2, 0, 1.0);      // 近端左侧
-                corners[1] = new Vec3(width/2, 0, 1.0);       // 近端右侧
-                corners[2] = new Vec3(-width/2, 0, 1.0 + length); // 远端左侧
-                corners[3] = new Vec3(width/2, 0, 1.0 + length);  // 远端右侧
+                corners[0] = new Vec3(-width / 2, 0, 1.0);      // 近端左侧
+                corners[1] = new Vec3(width / 2, 0, 1.0);       // 近端右侧
+                corners[2] = new Vec3(-width / 2, 0, 1.0 + length); // 远端左侧
+                corners[3] = new Vec3(width / 2, 0, 1.0 + length);  // 远端右侧
 
                 for (int i = 0; i < 4; i++) {
                     double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
@@ -392,16 +386,16 @@ public class PECParticleEffectInvoker {
                 ClientLevel level = (ClientLevel) entity.level();
 
                 Vec3 center = entity.position().add(0, 0.1, 0);
-                float yawRadians = entity.getYRot() * ((float)Math.PI / 180F);
+                float yawRadians = entity.getYRot() * ((float) Math.PI / 180F);
 
                 float width = 5f;
                 float length = 5.0f;
 
                 Vec3[] corners = new Vec3[4];
-                corners[0] = new Vec3(-width/2, 0, 1.0);      // 近端左侧
-                corners[1] = new Vec3(width/2, 0, 1.0);       // 近端右侧
-                corners[2] = new Vec3(-width/2, 0, 1.0 + length); // 远端左侧
-                corners[3] = new Vec3(width/2, 0, 1.0 + length);  // 远端右侧
+                corners[0] = new Vec3(-width / 2, 0, 1.0);      // 近端左侧
+                corners[1] = new Vec3(width / 2, 0, 1.0);       // 近端右侧
+                corners[2] = new Vec3(-width / 2, 0, 1.0 + length); // 远端左侧
+                corners[3] = new Vec3(width / 2, 0, 1.0 + length);  // 远端右侧
 
                 for (int i = 0; i < 4; i++) {
                     double rotatedX = corners[i].x * Math.cos(yawRadians) - corners[i].z * Math.sin(yawRadians);
@@ -466,34 +460,34 @@ public class PECParticleEffectInvoker {
     }
 
     public static AnimationEvent.InPeriodEvent particleTrail(int startFrame, int endFrame, InteractionHand hand, Vec3 startOffset, Vec3 endOffset, float timeInterpolation, int particleCount, ParticleOptions particleOptions, float random) {
-        float start = (float)startFrame / 60.0F;
-        float end = (float)endFrame / 60.0F;
+        float start = (float) startFrame / 60.0F;
+        float end = (float) endFrame / 60.0F;
         Joint joint = null;
         switch (hand) {
-            case MAIN_HAND -> joint = ((HumanoidArmature) Armatures.BIPED.get()).handR;
-            case OFF_HAND -> joint = ((HumanoidArmature)Armatures.BIPED.get()).handL;
+            case MAIN_HAND -> joint = Armatures.BIPED.get().handR;
+            case OFF_HAND -> joint = Armatures.BIPED.get().handL;
         }
 
         Joint finalJoint = joint;
         return AnimationEvent.InPeriodEvent.create(start, end, (entityPatch, self, params) -> {
-            AnimationPlayer player = entityPatch.getAnimator().getPlayerFor((AssetAccessor)null);
+            AnimationPlayer player = entityPatch.getAnimator().getPlayerFor(null);
             float prevElapsedTime = player.getPrevElapsedTime();
             float elapsedTime = player.getElapsedTime();
             float step = (elapsedTime - prevElapsedTime) / timeInterpolation;
             Vec3 trailStartOffset = startOffset;
             Vec3 trailEndOffset = endOffset;
-            Vec3f trailDirection = new Vec3f((float)(trailEndOffset.x - trailStartOffset.x), (float)(trailEndOffset.y - trailStartOffset.y), (float)(trailEndOffset.z - trailStartOffset.z));
+            Vec3f trailDirection = new Vec3f((float) (trailEndOffset.x - trailStartOffset.x), (float) (trailEndOffset.y - trailStartOffset.y), (float) (trailEndOffset.z - trailStartOffset.z));
 
-            for(float f = prevElapsedTime; f <= elapsedTime; f += step) {
-                for(int i = 0; i <= particleCount; ++i) {
-                    float ratio = (float)i / (float)particleCount;
-                    Vec3f pointOffset = new Vec3f((float)(trailStartOffset.x + (double)(trailDirection.x * ratio)), (float)(trailStartOffset.y + (double)(trailDirection.y * ratio)), (float)(trailStartOffset.z + (double)(trailDirection.z * ratio)));
-                    double randX = (Math.random() - 0.5) * (double)random;
-                    double randY = (Math.random() - 0.5) * (double)random;
-                    double randZ = (Math.random() - 0.5) * (double)random;
+            for (float f = prevElapsedTime; f <= elapsedTime; f += step) {
+                for (int i = 0; i <= particleCount; ++i) {
+                    float ratio = (float) i / (float) particleCount;
+                    Vec3f pointOffset = new Vec3f((float) (trailStartOffset.x + (double) (trailDirection.x * ratio)), (float) (trailStartOffset.y + (double) (trailDirection.y * ratio)), (float) (trailStartOffset.z + (double) (trailDirection.z * ratio)));
+                    double randX = (Math.random() - 0.5) * (double) random;
+                    double randY = (Math.random() - 0.5) * (double) random;
+                    double randZ = (Math.random() - 0.5) * (double) random;
                     Vec3 worldPos = AvalonAnimationUtils.getJointWorldRawPos(entityPatch, finalJoint, f + step, pointOffset);
-                    if (((LivingEntity)entityPatch.getOriginal()).level().isClientSide) {
-                        ((LivingEntity)entityPatch.getOriginal()).level().addParticle(particleOptions, worldPos.x + randX, worldPos.y + randY, worldPos.z + randZ, 0.0, 0.0, 0.0);
+                    if (entityPatch.getOriginal().level().isClientSide) {
+                        entityPatch.getOriginal().level().addParticle(particleOptions, worldPos.x + randX, worldPos.y + randY, worldPos.z + randZ, 0.0, 0.0, 0.0);
                     }
                 }
             }

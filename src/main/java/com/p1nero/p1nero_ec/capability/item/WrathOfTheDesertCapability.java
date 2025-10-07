@@ -1,8 +1,5 @@
 package com.p1nero.p1nero_ec.capability.item;
 
-import java.util.List;
-import javax.annotation.Nullable;
-
 import com.p1nero.p1nero_ec.gameassets.PECAnimations;
 import com.p1nero.p1nero_ec.gameassets.PECSkills;
 import net.minecraft.sounds.SoundEvent;
@@ -24,9 +21,12 @@ import yesman.epicfight.world.capabilities.item.CapabilityItem;
 import yesman.epicfight.world.capabilities.item.RangedWeaponCapability;
 import yesman.epicfight.world.capabilities.item.Style;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class WrathOfTheDesertCapability extends RangedWeaponCapability {
-    private List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> attackMotion;
-    private List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> mountAttackMotion;
+    private final List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> attackMotion;
+    private final List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> mountAttackMotion;
 
     public WrathOfTheDesertCapability(CapabilityItem.Builder builder) {
         super(builder);

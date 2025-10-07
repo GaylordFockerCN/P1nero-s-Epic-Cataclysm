@@ -23,18 +23,19 @@ public class CustomGuiRenderer {
     private static final List<SkillIcon> SKILL_ICONS = new ArrayList<>();
     private static final int MAX_INTERVAL = 1;
     private static int interval = MAX_INTERVAL;
+
     public static void renderSkillPoints(GuiGraphics guiGraphics, Window window, float partialTick) {
         LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-        if(localPlayerPatch != null) {
-            if(!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
+        if (localPlayerPatch != null) {
+            if (!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
                 return;
             }
             LocalPlayer localPlayer = localPlayerPatch.getOriginal();
-            if(!localPlayer.isCreative() && !localPlayer.isSpectator()) {
+            if (!localPlayer.isCreative() && !localPlayer.isSpectator()) {
                 int x = (int) (window.getGuiScaledWidth() / 2.0F - 32);
                 int y = window.getGuiScaledHeight() - 70;
-                if(!SKILL_ICONS.isEmpty()) {
-                    for(int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
+                if (!SKILL_ICONS.isEmpty()) {
+                    for (int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
                         SkillIcon skillIcon = SKILL_ICONS.get(i);
                         skillIcon.updateXY(100 + PECConfig.UI_X.get() + x + 20 * i, PECConfig.UI_Y.get() + y);
                         skillIcon.render(guiGraphics);
@@ -45,33 +46,33 @@ public class CustomGuiRenderer {
     }
 
     public static void addPoint(int index) {
-        if(SKILL_ICONS.size() <= index) {
+        if (SKILL_ICONS.size() <= index) {
             return;
         }
         SKILL_ICONS.get(index).onAdd();
     }
 
     public static void remove(int index) {
-        if(SKILL_ICONS.size() <= index) {
+        if (SKILL_ICONS.size() <= index) {
             return;
         }
         SKILL_ICONS.get(index).setDelete();
     }
 
     public static boolean isSkillPointEmpty(int index) {
-        if(SKILL_ICONS.size() <= index) {
+        if (SKILL_ICONS.size() <= index) {
             return false;
         }
         return SKILL_ICONS.get(index).removed;
     }
 
     public static void update() {
-        if(interval > 0) {
+        if (interval > 0) {
             interval--;
-            if(interval == 0) {
+            if (interval == 0) {
                 interval = MAX_INTERVAL;
-                if(SKILL_ICONS.isEmpty()) {
-                    for(int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
+                if (SKILL_ICONS.isEmpty()) {
+                    for (int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
                         SKILL_ICONS.add(new SkillIcon());
                     }
                 }
@@ -84,9 +85,9 @@ public class CustomGuiRenderer {
         SKILL_ICONS.forEach(SkillIcon::reset);
     }
 
-    private static class SkillIcon{
-        private int x, y;
+    private static class SkillIcon {
         private final int IN = 0, LOOP = 1, OUT = 2, MAX_FRAME_INDEX = 7;
+        private int x, y;
         private int currentType = IN;
         private int currentIndex = 0;
         private ResourceLocation currentTexture = IN_OUT_TEXTURE;
@@ -99,15 +100,15 @@ public class CustomGuiRenderer {
             currentTexture = IN_OUT_TEXTURE;
         }
 
-        private void onAdd(){
+        private void onAdd() {
             removed = false;
             currentType = IN;
             currentIndex = 0;
             currentTexture = IN_OUT_TEXTURE;
         }
 
-        private void setDelete(){
-            if(currentType == OUT) {
+        private void setDelete() {
+            if (currentType == OUT) {
                 //防止重复退出
                 return;
             }
@@ -116,7 +117,7 @@ public class CustomGuiRenderer {
             currentIndex = MAX_FRAME_INDEX;
         }
 
-        private void setLoop(){
+        private void setLoop() {
             currentTexture = LOOP_TEXTURE;
             currentIndex = 0;
             currentType = LOOP;
@@ -128,23 +129,23 @@ public class CustomGuiRenderer {
         }
 
         private void update() {
-            if(currentType == IN) {
+            if (currentType == IN) {
                 currentIndex++;
-                if(currentIndex > MAX_FRAME_INDEX) {
+                if (currentIndex > MAX_FRAME_INDEX) {
                     setLoop();
                 }
             }
 
-            if(currentType == LOOP) {
+            if (currentType == LOOP) {
                 currentIndex++;
-                if(currentIndex > MAX_FRAME_INDEX) {
+                if (currentIndex > MAX_FRAME_INDEX) {
                     currentIndex = 0;
                 }
             }
 
-            if(currentType == OUT && currentIndex > 0) {
+            if (currentType == OUT && currentIndex > 0) {
                 currentIndex--;
-                if(currentIndex == 0) {
+                if (currentIndex == 0) {
                     removed = true;
                 }
             }
@@ -152,7 +153,7 @@ public class CustomGuiRenderer {
 
         private void render(GuiGraphics guiGraphics) {
             guiGraphics.blit(BG_TEXTURE, x, y, 64, 64, 0, 0, 64, 64, 64, 64);//画背景
-            if(!removed) {
+            if (!removed) {
 //                System.out.println(currentTexture + " " + currentIndex + " " + currentType);
                 guiGraphics.blit(currentTexture, x, y, 64, 64, 64 * currentIndex, 0, 64, 64, 512, 64);
             }

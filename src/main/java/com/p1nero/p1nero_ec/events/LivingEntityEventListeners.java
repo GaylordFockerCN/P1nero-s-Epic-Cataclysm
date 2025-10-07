@@ -14,11 +14,11 @@ import yesman.epicfight.world.damagesource.StunType;
 public class LivingEntityEventListeners {
 
     @SubscribeEvent
-    public static void onLivingTick(LivingEvent.LivingTickEvent event){
+    public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity living = event.getEntity();
-        if(living.hasEffect(ModEffect.EFFECTSTUN.get())) {
+        if (living.hasEffect(ModEffect.EFFECTSTUN.get())) {
             LivingEntityPatch<?> livingEntityPatch = EpicFightCapabilities.getEntityPatch(living, LivingEntityPatch.class);
-            if(livingEntityPatch != null) {
+            if (livingEntityPatch != null) {
                 livingEntityPatch.applyStun(StunType.HOLD, 0.15F);
             }
         }

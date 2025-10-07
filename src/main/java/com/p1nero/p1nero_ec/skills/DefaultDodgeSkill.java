@@ -19,6 +19,7 @@ import java.util.UUID;
 
 public class DefaultDodgeSkill extends StepSkill {
     private static final UUID EVENT_UUID = UUID.fromString("11bd5c76-fe77-11ed-be56-0242ac191981");
+
     public DefaultDodgeSkill(Builder builder) {
         super(builder);
     }

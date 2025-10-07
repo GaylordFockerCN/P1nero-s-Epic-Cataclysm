@@ -56,7 +56,7 @@ public class DataManager {
         protected int id;
 
         public Data(String key) {
-            if(EXISTING_ID.contains(key)) {
+            if (EXISTING_ID.contains(key)) {
                 throw new IllegalArgumentException(key + " is already exist!");
             }
             this.key = key;

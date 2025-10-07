@@ -14,7 +14,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class AxeBladeInvoker {
 
     private static float calculateRotationFromMovement(double xPower, double zPower) {
-        return (float)Math.toDegrees(Math.atan2(zPower, xPower));
+        return (float) Math.toDegrees(Math.atan2(zPower, xPower));
     }
 
     private static double findGroundY(Level world, double x, double z, double searchMinY, double searchMaxY) {
@@ -37,9 +37,9 @@ public class AxeBladeInvoker {
                 break;
             }
             blockpos = blockpos.below();
-        } while(blockpos.getY() >= Mth.floor(searchMinY) - 1);
+        } while (blockpos.getY() >= Mth.floor(searchMinY) - 1);
 
-        return foundGround ? (double)blockpos.getY() + groundY : searchMaxY;
+        return foundGround ? (double) blockpos.getY() + groundY : searchMaxY;
     }
 
     private static void spawnAxeBladeOnGround(Level world, LivingEntity caster, double x, double z,
@@ -87,7 +87,7 @@ public class AxeBladeInvoker {
             angle = -spreadAngle / 2 + (spreadAngle * claw / (clawCount - 1));
 
             double angleRad = angle * (Math.PI / 180.0);
-            Vec3 clawDirection = lookVec.yRot((float)angleRad).normalize();
+            Vec3 clawDirection = lookVec.yRot((float) angleRad).normalize();
 
             Vec3 spawnPos = caster.position().add(clawDirection.x * distance, 0, clawDirection.z * distance);
 
@@ -139,11 +139,11 @@ public class AxeBladeInvoker {
             angle = -spreadAngle / 2 + (spreadAngle * claw / (clawCount - 1));
 
             double angleRad = angle * (Math.PI / 180.0);
-            Vec3 clawDirection = lookVec.yRot((float)angleRad).normalize();
+            Vec3 clawDirection = lookVec.yRot((float) angleRad).normalize();
 
             int bladesPerClaw = 3;
             for (int i = 0; i < bladesPerClaw; i++) {
-                double progress = (double)(i + 1) / (bladesPerClaw + 1);
+                double progress = (double) (i + 1) / (bladesPerClaw + 1);
                 double distance = baseDistance + progress * 3.0;
 
                 Vec3 spawnPos = caster.position().add(clawDirection.x * distance, 0, clawDirection.z * distance);
@@ -155,7 +155,7 @@ public class AxeBladeInvoker {
                         spawnPos.x, spawnPos.z,
                         caster.getY() - 2, caster.getY() + 2,
                         clawDirection.x, clawDirection.z,
-                        damage * (1.0f - (float)progress * 0.2f),
+                        damage * (1.0f - (float) progress * 0.2f),
                         rotation
                 );
             }
@@ -189,19 +189,19 @@ public class AxeBladeInvoker {
     }
 
     public static void createForwardAxeBlade(Level world, LivingEntity caster, double distance) {
-        createForwardAxeBlade(world, caster, distance, (float)CMConfig.AptrgangrAxeBladeDamage);
+        createForwardAxeBlade(world, caster, distance, (float) CMConfig.AptrgangrAxeBladeDamage);
     }
 
     public static void createClawAxeBlades(Level world, LivingEntity caster, double distance) {
-        createClawAxeBlades(world, caster, distance, (float)CMConfig.AptrgangrAxeBladeDamage);
+        createClawAxeBlades(world, caster, distance, (float) CMConfig.AptrgangrAxeBladeDamage);
     }
 
     public static void createRadialAxeBlades(Level world, LivingEntity caster, double startDistance) {
-        createRadialAxeBlades(world, caster, startDistance, (float)CMConfig.AptrgangrAxeBladeDamage);
+        createRadialAxeBlades(world, caster, startDistance, (float) CMConfig.AptrgangrAxeBladeDamage);
     }
 
     public static void createFiveClawAxeBlades(Level world, LivingEntity caster, double baseDistance) {
-        createFiveClawAxeBlades(world, caster, baseDistance, (float)CMConfig.AptrgangrAxeBladeDamage);
+        createFiveClawAxeBlades(world, caster, baseDistance, (float) CMConfig.AptrgangrAxeBladeDamage);
     }
 
     public static void createForwardAxeBlade(LivingEntity caster) {

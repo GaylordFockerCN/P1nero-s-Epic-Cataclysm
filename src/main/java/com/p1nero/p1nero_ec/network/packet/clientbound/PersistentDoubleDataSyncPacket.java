@@ -9,13 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 public record PersistentDoubleDataSyncPacket(String key, boolean isLocked, double value) implements BasePacket {
-    @Override
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeComponent(Component.literal(key));
-        buf.writeBoolean(isLocked);
-        buf.writeDouble(value);
-    }
-
     public static PersistentDoubleDataSyncPacket decode(FriendlyByteBuf buf) {
         String key = buf.readComponent().getString();
         boolean isLocked = buf.readBoolean();
@@ -24,8 +17,15 @@ public record PersistentDoubleDataSyncPacket(String key, boolean isLocked, doubl
     }
 
     @Override
+    public void encode(FriendlyByteBuf buf) {
+        buf.writeComponent(Component.literal(key));
+        buf.writeBoolean(isLocked);
+        buf.writeDouble(value);
+    }
+
+    @Override
     public void execute(Player player) {
-        if(player != null) {
+        if (player != null) {
             if (isLocked) {
                 DataManager.putData(player, key + "isLocked", true);
                 return;

@@ -11,22 +11,22 @@ import yesman.epicfight.client.ClientEngine;
 
 public record SetTargetPacket(int id) implements BasePacket {
 
+    public static SetTargetPacket decode(FriendlyByteBuf buf) {
+        return new SetTargetPacket(buf.readInt());
+    }
+
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(id);
     }
 
-    public static SetTargetPacket decode(FriendlyByteBuf buf){
-        return new SetTargetPacket(buf.readInt());
-    }
-
     @Override
     public void execute(Player player) {
-        if(Minecraft.getInstance().player != null && Minecraft.getInstance().level != null){
-           Entity entity = Minecraft.getInstance().level.getEntity(id);
-           if(entity instanceof LivingEntity living){
-               ((LocalPlayerPatchAccessor)ClientEngine.getInstance().getPlayerPatch()).setRayTarget(living);
-           }
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+            Entity entity = Minecraft.getInstance().level.getEntity(id);
+            if (entity instanceof LivingEntity living) {
+                ((LocalPlayerPatchAccessor) ClientEngine.getInstance().getPlayerPatch()).setRayTarget(living);
+            }
         }
     }
 }

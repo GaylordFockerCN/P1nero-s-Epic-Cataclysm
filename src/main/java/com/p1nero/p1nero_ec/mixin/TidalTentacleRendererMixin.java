@@ -17,9 +17,9 @@ import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 @Mixin(Tidal_Tentacle_Renderer.class)
 public class TidalTentacleRendererMixin {
     @Inject(method = "getPositionOfPriorMob", at = @At("HEAD"), remap = false, cancellable = true)
-    private void pec$getPositionOfPriorMob(Tidal_Tentacle_Entity segment, Entity mob, float partialTicks, CallbackInfoReturnable<Vec3> cir){
+    private void pec$getPositionOfPriorMob(Tidal_Tentacle_Entity segment, Entity mob, float partialTicks, CallbackInfoReturnable<Vec3> cir) {
         PlayerPatch<?> playerPatch = EpicFightCapabilities.getEntityPatch(mob, PlayerPatch.class);
-        if(playerPatch != null && segment.isCreator(mob)) {
+        if (playerPatch != null && segment.isCreator(mob)) {
             cir.setReturnValue(AvalonAnimationUtils.getJointWorldPos(playerPatch, Armatures.BIPED.get().toolR, new Vec3f(0, 0.5, 0), partialTicks));
         }
     }

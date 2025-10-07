@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class PECClientHandler {
 
     public static void syncBoolData(String key, boolean isLocked, boolean value) {
-        if(Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (isLocked) {
                 DataManager.putData(player, key + "isLocked", true);
@@ -35,7 +35,7 @@ public class PECClientHandler {
         }
     }
 
-    public static void syncStringData(String key, boolean isLocked, String value){
+    public static void syncStringData(String key, boolean isLocked, String value) {
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (isLocked) {
@@ -48,7 +48,7 @@ public class PECClientHandler {
     }
 
     public static void syncTCRPlayer(CompoundTag compoundTag) {
-        if(Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
             PECCapabilityProvider.getPlayer(Minecraft.getInstance().player).loadNBTData(compoundTag);
         }
     }

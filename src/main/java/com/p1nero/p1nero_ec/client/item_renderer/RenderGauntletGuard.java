@@ -16,6 +16,7 @@ public class RenderGauntletGuard extends RenderItemBase {
     public RenderGauntletGuard(JsonElement jsonElement) {
         super(jsonElement);
     }
+
     public void renderItemInHand(ItemStack stack, LivingEntityPatch<?> entityPatch, InteractionHand hand, OpenMatrix4f[] poses, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
         OpenMatrix4f modelMatrix = this.getCorrectionMatrix(entityPatch, InteractionHand.MAIN_HAND, poses);
         poseStack.pushPose();

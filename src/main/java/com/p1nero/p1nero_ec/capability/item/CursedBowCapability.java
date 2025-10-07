@@ -1,7 +1,6 @@
 package com.p1nero.p1nero_ec.capability.item;
 
 import com.p1nero.p1nero_ec.gameassets.PECAnimations;
-import com.p1nero.p1nero_ec.gameassets.PECSkills;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class CursedBowCapability extends RangedWeaponCapability {
-    private List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> attackMotion;
-    private List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> mountAttackMotion;
+    private final List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> attackMotion;
+    private final List<AnimationManager.AnimationAccessor<? extends AttackAnimation>> mountAttackMotion;
 
     public CursedBowCapability(CapabilityItem.Builder builder) {
         super(builder);

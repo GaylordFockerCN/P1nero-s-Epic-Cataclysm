@@ -14,8 +14,8 @@ import yesman.epicfight.gameasset.Armatures;
 public class PECEffectConditionParticleTrail {
     public static AnimationEvent.InPeriodEvent buffedParticleTrail(int startFrame, int endFrame, InteractionHand hand, Vec3 startOffset, Vec3 endOffset, float timeInterpolation, int particleCount, ParticleOptions particleOptions, float randomX, float randomY, float randomZ, float velocityX, float velocityY, float velocityZ) {
 
-        float start = (float)startFrame / 60.0F;
-        float end = (float)endFrame / 60.0F;
+        float start = (float) startFrame / 60.0F;
+        float end = (float) endFrame / 60.0F;
 
         Joint joint = null;
         switch (hand) {
@@ -44,22 +44,22 @@ public class PECEffectConditionParticleTrail {
             float step = (elapsedTime - prevElapsedTime) / timeInterpolation;
 
             Vec3f trailDirection = new Vec3f(
-                    (float)(endOffset.x - startOffset.x),
-                    (float)(endOffset.y - startOffset.y),
-                    (float)(endOffset.z - startOffset.z)
+                    (float) (endOffset.x - startOffset.x),
+                    (float) (endOffset.y - startOffset.y),
+                    (float) (endOffset.z - startOffset.z)
             );
 
-            for(float f = prevElapsedTime; f <= elapsedTime; f += step) {
-                for(int i = 0; i <= particleCount; ++i) {
-                    float ratio = (float)i / (float)particleCount;
+            for (float f = prevElapsedTime; f <= elapsedTime; f += step) {
+                for (int i = 0; i <= particleCount; ++i) {
+                    float ratio = (float) i / (float) particleCount;
                     Vec3f pointOffset = new Vec3f(
-                            (float)(startOffset.x + (double)(trailDirection.x * ratio)),
-                            (float)(startOffset.y + (double)(trailDirection.y * ratio)),
-                            (float)(startOffset.z + (double)(trailDirection.z * ratio))
+                            (float) (startOffset.x + (double) (trailDirection.x * ratio)),
+                            (float) (startOffset.y + (double) (trailDirection.y * ratio)),
+                            (float) (startOffset.z + (double) (trailDirection.z * ratio))
                     );
-                    double randX = (Math.random() - 0.5) * (double)randomX;
-                    double randY = (Math.random() - 0.5) * (double)randomY;
-                    double randZ = (Math.random() - 0.5) * (double)randomZ;
+                    double randX = (Math.random() - 0.5) * (double) randomX;
+                    double randY = (Math.random() - 0.5) * (double) randomY;
+                    double randZ = (Math.random() - 0.5) * (double) randomZ;
                     Vec3 worldPos = AvalonAnimationUtils.getJointWorldRawPos(
                             entityPatch, finalJoint, f + step, pointOffset);
 

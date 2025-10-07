@@ -97,20 +97,24 @@ import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GRO
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECAnimations {
+    public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
+    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 5.5, 0.0, 0.8, -4);
+    public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
+    public static final Collider BEDIVERE_1 = new OBBCollider(0.95, 0.95, 1, 0.0, 0.8, -0.8);
+    public static final Collider BEDIVERE_SKILL_A_HIT = new OBBCollider(3, 3, 3, 0.0, 0.0, 0.0);
+    public static final Collider BEDIVERE_SKILL_B_HIT = new OBBCollider(1.5, 1.5, 3, 0.0, 1.25, -2);
+    public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
     public static AnimationManager.AnimationAccessor<StaticAnimation> CLAW_SHOOT;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_2;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_3;
-
     public static AnimationManager.AnimationAccessor<DashAttackAnimation> INFERNAL_AUTO3;
-
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO3;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO4;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_2;
-
     public static AnimationManager.AnimationAccessor<StaticAnimation> BEDIVERE_IDLE;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO2;
@@ -119,7 +123,6 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO5;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_SKILL_A;
     public static AnimationManager.AnimationAccessor<AttackAnimation> BEDIVERE_SKILL_B;
-
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL1;
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
     public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_SKILL3;
@@ -138,19 +141,6 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL2;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CLAW_SKILL3;
 
-    public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
-    public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 5.5, 0.0, 0.8, -4);
-    public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
-
-    public static final Collider BEDIVERE_1 = new OBBCollider(0.95, 0.95, 1, 0.0, 0.8, -0.8);
-    public static final Collider BEDIVERE_SKILL_A_HIT = new OBBCollider(3, 3, 3, 0.0, 0.0, 0.0);
-    public static final Collider BEDIVERE_SKILL_B_HIT = new OBBCollider(1.5, 1.5, 3, 0.0, 1.25, -2);
-
-
-
-
-    public static final Collider CLAW = new OBBCollider(1, 1.4, 1, 0.0, 0.0, 0.0);
-
     @SubscribeEvent
     public static void registerAnimations(AnimationManager.AnimationRegistryEvent event) {
         event.newBuilder(PECMod.MOD_ID, (builder) -> {
@@ -161,7 +151,7 @@ public class PECAnimations {
                     new ScanAttackAnimation(0.15F, 0, 0.15F, 65 / 60F, 65 / 60F,
                             InteractionHand.MAIN_HAND, PECWeaponPresets.BOW_SCAN, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
                             .addEvents(setFullBowUseTime(20 / 60F), AnimationEvent.InTimeEvent.create(0.49F,
-                                    shootPhantomArrow(1.0F), AnimationEvent.Side.SERVER),
+                                            shootPhantomArrow(1.0F), AnimationEvent.Side.SERVER),
                                     resetBowUseTime(0.6F),
                                     setFullBowUseTime(50 / 60F),
                                     resetBowUseTime(1.1F),
@@ -204,7 +194,7 @@ public class PECAnimations {
                             .addEvents(
                                     setFullBowUseTime(0.33F),
                                     AnimationEvent.InTimeEvent.create(0.49F,
-                                    shootSandstorm(0.8F, true), AnimationEvent.Side.SERVER),
+                                            shootSandstorm(0.8F, true), AnimationEvent.Side.SERVER),
                                     resetBowUseTime(0.6F),
                                     setFullBowUseTime(0.8F),
                                     AnimationEvent.InTimeEvent.create(1.0F,
@@ -219,7 +209,7 @@ public class PECAnimations {
                             .addEvents(
                                     setFullBowUseTime(0.33f),
                                     AnimationEvent.InTimeEvent.create(0.5F,
-                                    shootCursedSandstorm(1.1F, true), AnimationEvent.Side.SERVER),
+                                            shootCursedSandstorm(1.1F, true), AnimationEvent.Side.SERVER),
                                     resetBowUseTime(0.6F),
                                     setFullBowUseTime(0.9F),
                                     resetBowUseTime(1.1F),
@@ -243,7 +233,6 @@ public class PECAnimations {
                             ));
 
 
-
             BOW_DASH_ATTACK = builder.nextAccessor("bow/bow_dash_attack", accessor ->
                     new AttackAnimation(0.15F, 0, 0, 40 / 60F, 60 / 60F,
                             PECWeaponPresets.BOW_DASH, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
@@ -253,26 +242,26 @@ public class PECAnimations {
 
             BEDIVERE_IDLE = builder.nextAccessor("living/bedivere_idle", (accessor) -> new StaticAnimation(true, accessor, Armatures.BIPED));
 
-            BEDIVERE_AUTO1 = builder.nextAccessor("combat/bedivere_auto1", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(26,35,45, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_1))
+            BEDIVERE_AUTO1 = builder.nextAccessor("combat/bedivere_auto1", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(26, 35, 45, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, BEDIVERE_1))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    .addEvents(AvalonEventUtils.simpleCameraShake(26,5,3,1,3),
+                    .addEvents(AvalonEventUtils.simpleCameraShake(26, 5, 3, 1, 3),
                             AnimationEvent.InTimeEvent.create(0.7F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
                                 caster.getLookAngle();
                                 caster.getLookAngle();
-                                VoidEffectInvoker.spawnVoidVortexInFront(world, caster, 3,50);
+                                VoidEffectInvoker.spawnVoidVortexInFront(world, caster, 3, 50);
                             }, AnimationEvent.Side.BOTH))
             );
-            BEDIVERE_AUTO2 = builder.nextAccessor("combat/bedivere_auto2", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(31,40,50, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
+            BEDIVERE_AUTO2 = builder.nextAccessor("combat/bedivere_auto2", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(31, 40, 50, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    .addEvents(AvalonEventUtils.simpleCameraShake(40,7,2,2,3),
-                            ParticleEffectInvoker.simpleGroundSplit(40,-0.5,0,0F,0,3F,true),
-                            PECParticleEffectInvoker.createVoidRingEffect(31,40),
+                    .addEvents(AvalonEventUtils.simpleCameraShake(40, 7, 2, 2, 3),
+                            ParticleEffectInvoker.simpleGroundSplit(40, -0.5, 0, 0F, 0, 3F, true),
+                            PECParticleEffectInvoker.createVoidRingEffect(31, 40),
                             AnimationEvent.InTimeEvent.create(0.65F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -280,21 +269,21 @@ public class PECAnimations {
                                 createForwardVoidRuneCluster(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
                             }, AnimationEvent.Side.BOTH))
             );
-            BEDIVERE_AUTO3 = builder.nextAccessor("combat/bedivere_auto3", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(23,29,34, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().handR, CLAW))
+            BEDIVERE_AUTO3 = builder.nextAccessor("combat/bedivere_auto3", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(23, 29, 34, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().handR, CLAW))
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
             );
-            BEDIVERE_AUTO4 = builder.nextAccessor("combat/bedivere_auto4", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(23,28,42, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().handL, CLAW))
+            BEDIVERE_AUTO4 = builder.nextAccessor("combat/bedivere_auto4", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(23, 28, 42, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().handL, CLAW))
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
             );
-            BEDIVERE_AUTO5 = builder.nextAccessor("combat/bedivere_auto5", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(29,38,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
+            BEDIVERE_AUTO5 = builder.nextAccessor("combat/bedivere_auto5", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(29, 38, 55, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, CLAW_AUTO3))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    .addEvents(AvalonEventUtils.simpleCameraShake(29,15,4,3,5),
-                            ParticleEffectInvoker.simpleGroundSplit(29,0.5,0,0F,0,3F,true),
-                            PECParticleEffectInvoker.createVoidRingEffect(22,40),
+                    .addEvents(AvalonEventUtils.simpleCameraShake(29, 15, 4, 3, 5),
+                            ParticleEffectInvoker.simpleGroundSplit(29, 0.5, 0, 0F, 0, 3F, true),
+                            PECParticleEffectInvoker.createVoidRingEffect(22, 40),
                             AnimationEvent.InTimeEvent.create(0.85F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -302,16 +291,16 @@ public class PECAnimations {
                                 VoidEffectInvoker.createSimpleVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster, 2, 5);
                             }, AnimationEvent.Side.BOTH))
             );
-            BEDIVERE_SKILL_A = builder.nextAccessor("skill/bedivere_skill_a", accessor -> new AvalonAttackAnimation(0.07F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(25,35,55, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT)
-                    , createSimplePhase(55,60,75, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT))
+            BEDIVERE_SKILL_A = builder.nextAccessor("skill/bedivere_skill_a", accessor -> new AvalonAttackAnimation(0.07F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(25, 35, 55, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT)
+                    , createSimplePhase(55, 60, 75, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_A_HIT))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                     .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
                     .addProperty(AnimationProperty.ActionAnimationProperty.NO_GRAVITY_TIME, TimePairList.create(0.0F, 0.9F))
-                    .addEvents(AvalonEventUtils.simpleCameraShake(25,7,2,2,3),
-                            ParticleEffectInvoker.simpleGroundSplit(25,0.5,0,0F,0,3F,true),
-                            ParticleEffectInvoker.simpleGroundSplit(60,1,0,0F,0,6F,true),
+                    .addEvents(AvalonEventUtils.simpleCameraShake(25, 7, 2, 2, 3),
+                            ParticleEffectInvoker.simpleGroundSplit(25, 0.5, 0, 0F, 0, 3F, true),
+                            ParticleEffectInvoker.simpleGroundSplit(60, 1, 0, 0F, 0, 6F, true),
                             AnimationEvent.InTimeEvent.create(0.4F, (entitypatch, self, params) -> {
                                 if (!entitypatch.getOriginal().level().isClientSide()) {
                                     LivingEntity attacker = entitypatch.getOriginal();
@@ -327,7 +316,7 @@ public class PECAnimations {
                                     double speed = 0.5; // 提高速度
                                     // 多层冲击波
                                     for (int wave = 0; wave < waveCount; wave++) {
-                                        double progress = wave / (double)(waveCount - 1);
+                                        double progress = wave / (double) (waveCount - 1);
                                         double radius = Mth.lerp(progress, baseRadius, maxRadius);
                                         double verticalScale = 1.8 * Math.sin(progress * Math.PI); // 增强垂直波动
                                         for (int i = 0; i < particlesPerWave; i++) {
@@ -425,13 +414,19 @@ public class PECAnimations {
                                 }
                             }, AnimationEvent.Side.SERVER),
                             AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) ->
-                            {entitypatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(),1.5F,0,0);}, AnimationEvent.Side.SERVER),
+                            {
+                                entitypatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), 1.5F, 0, 0);
+                            }, AnimationEvent.Side.SERVER),
                             AnimationEvent.InTimeEvent.create(0.95F, (entitypatch, self, params) ->
-                            {entitypatch.playSound(SoundEvents.ENDER_DRAGON_GROWL,1.5F,0,0);}, AnimationEvent.Side.SERVER),
+                            {
+                                entitypatch.playSound(SoundEvents.ENDER_DRAGON_GROWL, 1.5F, 0, 0);
+                            }, AnimationEvent.Side.SERVER),
                             AnimationEvent.InTimeEvent.create(1.15F, (entitypatch, self, params) ->
-                            {entitypatch.playSound(SoundEvents.GENERIC_EXPLODE,1F,0,0);}, AnimationEvent.Side.SERVER),
+                            {
+                                entitypatch.playSound(SoundEvents.GENERIC_EXPLODE, 1F, 0, 0);
+                            }, AnimationEvent.Side.SERVER),
                             AnimationEvent.InTimeEvent.create(0.95F, summonEnhanceAbyssPortal(), AnimationEvent.Side.SERVER),
-                            PECParticleEffectInvoker.spawnExpParticle(65,0.8F,0,-0.7F),
+                            PECParticleEffectInvoker.spawnExpParticle(65, 0.8F, 0, -0.7F),
                             AnimationEvent.InTimeEvent.create(0.95F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -451,12 +446,12 @@ public class PECAnimations {
                             new AttackAnimation.Phase(0.716F, 0.716F, 0.766F, 0.833F, 0.833F, InteractionHand.OFF_HAND, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT),
                             new AttackAnimation.Phase(0.833F, 0.833F, 0.883F, 1.1F, 1.1F, Armatures.BIPED.get().rootJoint, BEDIVERE_SKILL_B_HIT))
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.5F))
-                            .addEvents(PECParticleEffectInvoker.createForwardEnderJetParticles(10,60),
+                            .addEvents(PECParticleEffectInvoker.createForwardEnderJetParticles(10, 60),
                                     AnimationEvent.InTimeEvent.create(0.25F, (entityPatch, self, params) -> {
                                         Level world = entityPatch.getOriginal().level();
                                         LivingEntity caster = entityPatch.getOriginal();
                                         caster.getLookAngle();
-                                        VoidEffectInvoker.createVoidRuneInGaps(world,caster);
+                                        VoidEffectInvoker.createVoidRuneInGaps(world, caster);
                                     }, AnimationEvent.Side.BOTH))
             );
 
@@ -629,72 +624,78 @@ public class PECAnimations {
             );
 
             INFERNAL_AUTO3 = builder.nextAccessor("skill/infernal_auto3", (accessor) -> new DashAttackAnimation(0.25F, 0.2F, 0.35F, 0.6F, 1.2F, null, Armatures.BIPED.get().toolR, accessor, Armatures.BIPED, false)
-                            .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
-                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.8F)
-                            .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
-                                    PECParticleEffectInvoker.createForwardMagmaEruption(27),
-                                    ParticleEffectInvoker.createLavaRingEffect(15,30),
-                                    ParticleEffectInvoker.simpleGroundSplit(27,2,0,0,0,2,true),
-                                    ParticleEffectInvoker.simpleGroundSplit(27,4,0,0,0,2,true),
-                                    AnimationEvent.InTimeEvent.create(0.3F, (entityPatch, self, params) -> {
-                                        Level world = entityPatch.getOriginal().level();
-                                        LivingEntity caster = entityPatch.getOriginal();
-                                        caster.getLookAngle();
-                                        createMiniForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
-                                    }, AnimationEvent.Side.BOTH))
-            );
-
-            ANNIHILATOR_AUTO1 = builder.nextAccessor("combat/annihilator_auto1",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
-                            , createSimplePhase(15,21,24, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolL,null)
-                            , createSimplePhase(25,31,36, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolR,null))
-                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    );
-            ANNIHILATOR_AUTO2 = builder.nextAccessor("combat/annihilator_auto2",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
-                            , createSimplePhase(16,22,25, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolR,null)
-                            , createSimplePhase(25,31,36, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolL,null))
-                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    );
-            ANNIHILATOR_AUTO3 = builder.nextAccessor("combat/annihilator_auto3",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.8F,1
-                            , createSimplePhase(19,27,34, InteractionHand.MAIN_HAND,1.1F,1.5F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_3))
-                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
-                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.4F, (entityPatch, self, params) -> {
-                                entityPatch.getOriginal().level();
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
+                    .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.8F)
+                    .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.BLAZE_SHOOT, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
+                            PECParticleEffectInvoker.createForwardMagmaEruption(27),
+                            ParticleEffectInvoker.createLavaRingEffect(15, 30),
+                            ParticleEffectInvoker.simpleGroundSplit(27, 2, 0, 0, 0, 2, true),
+                            ParticleEffectInvoker.simpleGroundSplit(27, 4, 0, 0, 0, 2, true),
+                            AnimationEvent.InTimeEvent.create(0.3F, (entityPatch, self, params) -> {
+                                Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
                                 caster.getLookAngle();
-                                createForwardAxeBlade(caster);
+                                createMiniForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
                             }, AnimationEvent.Side.BOTH))
-                    );
-            ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto4",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
-                            , createSimplePhase(24,33,43, InteractionHand.MAIN_HAND,1.2F,1.2F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_4))
-                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
-                            .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.45F, (entitypatch, self, params) ->
-                                    {entitypatch.playSound(EpicFightSounds.WHOOSH_SHARP.get(),1,1,1);}, AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(0.45F, (entityPatch, self, params) -> {
+            );
+
+            ANNIHILATOR_AUTO1 = builder.nextAccessor("combat/annihilator_auto1", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 0.7F, 1
+                    , createSimplePhase(15, 21, 24, InteractionHand.MAIN_HAND, 0.5F, 1F, Armatures.BIPED.get().toolL, null)
+                    , createSimplePhase(25, 31, 36, InteractionHand.MAIN_HAND, 0.5F, 1F, Armatures.BIPED.get().toolR, null))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+            );
+            ANNIHILATOR_AUTO2 = builder.nextAccessor("combat/annihilator_auto2", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 0.7F, 1
+                    , createSimplePhase(16, 22, 25, InteractionHand.MAIN_HAND, 0.5F, 1F, Armatures.BIPED.get().toolR, null)
+                    , createSimplePhase(25, 31, 36, InteractionHand.MAIN_HAND, 0.5F, 1F, Armatures.BIPED.get().toolL, null))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+            );
+            ANNIHILATOR_AUTO3 = builder.nextAccessor("combat/annihilator_auto3", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 0.8F, 1
+                    , createSimplePhase(19, 27, 34, InteractionHand.MAIN_HAND, 1.1F, 1.5F, Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_3))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.4F, (entityPatch, self, params) -> {
+                        entityPatch.getOriginal().level();
+                        LivingEntity caster = entityPatch.getOriginal();
+                        caster.getLookAngle();
+                        createForwardAxeBlade(caster);
+                    }, AnimationEvent.Side.BOTH))
+            );
+            ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto4", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 0.7F, 1
+                    , createSimplePhase(24, 33, 43, InteractionHand.MAIN_HAND, 1.2F, 1.2F, Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_4))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.45F, (entitypatch, self, params) ->
+                            {
+                                entitypatch.playSound(EpicFightSounds.WHOOSH_SHARP.get(), 1, 1, 1);
+                            }, AnimationEvent.Side.SERVER),
+                            AnimationEvent.InTimeEvent.create(0.45F, (entityPatch, self, params) -> {
                                 entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
                                 caster.getLookAngle();
                                 createClawAxeBlades(caster);
                             }, AnimationEvent.Side.BOTH))
-                    );
-            ANNIHILATOR_SKILL_1 = builder.nextAccessor("skill/annihilator_skill1", accessor -> new AvalonAttackAnimation(0.15F,accessor,Armatures.BIPED,1F,1
-                            , createSimplePhase(31,42,47, InteractionHand.MAIN_HAND,1.0F,1F,
-                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolR, null),
-                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolL, null)))
-                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
-                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) ->
-                                    {entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(),1,1,1);}, AnimationEvent.Side.SERVER),
-                                    AvalonEventUtils.simpleGroundSplit(46,2,0,0,0,4,true),
-                            AvalonEventUtils.simpleCameraShake(46,12,5,5,5),
+            );
+            ANNIHILATOR_SKILL_1 = builder.nextAccessor("skill/annihilator_skill1", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(31, 42, 47, InteractionHand.MAIN_HAND, 1.0F, 1F,
+                    AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolR, null),
+                    AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolL, null)))
+                    .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
+                    .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) ->
+                            {
+                                entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(), 1, 1, 1);
+                            }, AnimationEvent.Side.SERVER),
+                            AvalonEventUtils.simpleGroundSplit(46, 2, 0, 0, 0, 4, true),
+                            AvalonEventUtils.simpleCameraShake(46, 12, 5, 5, 5),
                             AnimationEvent.InTimeEvent.create(0.73F, (entitypatch, self, params) -> {
                                 if (!entitypatch.getOriginal().level().isClientSide()) {
                                     LivingEntity attacker = entitypatch.getOriginal();
@@ -745,18 +746,18 @@ public class PECAnimations {
                                     );
                                 }
                             }, AnimationEvent.Side.SERVER),
-                                    AnimationEvent.InTimeEvent.create(0.73F, (entityPatch, self, params) -> {
-                                        entityPatch.getOriginal().level();
-                                        LivingEntity caster = entityPatch.getOriginal();
-                                        caster.getLookAngle();
-                                        createRadialAxeBlades(caster);
-                                    }, AnimationEvent.Side.BOTH))
-                            .newTimePair(0.0F, 1.5F)
-                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                    );
+                            AnimationEvent.InTimeEvent.create(0.73F, (entityPatch, self, params) -> {
+                                entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                createRadialAxeBlades(caster);
+                            }, AnimationEvent.Side.BOTH))
+                    .newTimePair(0.0F, 1.5F)
+                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
+            );
             ANNIHILATOR_SKILL_2 =
-                    builder.nextAccessor("skill/annihilator_skill2",accessor -> new AvalonAttackAnimation(0.15F,accessor,Armatures.BIPED,1F,1
-                            , createSimplePhase(32,42,47, InteractionHand.MAIN_HAND,1.0F,1F,
+                    builder.nextAccessor("skill/annihilator_skill2", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 1F, 1
+                            , createSimplePhase(32, 42, 47, InteractionHand.MAIN_HAND, 1.0F, 1F,
                             AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().rootJoint, EXSILIUMGLADIUS_ABBB_HIT),
                             AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().rootJoint, EXSILIUMGLADIUS_ABBB_HIT)))
                             .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
@@ -764,12 +765,14 @@ public class PECAnimations {
                             .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.setter(MAX_VALUE))
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                             .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) ->
-                                    {entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(),1,1,1);}, AnimationEvent.Side.SERVER),
-                                    AvalonEventUtils.simpleGroundSplit(37,2,0,0,0,3,true),
-                                    AvalonEventUtils.simpleGroundSplit(37,6,0,0,0,2,true),
-                                    AvalonEventUtils.simpleGroundSplit(37,10,0,0,0,2,true),
-                                    AvalonEventUtils.simpleGroundSplit(37,14,0,0,0,2,true),
-                                    AvalonEventUtils.simpleCameraShake(37,12,5,5,5),
+                                    {
+                                        entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(), 1, 1, 1);
+                                    }, AnimationEvent.Side.SERVER),
+                                    AvalonEventUtils.simpleGroundSplit(37, 2, 0, 0, 0, 3, true),
+                                    AvalonEventUtils.simpleGroundSplit(37, 6, 0, 0, 0, 2, true),
+                                    AvalonEventUtils.simpleGroundSplit(37, 10, 0, 0, 0, 2, true),
+                                    AvalonEventUtils.simpleGroundSplit(37, 14, 0, 0, 0, 2, true),
+                                    AvalonEventUtils.simpleCameraShake(37, 12, 5, 5, 5),
                                     AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) -> {
                                         if (!entitypatch.getOriginal().level().isClientSide()) {
                                             LivingEntity attacker = entitypatch.getOriginal();
@@ -953,10 +956,14 @@ public class PECAnimations {
                     })
                     .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, false)
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.2F))
-                    .addEvents(AnimationEvent.InTimeEvent.create(0.3F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.BLAZE_SHOOT,0,0);}, AnimationEvent.Side.CLIENT),
-                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
-                            AvalonEventUtils.particleTrail(20,75,InteractionHand.MAIN_HAND,new Vec3(0,0,-1.5F),new Vec3(0,0,-1.8F),6,4,ParticleTypes.SMALL_FLAME,0.6F),
-                            ParticleEffectInvoker.createLavaRingEffect(0,50),
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.3F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.BLAZE_SHOOT, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.FIRECHARGE_USE, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
+                            AvalonEventUtils.particleTrail(20, 75, InteractionHand.MAIN_HAND, new Vec3(0, 0, -1.5F), new Vec3(0, 0, -1.8F), 6, 4, ParticleTypes.SMALL_FLAME, 0.6F),
+                            ParticleEffectInvoker.createLavaRingEffect(0, 50),
                             AnimationEvent.InTimeEvent.create(0.95F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -977,20 +984,24 @@ public class PECAnimations {
                     .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
-            INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,1F,1
-                    , createSimplePhase(33,44,70, InteractionHand.MAIN_HAND,1F,1F,Armatures.BIPED.get().rootJoint, INFERNAL_SKILL2_BOX))
+            INFERNAL_SKILL2 = builder.nextAccessor("skill/infernal_skill2", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 1F, 1
+                    , createSimplePhase(33, 44, 70, InteractionHand.MAIN_HAND, 1F, 1F, Armatures.BIPED.get().rootJoint, INFERNAL_SKILL2_BOX))
                     .addProperty(AnimationProperty.AttackPhaseProperty.SOURCE_TAG, Set.of(EpicFightDamageTypeTags.FINISHER))
                     .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND,EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND, EpicFightSounds.BLADE_RUSH_FINISHER.get())
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
-                    .addEvents(AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
-                            AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.GENERIC_EXPLODE,0,0);}, AnimationEvent.Side.CLIENT),
-                            ParticleEffectInvoker.simpleGroundSplit(33,2,0,0,0,3,true),
-                            ParticleEffectInvoker.simpleGroundSplit(33,6,0,0,0,2,true),
-                            ParticleEffectInvoker.simpleGroundSplit(33,10,0,0,0,2,true),
-                            ParticleEffectInvoker.simpleGroundSplit(33,14,0,0,0,2,true),
-                            AvalonEventUtils.simpleCameraShake(33,12,5,5,5),
-                            PECParticleEffectInvoker.createForwardFlameJetParticles(10,25),
+                    .addEvents(AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.FIRECHARGE_USE, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
+                            ParticleEffectInvoker.simpleGroundSplit(33, 2, 0, 0, 0, 3, true),
+                            ParticleEffectInvoker.simpleGroundSplit(33, 6, 0, 0, 0, 2, true),
+                            ParticleEffectInvoker.simpleGroundSplit(33, 10, 0, 0, 0, 2, true),
+                            ParticleEffectInvoker.simpleGroundSplit(33, 14, 0, 0, 0, 2, true),
+                            AvalonEventUtils.simpleCameraShake(33, 12, 5, 5, 5),
+                            PECParticleEffectInvoker.createForwardFlameJetParticles(10, 25),
                             AnimationEvent.InTimeEvent.create(0.38F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -1009,17 +1020,19 @@ public class PECAnimations {
                     .addProperty(AnimationProperty.AttackPhaseProperty.ARMOR_NEGATION_MODIFIER, ValueModifier.setter(30.0F))
                     .addProperty(AnimationProperty.AttackPhaseProperty.IMPACT_MODIFIER, ValueModifier.multiplier(3.0F))
                     .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.setter(5))
-                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND,EpicFightSounds.WHOOSH_BIG.get())
-                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND,EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_BIG.get())
+                    .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND, EpicFightSounds.BLADE_RUSH_FINISHER.get())
                     .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
                     .addProperty(AnimationProperty.AttackPhaseProperty.EXTRA_DAMAGE, Set.of(ExtraDamageInstance.SWEEPING_EDGE_ENCHANTMENT.create()))
                     .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                     .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
-                    .addEvents(AvalonEventUtils.simpleCameraShake(60,40,4,4,7),
-                            PECParticleEffectInvoker.createLavaRingEffect(30,70),
+                    .addEvents(AvalonEventUtils.simpleCameraShake(60, 40, 4, 4, 7),
+                            PECParticleEffectInvoker.createLavaRingEffect(30, 70),
                             PECParticleEffectInvoker.createMagmaEruption(65),
                             AnimationEvent.InTimeEvent.create(0.9F, FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.0F, 0.0F), Armatures.BIPED.get().toolR, 5D, 0F),
-                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {entitypatch.playSound(SoundEvents.FIRECHARGE_USE,0,0);}, AnimationEvent.Side.CLIENT),
+                            AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {
+                                entitypatch.playSound(SoundEvents.FIRECHARGE_USE, 0, 0);
+                            }, AnimationEvent.Side.CLIENT),
                             AnimationEvent.InTimeEvent.create(0.8F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
@@ -1037,9 +1050,9 @@ public class PECAnimations {
                                 }
                                 createEnhancedFlameJetBurst(world, caster.getX(), caster.getY(), caster.getZ(), caster);
                             }, AnimationEvent.Side.BOTH))
-                            .newTimePair(0.0F, 1.5F)
-                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                    );
+                    .newTimePair(0.0F, 1.5F)
+                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
+            );
 
             SOUL_RENDER_SKILL1 = builder.nextAccessor("skill/soul_render_skill1", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 1.1F, 1,
                     createSimplePhase(38, 56, 75, InteractionHand.MAIN_HAND, 1.5F, 1.5F, Armatures.BIPED.get().toolR, null))
@@ -1122,7 +1135,7 @@ public class PECAnimations {
                                     }
                                 }
                                 if (world.isClientSide) {
-                                    world.addParticle(new RingParticle.RingData(0.0F, ((float) Math.PI / 2F), 30, 0.337F, 0.925F, 0.8F, 1.0F, 85.0F, false, RingParticle.EnumRingBehavior.GROW), caster.getX(), caster.getY() + (double) 0.03F, caster.getZ(), (double) 0.0F, (double) 0.0F, (double) 0.0F);
+                                    world.addParticle(new RingParticle.RingData(0.0F, ((float) Math.PI / 2F), 30, 0.337F, 0.925F, 0.8F, 1.0F, 85.0F, false, RingParticle.EnumRingBehavior.GROW), caster.getX(), caster.getY() + (double) 0.03F, caster.getZ(), 0.0F, 0.0F, 0.0F);
                                 }
                             }, AnimationEvent.Side.BOTH)
                     )
@@ -1498,18 +1511,18 @@ public class PECAnimations {
             );
 
             THE_INCINERATOR_SKILL2 = builder.nextAccessor("skill/the_incinerator_skill2", (accessor) ->
-                            new ActionAnimation(0.0F, accessor, Armatures.BIPED)
-                                    .addState(EntityState.PHASE_LEVEL, 1)
-                                    .addState(EntityState.CAN_BASIC_ATTACK, true)
-                                    .addState(EntityState.CAN_SKILL_EXECUTION, true)
-                                    .addState(EntityState.TURNING_LOCKED, true)
-                                    .addState(EntityState.MOVEMENT_LOCKED, true)
-                                    .addState(EntityState.INACTION, false)
-                                    .newTimePair(0.0F, Float.MAX_VALUE)
-                                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                                    .addEvents(AnimationProperty.ActionAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(((livingEntityPatch, staticAnimation, objects) -> livingEntityPatch.reserveAnimation(EFNGreatSwordAnimations.NG_GREATSWORD_CHARG1MAX_FIRST)), AnimationEvent.Side.SERVER))
-                                    .addEvents(AnimationEvent.InTimeEvent.create(0.2F, summonFireBall(), AnimationEvent.Side.SERVER))
-                    );
+                    new ActionAnimation(0.0F, accessor, Armatures.BIPED)
+                            .addState(EntityState.PHASE_LEVEL, 1)
+                            .addState(EntityState.CAN_BASIC_ATTACK, true)
+                            .addState(EntityState.CAN_SKILL_EXECUTION, true)
+                            .addState(EntityState.TURNING_LOCKED, true)
+                            .addState(EntityState.MOVEMENT_LOCKED, true)
+                            .addState(EntityState.INACTION, false)
+                            .newTimePair(0.0F, Float.MAX_VALUE)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
+                            .addEvents(AnimationProperty.ActionAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(((livingEntityPatch, staticAnimation, objects) -> livingEntityPatch.reserveAnimation(EFNGreatSwordAnimations.NG_GREATSWORD_CHARG1MAX_FIRST)), AnimationEvent.Side.SERVER))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.2F, summonFireBall(), AnimationEvent.Side.SERVER))
+            );
 
             THE_INCINERATOR_SKILL3 = builder.nextAccessor("skill/the_incinerator_skill3", accessor -> new AvalonAttackAnimation(0F, accessor, Armatures.BIPED, 1, 1
                     , createSimplePhase(60, 80, 85, InteractionHand.MAIN_HAND, 1, 1F, Armatures.BIPED.get().toolR, MEEN_LANCE_1)
@@ -1862,14 +1875,14 @@ public class PECAnimations {
                             AnimationEvent.InTimeEvent.create(1.0F, (entitypatch, self, params) ->
                             {
                                 LivingEntity player = entitypatch.getOriginal();
-                                double headY = player.getY() + (double)1.0F;
+                                double headY = player.getY() + (double) 1.0F;
                                 int standingOnY = Mth.floor(player.getY()) - 2;
-                                float yawRadians = (float)Math.toRadians((double)(90.0F + player.getYRot()));
+                                float yawRadians = (float) Math.toRadians(90.0F + player.getYRot());
                                 boolean hasSucceeded = false;
-                                for(int l = 0; l < 10; ++l) {
-                                    double d2 = (double)2.25F * (double)(l + 1);
-                                    int j2 = (int)(1.5F * (float)l);
-                                    if (spawnFlameStrike(player.getX() + (double)Mth.cos(yawRadians) * d2, player.getZ() + (double)Mth.sin(yawRadians) * d2, (double)standingOnY, headY, yawRadians, 40, j2, j2, player.level(), 1.0F, player)) {
+                                for (int l = 0; l < 10; ++l) {
+                                    double d2 = (double) 2.25F * (double) (l + 1);
+                                    int j2 = (int) (1.5F * (float) l);
+                                    if (spawnFlameStrike(player.getX() + (double) Mth.cos(yawRadians) * d2, player.getZ() + (double) Mth.sin(yawRadians) * d2, standingOnY, headY, yawRadians, 40, j2, j2, player.level(), 1.0F, player)) {
                                         hasSucceeded = true;
                                     }
                                 }
@@ -1889,10 +1902,10 @@ public class PECAnimations {
     public static AnimationEvent.InTimeEvent<?> setFullBowUseTime(float time) {
         return AnimationEvent.InTimeEvent.create(time, (livingEntityPatch, assetAccessor, animationParameters) -> {
             ItemStack itemStack = livingEntityPatch.getOriginal().getMainHandItem();
-            if(itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())){
+            if (itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())) {
                 Wrath_of_the_desert.setUseTime(itemStack, 20);
             }
-            if(itemStack.is(ModItems.CURSED_BOW.get())) {
+            if (itemStack.is(ModItems.CURSED_BOW.get())) {
                 Cursed_bow.setUseTime(itemStack, 20);
             }
         }, AnimationEvent.Side.CLIENT);
@@ -1901,10 +1914,10 @@ public class PECAnimations {
     public static AnimationEvent.InTimeEvent<?> resetBowUseTime(float time) {
         return AnimationEvent.InTimeEvent.create(time, (livingEntityPatch, assetAccessor, animationParameters) -> {
             ItemStack itemStack = livingEntityPatch.getOriginal().getMainHandItem();
-            if(itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())){
+            if (itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())) {
                 Wrath_of_the_desert.setUseTime(itemStack, 0);
             }
-            if(itemStack.is(ModItems.CURSED_BOW.get())) {
+            if (itemStack.is(ModItems.CURSED_BOW.get())) {
                 Cursed_bow.setUseTime(itemStack, 0);
             }
         }, AnimationEvent.Side.CLIENT);
@@ -1913,7 +1926,7 @@ public class PECAnimations {
     private static boolean spawnFlameStrike(double x, double z, double minY, double maxY, float rotation, int duration, int wait, int delay, Level world, float radius, LivingEntity player) {
         BlockPos blockpos = BlockPos.containing(x, maxY, z);
         boolean flag = false;
-        double d0 = (double)0.0F;
+        double d0 = 0.0F;
 
         do {
             BlockPos blockpos1 = blockpos.below();
@@ -1932,10 +1945,10 @@ public class PECAnimations {
             }
 
             blockpos = blockpos.below();
-        } while((double)blockpos.getY() >= minY);
+        } while ((double) blockpos.getY() >= minY);
 
         if (flag) {
-            world.addFreshEntity(new Flame_Strike_Entity(world, x, (double)blockpos.getY() + d0, z, rotation, duration, wait, delay, radius, 6.0F, 2.0F, false, player));
+            world.addFreshEntity(new Flame_Strike_Entity(world, x, (double) blockpos.getY() + d0, z, rotation, duration, wait, delay, radius, 6.0F, 2.0F, false, player));
             return true;
         } else {
             return false;
@@ -1946,11 +1959,11 @@ public class PECAnimations {
         return (entityPatch, animation, params) -> {
             entityPatch.playSound(ModSounds.ABYSS_BLAST_ONLY_CHARGE.get(), 4.0F, 1.0F, 1.0F);
             LivingEntity entity = entityPatch.getOriginal();
-            if(entityPatch instanceof ServerPlayerPatch serverPlayerPatch) {
-                if(serverPlayerPatch.getTarget() == null) {
+            if (entityPatch instanceof ServerPlayerPatch serverPlayerPatch) {
+                if (serverPlayerPatch.getTarget() == null) {
                     ServerPlayer serverPlayer = serverPlayerPatch.getOriginal();
                     List<LivingEntity> list = serverPlayer.serverLevel().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, serverPlayer, new AABB(serverPlayer.position(), serverPlayer.position()).inflate(10));
-                    if(!list.isEmpty()) {
+                    if (!list.isEmpty()) {
                         list.sort(Comparator.comparingDouble((e) -> e.distanceTo(serverPlayer)));
                         serverPlayerPatch.setAttackTarget(list.get(0));
                     }
@@ -1959,65 +1972,65 @@ public class PECAnimations {
             entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.EVOKER_PREPARE_SUMMON, entity.getSoundSource(), 5.0F, 1.4F + entity.getRandom().nextFloat() * 0.1F, false);
             switch (entity.getRandom().nextInt(5)) {
                 case 0:
-                    shootAbyssFireball(entity, new Vec3((double)-5.0F, (double)3.0F, (double)0.0F), 109 - 45);
-                    shootFireball(entity, new Vec3((double)-2.0F, (double)3.0F, (double)0.0F), 0);
-                    shootFireball(entity, new Vec3((double)0.0F, (double)3.0F, (double)0.0F), 61 - 45);
-                    shootFireball(entity, new Vec3((double)2.0F, (double)3.0F, (double)0.0F), 77 - 45);
-                    shootFireball(entity, new Vec3((double)5.0F, (double)3.0F, (double)0.0F), 93 - 45);
+                    shootAbyssFireball(entity, new Vec3(-5.0F, 3.0F, 0.0F), 109 - 45);
+                    shootFireball(entity, new Vec3(-2.0F, 3.0F, 0.0F), 0);
+                    shootFireball(entity, new Vec3(0.0F, 3.0F, 0.0F), 61 - 45);
+                    shootFireball(entity, new Vec3(2.0F, 3.0F, 0.0F), 77 - 45);
+                    shootFireball(entity, new Vec3(5.0F, 3.0F, 0.0F), 93 - 45);
                     break;
                 case 1:
-                    shootFireball(entity, new Vec3((double)-5.0F, (double)3.0F, (double)0.0F), 0);
-                    shootAbyssFireball(entity, new Vec3((double)-2.0F, (double)3.0F, (double)0.0F), 109 - 45);
-                    shootFireball(entity, new Vec3((double)0.0F, (double)3.0F, (double)0.0F), 61 - 45);
-                    shootFireball(entity, new Vec3((double)2.0F, (double)3.0F, (double)0.0F), 77 - 45);
-                    shootFireball(entity, new Vec3((double)5.0F, (double)3.0F, (double)0.0F), 93 - 45);
+                    shootFireball(entity, new Vec3(-5.0F, 3.0F, 0.0F), 0);
+                    shootAbyssFireball(entity, new Vec3(-2.0F, 3.0F, 0.0F), 109 - 45);
+                    shootFireball(entity, new Vec3(0.0F, 3.0F, 0.0F), 61 - 45);
+                    shootFireball(entity, new Vec3(2.0F, 3.0F, 0.0F), 77 - 45);
+                    shootFireball(entity, new Vec3(5.0F, 3.0F, 0.0F), 93 - 45);
                     break;
                 case 2:
-                    shootFireball(entity, new Vec3((double)-5.0F, (double)3.0F, (double)0.0F), 0);
-                    shootFireball(entity, new Vec3((double)-2.0F, (double)3.0F, (double)0.0F), 61 - 45);
-                    shootAbyssFireball(entity, new Vec3((double)0.0F, (double)3.0F, (double)0.0F), 109 - 45);
-                    shootFireball(entity, new Vec3((double)2.0F, (double)3.0F, (double)0.0F), 77 - 45);
-                    shootFireball(entity, new Vec3((double)5.0F, (double)3.0F, (double)0.0F), 93 - 45);
+                    shootFireball(entity, new Vec3(-5.0F, 3.0F, 0.0F), 0);
+                    shootFireball(entity, new Vec3(-2.0F, 3.0F, 0.0F), 61 - 45);
+                    shootAbyssFireball(entity, new Vec3(0.0F, 3.0F, 0.0F), 109 - 45);
+                    shootFireball(entity, new Vec3(2.0F, 3.0F, 0.0F), 77 - 45);
+                    shootFireball(entity, new Vec3(5.0F, 3.0F, 0.0F), 93 - 45);
                     break;
                 case 3:
-                    shootFireball(entity, new Vec3((double)-5.0F, (double)3.0F, (double)0.0F), 0);
-                    shootFireball(entity, new Vec3((double)-2.0F, (double)3.0F, (double)0.0F), 61 - 45);
-                    shootFireball(entity, new Vec3((double)0.0F, (double)3.0F, (double)0.0F), 77 - 45);
-                    shootAbyssFireball(entity, new Vec3((double)2.0F, (double)3.0F, (double)0.0F), 109 - 45);
-                    shootFireball(entity, new Vec3((double)5.0F, (double)3.0F, (double)0.0F), 93 - 45);
+                    shootFireball(entity, new Vec3(-5.0F, 3.0F, 0.0F), 0);
+                    shootFireball(entity, new Vec3(-2.0F, 3.0F, 0.0F), 61 - 45);
+                    shootFireball(entity, new Vec3(0.0F, 3.0F, 0.0F), 77 - 45);
+                    shootAbyssFireball(entity, new Vec3(2.0F, 3.0F, 0.0F), 109 - 45);
+                    shootFireball(entity, new Vec3(5.0F, 3.0F, 0.0F), 93 - 45);
                     break;
                 case 4:
-                    shootFireball(entity, new Vec3((double)-5.0F, (double)3.0F, (double)0.0F), 0);
-                    shootFireball(entity, new Vec3((double)-2.0F, (double)3.0F, (double)0.0F), 61 - 45);
-                    shootFireball(entity, new Vec3((double)0.0F, (double)3.0F, (double)0.0F), 77 - 45);
-                    shootFireball(entity, new Vec3((double)2.0F, (double)3.0F, (double)0.0F), 93 - 45);
-                    shootAbyssFireball(entity, new Vec3((double)5.0F, (double)3.0F, (double)0.0F), 109 - 45);
+                    shootFireball(entity, new Vec3(-5.0F, 3.0F, 0.0F), 0);
+                    shootFireball(entity, new Vec3(-2.0F, 3.0F, 0.0F), 61 - 45);
+                    shootFireball(entity, new Vec3(0.0F, 3.0F, 0.0F), 77 - 45);
+                    shootFireball(entity, new Vec3(2.0F, 3.0F, 0.0F), 93 - 45);
+                    shootAbyssFireball(entity, new Vec3(5.0F, 3.0F, 0.0F), 109 - 45);
             }
         };
     }
-    
+
     private static void shootAbyssFireball(LivingEntity entity, Vec3 shotAt, int timer) {
-        shotAt = shotAt.yRot(-entity.getYRot() * ((float)Math.PI / 180F));
+        shotAt = shotAt.yRot(-entity.getYRot() * ((float) Math.PI / 180F));
         Ignis_Abyss_Fireball_Entity shot = new Ignis_Abyss_Fireball_Entity(entity.level(), entity);
-        shot.setPos(entity.getX() - (double)(entity.getBbWidth() + 1.0F) * 0.15 * (double)Mth.sin(entity.yBodyRot * ((float)Math.PI / 180F)), entity.getY() + (double)1.0F, entity.getZ() + (double)(entity.getBbWidth() + 1.0F) * 0.15 * (double)Mth.cos(entity.yBodyRot * ((float)Math.PI / 180F)));
+        shot.setPos(entity.getX() - (double) (entity.getBbWidth() + 1.0F) * 0.15 * (double) Mth.sin(entity.yBodyRot * ((float) Math.PI / 180F)), entity.getY() + (double) 1.0F, entity.getZ() + (double) (entity.getBbWidth() + 1.0F) * 0.15 * (double) Mth.cos(entity.yBodyRot * ((float) Math.PI / 180F)));
         double d0 = shotAt.x;
         double d1 = shotAt.y;
         double d2 = shotAt.z;
-        float f = Mth.sqrt((float)(d0 * d0 + d2 * d2)) * 0.35F;
-        shot.shoot(d0, d1 + (double)f, d2, 0.25F, 3.0F);
+        float f = Mth.sqrt((float) (d0 * d0 + d2 * d2)) * 0.35F;
+        shot.shoot(d0, d1 + (double) f, d2, 0.25F, 3.0F);
         shot.setUp(timer + 1);
         entity.level().addFreshEntity(shot);
     }
-    
+
     private static void shootFireball(LivingEntity entity, Vec3 shotAt, int timer) {
-        shotAt = shotAt.yRot(-entity.getYRot() * ((float)Math.PI / 180F));
+        shotAt = shotAt.yRot(-entity.getYRot() * ((float) Math.PI / 180F));
         Ignis_Fireball_Entity shot = new Ignis_Fireball_Entity(entity.level(), entity);
-        shot.setPos(entity.getX() - (double)(entity.getBbWidth() + 1.0F) * 0.15 * (double)Mth.sin(entity.yBodyRot * ((float)Math.PI / 180F)), entity.getY() + (double)1.0F, entity.getZ() + (double)(entity.getBbWidth() + 1.0F) * 0.15 * (double)Mth.cos(entity.yBodyRot * ((float)Math.PI / 180F)));
+        shot.setPos(entity.getX() - (double) (entity.getBbWidth() + 1.0F) * 0.15 * (double) Mth.sin(entity.yBodyRot * ((float) Math.PI / 180F)), entity.getY() + (double) 1.0F, entity.getZ() + (double) (entity.getBbWidth() + 1.0F) * 0.15 * (double) Mth.cos(entity.yBodyRot * ((float) Math.PI / 180F)));
         double d0 = shotAt.x;
         double d1 = shotAt.y;
         double d2 = shotAt.z;
-        float f = Mth.sqrt((float)(d0 * d0 + d2 * d2)) * 0.35F;
-        shot.shoot(d0, d1 + (double)f, d2, 0.25F, 3.0F);
+        float f = Mth.sqrt((float) (d0 * d0 + d2 * d2)) * 0.35F;
+        shot.shoot(d0, d1 + (double) f, d2, 0.25F, 3.0F);
         shot.setUp(timer + 1);
 
         entity.level().addFreshEntity(shot);
@@ -2073,7 +2086,7 @@ public class PECAnimations {
                 }
             }
 
-            float rotation = entity.getYRot() * ((float)Math.PI / 180F);
+            float rotation = entity.getYRot() * ((float) Math.PI / 180F);
 
             world.addFreshEntity(new Abyss_Blast_Portal_Entity(
                     world,
@@ -2090,7 +2103,6 @@ public class PECAnimations {
             entityPatch.playSound(SoundEvents.END_PORTAL_SPAWN, 0.5F, 1.0F, 1.0F);
         };
     }
-
 
 
     protected static void spawnLightning(LivingEntity entity, double x, double z, double minY, double maxY, float rotation, int delay, float size) {
@@ -2317,7 +2329,7 @@ public class PECAnimations {
             ++theta;
             double vecX = Math.cos(theta);
             double vecZ = Math.sin(theta);
-            entity.level().addParticle(new RoarParticle.RoarData(duration, r, g, b, a, start, inc, end), entity.getX() + (double) vec * vecX + (double) (f * math), entity.getY() + (double) y, entity.getZ() + (double) vec * vecZ + (double) (f1 * math), (double) 0.0F, (double) 0.0F, (double) 0.0F);
+            entity.level().addParticle(new RoarParticle.RoarData(duration, r, g, b, a, start, inc, end), entity.getX() + (double) vec * vecX + (double) (f * math), entity.getY() + (double) y, entity.getZ() + (double) vec * vecZ + (double) (f1 * math), 0.0F, 0.0F, 0.0F);
         }
 
     }
@@ -2466,10 +2478,10 @@ public class PECAnimations {
                 break;
             }
             blockpos = blockpos.below();
-        } while(blockpos.getY() >= minY);
+        } while (blockpos.getY() >= minY);
 
         if (flag) {
-            world.addFreshEntity(new Flame_Jet_Entity(world, x, (double)blockpos.getY() + groundY, z, rotation, delay, damage, caster));
+            world.addFreshEntity(new Flame_Jet_Entity(world, x, (double) blockpos.getY() + groundY, z, rotation, delay, damage, caster));
             return true;
         } else {
             return false;
@@ -2513,7 +2525,7 @@ public class PECAnimations {
 
         for (int i = 0; i < 2; i++) {
             spawnFlameJetOnGround(world, centerX, centerZ, centerY - 1, centerY + 3,
-                    yaw * ((float)Math.PI / 180F),
+                    yaw * ((float) Math.PI / 180F),
                     i * 5, damage, caster);
         }
 
@@ -2538,7 +2550,7 @@ public class PECAnimations {
                         offsetAngle, delay, damage, caster);
 
                 if (ring == 2 && i % 2 == 0) {
-                    float midAngle = offsetAngle + (float)(Math.PI / directions);
+                    float midAngle = offsetAngle + (float) (Math.PI / directions);
                     double midJetX = centerX + Math.cos(midAngle) * (distance * 0.9);
                     double midJetZ = centerZ + Math.sin(midAngle) * (distance * 0.9);
 
@@ -2572,7 +2584,7 @@ public class PECAnimations {
             int delay = i * 2;
 
             spawnFlameJetOnGround(world, jetX, jetZ, startY - 1, startY + 2,
-                    yaw * ((float)Math.PI / 180F), delay, damage, caster);
+                    yaw * ((float) Math.PI / 180F), delay, damage, caster);
 
             int sideCount = world.random.nextInt(2) + 1;
 
@@ -2591,13 +2603,13 @@ public class PECAnimations {
                 int sideDelay = delay + world.random.nextInt(3);
 
                 spawnFlameJetOnGround(world, sideJetX, sideJetZ, startY - 1, startY + 2,
-                        yaw * ((float)Math.PI / 180F), sideDelay, damage, caster);
+                        yaw * ((float) Math.PI / 180F), sideDelay, damage, caster);
             }
         }
     }
 
     private static void createMiniForwardFlameJet(Level world, double startX, double startY, double startZ,
-                                              LivingEntity caster, float yaw) {
+                                                  LivingEntity caster, float yaw) {
         if (world.isClientSide()) return;
 
         float damage = (float) CMConfig.FlareBombDamage;
@@ -2619,7 +2631,7 @@ public class PECAnimations {
             int delay = i * 2;
 
             spawnFlameJetOnGround(world, jetX, jetZ, startY - 1, startY + 2,
-                    yaw * ((float)Math.PI / 180F), delay, damage, caster);
+                    yaw * ((float) Math.PI / 180F), delay, damage, caster);
 
             int sideCount = world.random.nextInt(2) + 1;
 
@@ -2638,7 +2650,7 @@ public class PECAnimations {
                 int sideDelay = delay + world.random.nextInt(3);
 
                 spawnFlameJetOnGround(world, sideJetX, sideJetZ, startY - 1, startY + 2,
-                        yaw * ((float)Math.PI / 180F), sideDelay, damage, caster);
+                        yaw * ((float) Math.PI / 180F), sideDelay, damage, caster);
             }
         }
     }

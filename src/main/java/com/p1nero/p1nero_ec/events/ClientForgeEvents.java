@@ -27,10 +27,10 @@ import yesman.epicfight.main.EpicFightMod;
 public class ClientForgeEvents {
 
     @SubscribeEvent
-    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event){
-        if(event.getOverlay().id().equals(ResourceLocation.fromNamespaceAndPath(EpicFightMod.MODID, "weapon_innate"))) {
+    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
+        if (event.getOverlay().id().equals(ResourceLocation.fromNamespaceAndPath(EpicFightMod.MODID, "weapon_innate"))) {
             LocalPlayer localPlayer = Minecraft.getInstance().player;
-            if(localPlayer != null && PECPlayer.isValidWeapon(localPlayer.getMainHandItem())) {
+            if (localPlayer != null && PECPlayer.isValidWeapon(localPlayer.getMainHandItem())) {
                 event.setCanceled(true);
             }
         }
@@ -39,7 +39,7 @@ public class ClientForgeEvents {
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Pre event) {
         RenderSystem.enableBlend();
-        if(Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()){
+        if (Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
             CustomGuiRenderer.renderSkillPoints(event.getGuiGraphics(), event.getWindow(), event.getPartialTick());
         }
         RenderSystem.disableBlend();
@@ -48,7 +48,7 @@ public class ClientForgeEvents {
     @SubscribeEvent
     public static void onUpdateCompositeLayer(UpdatePlayerMotionEvent.CompositeLayer event) {
         ItemStack itemStack = event.getPlayerPatch().getOriginal().getMainHandItem();
-        if(itemStack.is(ModItems.TIDAL_CLAWS.get()) && event.getPlayerPatch().getOriginal().isUsingItem()) {
+        if (itemStack.is(ModItems.TIDAL_CLAWS.get()) && event.getPlayerPatch().getOriginal().isUsingItem()) {
             event.setMotion(LivingMotions.SHOT);
         }
     }
@@ -56,26 +56,26 @@ public class ClientForgeEvents {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-        if(localPlayerPatch != null) {
+        if (localPlayerPatch != null) {
             LocalPlayer localPlayer = localPlayerPatch.getOriginal();
             PECPlayer pecPlayer = PECCapabilityProvider.getPlayer(localPlayer);
             boolean currentLockOn = localPlayerPatch.isTargetLockedOn();
-            if(pecPlayer.isClientLockOn() != currentLockOn) {
+            if (pecPlayer.isClientLockOn() != currentLockOn) {
                 DataManager.isLockOn.put(localPlayer, currentLockOn);
-                pecPlayer.setClientLockOn(currentLockOn);;
+                pecPlayer.setClientLockOn(currentLockOn);
             }
 
 
             CustomGuiRenderer.update();
             int currentSkillPoint = DataManager.skillPoint.get(localPlayer).intValue();
-            if(pecPlayer.getLastSkillPoints() != currentSkillPoint) {
+            if (pecPlayer.getLastSkillPoints() != currentSkillPoint) {
                 pecPlayer.setLastSkillPoints(currentSkillPoint);
-                for(int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
-                    if(i < currentSkillPoint) {
-                        if(CustomGuiRenderer.isSkillPointEmpty(i)) {
+                for (int i = 0; i < PECPlayer.MAX_SKILL_POINTS; i++) {
+                    if (i < currentSkillPoint) {
+                        if (CustomGuiRenderer.isSkillPointEmpty(i)) {
                             CustomGuiRenderer.addPoint(i);
                         }
-                    } else if(!CustomGuiRenderer.isSkillPointEmpty(i)){
+                    } else if (!CustomGuiRenderer.isSkillPointEmpty(i)) {
                         CustomGuiRenderer.remove(i);
                     }
                 }

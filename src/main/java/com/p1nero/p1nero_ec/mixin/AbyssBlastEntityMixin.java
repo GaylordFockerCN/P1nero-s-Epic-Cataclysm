@@ -16,31 +16,36 @@ import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 @Mixin(Abyss_Blast_Entity.class)
 public abstract class AbyssBlastEntityMixin extends Entity {
 
-    @Shadow(remap = false) public LivingEntity caster;
+    @Shadow(remap = false)
+    public LivingEntity caster;
 
-    @Shadow(remap = false) public float renderYaw;
+    @Shadow(remap = false)
+    public float renderYaw;
 
-    @Shadow(remap = false) public float renderPitch;
+    @Shadow(remap = false)
+    public float renderPitch;
+    @Shadow(remap = false)
+    public double endPosX;
+    @Shadow(remap = false)
+    public double endPosZ;
+    @Shadow(remap = false)
+    public double endPosY;
 
     public AbyssBlastEntityMixin(EntityType<?> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }
 
-    @Shadow(remap = false) public abstract float getYaw();
+    @Shadow(remap = false)
+    public abstract float getYaw();
 
-    @Shadow(remap = false) public abstract float getPitch();
-
-    @Shadow(remap = false) public double endPosX;
-
-    @Shadow(remap = false) public double endPosZ;
-
-    @Shadow(remap = false) public double endPosY;
+    @Shadow(remap = false)
+    public abstract float getPitch();
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void pec$tick(CallbackInfo ci) {
         if (this.caster != null) {
             PlayerPatch<?> playerPatch = EpicFightCapabilities.getEntityPatch(this.caster, PlayerPatch.class);
-            if(playerPatch != null) {
+            if (playerPatch != null) {
                 this.renderYaw = this.getYaw();
                 this.renderPitch = this.getPitch();
             }
@@ -49,9 +54,9 @@ public abstract class AbyssBlastEntityMixin extends Entity {
 
     @Inject(method = "calculateEndPos", at = @At("HEAD"), cancellable = true, remap = false)
     private void pec$calculateEndPos(CallbackInfo ci) {
-        this.endPosX = this.getX() + (double)50.0F * Math.cos(this.getYaw()) * Math.cos(this.getPitch());
-        this.endPosZ = this.getZ() + (double)50.0F * Math.sin(this.getYaw()) * Math.cos(this.getPitch());
-        this.endPosY = this.getY() + (double)50.0F * Math.sin(this.getPitch());
+        this.endPosX = this.getX() + (double) 50.0F * Math.cos(this.getYaw()) * Math.cos(this.getPitch());
+        this.endPosZ = this.getZ() + (double) 50.0F * Math.sin(this.getYaw()) * Math.cos(this.getPitch());
+        this.endPosY = this.getY() + (double) 50.0F * Math.sin(this.getPitch());
         ci.cancel();
     }
 

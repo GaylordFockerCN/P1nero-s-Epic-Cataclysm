@@ -9,9 +9,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public final class PECSounds {
 
-	public static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, PECMod.MOD_ID);
-	public static final RegistryObject<SoundEvent> GAIN_ABILITY_POINTS = createEvent("gain_ability_points");
-	private static RegistryObject<SoundEvent> createEvent(String sound) {
-		return REGISTRY.register(sound, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, sound)));
-	}
+    public static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, PECMod.MOD_ID);
+    public static final RegistryObject<SoundEvent> GAIN_ABILITY_POINTS = createEvent("gain_ability_points");
+
+    private static RegistryObject<SoundEvent> createEvent(String sound) {
+        return REGISTRY.register(sound, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, sound)));
+    }
 }

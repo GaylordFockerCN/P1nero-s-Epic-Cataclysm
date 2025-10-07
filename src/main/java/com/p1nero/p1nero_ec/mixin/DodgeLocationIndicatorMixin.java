@@ -28,16 +28,17 @@ import yesman.epicfight.world.entity.DodgeLocationIndicator;
 @Mixin(value = DodgeLocationIndicator.class)
 public abstract class DodgeLocationIndicatorMixin extends LivingEntity {
 
-    @Shadow(remap = false) private LivingEntityPatch<?> entitypatch;
+    @Shadow(remap = false)
+    private LivingEntityPatch<?> entitypatch;
 
     protected DodgeLocationIndicatorMixin(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
         super(p_20966_, p_20967_);
     }
 
     @Inject(method = "hurt", at = @At("HEAD"))
-    private void pec$hurt(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir){
-        if(this.entitypatch instanceof ServerPlayerPatch serverPlayerPatch) {
-            if(!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(serverPlayerPatch.getOriginal().getMainHandItem())) {
+    private void pec$hurt(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (this.entitypatch instanceof ServerPlayerPatch serverPlayerPatch) {
+            if (!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(serverPlayerPatch.getOriginal().getMainHandItem())) {
                 return;
             }
             PECPlayer.addSkillPoint(serverPlayerPatch.getOriginal());

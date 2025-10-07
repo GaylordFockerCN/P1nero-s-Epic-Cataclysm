@@ -8,13 +8,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
 public record SyncPECPlayerPacket(CompoundTag data) implements BasePacket {
+    public static SyncPECPlayerPacket decode(FriendlyByteBuf buf) {
+        return new SyncPECPlayerPacket(buf.readNbt());
+    }
+
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeNbt(data);
-    }
-
-    public static SyncPECPlayerPacket decode(FriendlyByteBuf buf) {
-        return new SyncPECPlayerPacket(buf.readNbt());
     }
 
     @Override

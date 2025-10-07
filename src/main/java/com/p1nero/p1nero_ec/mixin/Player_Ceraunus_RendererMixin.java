@@ -27,20 +27,25 @@ import yesman.epicfight.gameasset.Armatures;
 @Mixin(Player_Ceraunus_Renderer.class)
 public abstract class Player_Ceraunus_RendererMixin {
 
-    @Shadow(remap = false) @Final private Ceraunus_Model model;
-
-    @Shadow(remap = false) protected abstract Vec3 getPositionOfPriorMob(Entity mob, float partialTicks);
-
-    @Shadow(remap = false) public abstract ResourceLocation getTextureLocation(Player_Ceraunus_Entity entity);
-
-    @Shadow(remap = false) @Final private static ResourceLocation CHAIN_TEXTURE;
+    @Shadow(remap = false)
+    @Final
+    private static ResourceLocation CHAIN_TEXTURE;
+    @Shadow(remap = false)
+    @Final
+    private Ceraunus_Model model;
 
     @Shadow(remap = false)
     public static void renderChainCube(Vec3 to, PoseStack poseStack, VertexConsumer buffer, int packedLightIn, int setOverlay) {
     }
 
+    @Shadow(remap = false)
+    protected abstract Vec3 getPositionOfPriorMob(Entity mob, float partialTicks);
+
+    @Shadow(remap = false)
+    public abstract ResourceLocation getTextureLocation(Player_Ceraunus_Entity entity);
+
     @Inject(method = "render(Lcom/github/L_Ender/cataclysm/entity/projectile/Player_Ceraunus_Entity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At("HEAD"), remap = false, cancellable = true)
-    private void pec$render(Player_Ceraunus_Entity entity, float yaw, float tickDelta, PoseStack matrices, MultiBufferSource provider, int light, CallbackInfo ci){
+    private void pec$render(Player_Ceraunus_Entity entity, float yaw, float tickDelta, PoseStack matrices, MultiBufferSource provider, int light, CallbackInfo ci) {
         matrices.pushPose();
 
         float yRot = Mth.lerp(tickDelta, entity.yRotO, entity.getYRot());
@@ -50,7 +55,7 @@ public abstract class Player_Ceraunus_RendererMixin {
         matrices.mulPose(Axis.ZP.rotationDegrees(xRot + 90.0F));
 
         VertexConsumer vertexConsumer = provider.getBuffer(this.model.renderType(getTextureLocation(entity)));
-        model.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY,1,1,1,1);
+        model.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 
         matrices.popPose();
         Entity fromEntity = entity.getOwner();
@@ -63,7 +68,7 @@ public abstract class Player_Ceraunus_RendererMixin {
 
             Vec3 fromPos = getPositionOfPriorMob(fromEntity, tickDelta);
             LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-            if(localPlayerPatch != null) {
+            if (localPlayerPatch != null) {
                 fromPos = AvalonAnimationUtils.getJointWorldPos(localPlayerPatch, Armatures.BIPED.get().handL);
             }
             Vec3 chainTo = fromPos.subtract(entityPos);
