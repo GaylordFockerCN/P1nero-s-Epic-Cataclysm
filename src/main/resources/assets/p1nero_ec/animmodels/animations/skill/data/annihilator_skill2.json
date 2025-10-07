@@ -1,0 +1,28 @@
+{
+	"trail_effects": [
+		{
+			"start_time": 0.3,
+			"end_time": 0.9,
+			"fade_time": 2.2,
+			"begin_pos": [0.0, 0.3, 0.0],
+			"end_pos": [0.0, 0.4, -18.2],
+			"lifetime": 25,
+			"joint": "Tool_L",
+			"item_skin_hand": "off_hand",
+			"texture_path": "efn:textures/trail/trail2.png",
+			"particle_type": "efn:bloom_trail"
+		},
+		{
+			"start_time": 0.3,
+			"end_time": 0.9,
+			"fade_time": 2.2,
+			"begin_pos": [0.0, 0.3, 0.0],
+			"end_pos": [0.0, 0.4, -18.2],
+			"lifetime":25,
+			"joint": "Tool_R",
+			"item_skin_hand": "main_hand",
+			"texture_path": "efn:textures/trail/trail1.png",
+			"particle_type": "efn:bloom_trail"
+		}
+	]
+}

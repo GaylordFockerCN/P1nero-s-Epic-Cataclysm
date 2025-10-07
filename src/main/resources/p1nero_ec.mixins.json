@@ -16,6 +16,8 @@
     "InfernalForgeMixin",
     "Soul_RenderMixin",
     "TakeDamageEventAttackMixin",
+    "TheAnnihilatorClientMixin",
+    "TheAnnihilatorMixin",
     "TidalClawsMixin"
   ],
   "client": [

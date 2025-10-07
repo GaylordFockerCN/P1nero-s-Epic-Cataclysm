@@ -12,7 +12,6 @@ import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
-import com.hm.efn.gameasset.EFNAnimations;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
@@ -87,11 +86,13 @@ import java.util.Set;
 import static com.hm.efn.gameasset.animations.EFNClawAnimations_N.CLAW_AUTO3;
 import static com.hm.efn.gameasset.animations.EFNDualSwordAnimations.DUAL_SWORD_AUTO_3;
 import static com.hm.efn.gameasset.animations.EFNDualSwordAnimations.DUAL_SWORD_AUTO_4;
+import static com.hm.efn.gameasset.animations.EFNExsiliumgladiusAnimations.EXSILIUMGLADIUS_ABBB_HIT;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
+import static com.p1nero.p1nero_ec.utils.AxeBladeInvoker.*;
 import static com.p1nero.p1nero_ec.utils.VoidEffectInvoker.createForwardVoidRuneCluster;
-import static yesman.epicfight.api.animation.types.DodgeAnimation.DODGEABLE_SOURCE_VALIDATOR;
+import static java.lang.Integer.MAX_VALUE;
 import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -107,6 +108,8 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO3;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO4;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_1;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_2;
 
     public static AnimationManager.AnimationAccessor<StaticAnimation> BEDIVERE_IDLE;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO1;
@@ -654,17 +657,283 @@ public class PECAnimations {
                             .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
                     );
-            ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto3",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.8F,1
+            ANNIHILATOR_AUTO3 = builder.nextAccessor("combat/annihilator_auto3",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.8F,1
                             , createSimplePhase(19,27,34, InteractionHand.MAIN_HAND,1.1F,1.5F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_3))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
                             .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.4F, (entityPatch, self, params) -> {
+                                entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                createForwardAxeBlade(caster);
+                            }, AnimationEvent.Side.BOTH))
                     );
             ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto4",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
                             , createSimplePhase(24,33,43, InteractionHand.MAIN_HAND,1.2F,1.2F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_4))
                             .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
-                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
                             .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.45F, (entitypatch, self, params) ->
+                                    {entitypatch.playSound(EpicFightSounds.WHOOSH_SHARP.get(),1,1,1);}, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.45F, (entityPatch, self, params) -> {
+                                entityPatch.getOriginal().level();
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                createClawAxeBlades(caster);
+                            }, AnimationEvent.Side.BOTH))
+                    );
+            ANNIHILATOR_SKILL_1 = builder.nextAccessor("skill/annihilator_skill1", accessor -> new AvalonAttackAnimation(0.15F,accessor,Armatures.BIPED,1F,1
+                            , createSimplePhase(31,42,47, InteractionHand.MAIN_HAND,1.0F,1F,
+                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolR, null),
+                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().toolL, null)))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) ->
+                                    {entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(),1,1,1);}, AnimationEvent.Side.SERVER),
+                                    AvalonEventUtils.simpleGroundSplit(46,2,0,0,0,4,true),
+                            AvalonEventUtils.simpleCameraShake(46,12,5,5,5),
+                            AnimationEvent.InTimeEvent.create(0.73F, (entitypatch, self, params) -> {
+                                if (!entitypatch.getOriginal().level().isClientSide()) {
+                                    LivingEntity attacker = entitypatch.getOriginal();
+                                    ServerLevel level = (ServerLevel) attacker.level();
+                                    // 冲击波参数
+                                    double centerX = attacker.getX();
+                                    double centerY = attacker.getY(); // 脚底位置
+                                    double centerZ = attacker.getZ();
+                                    double baseRadius = 8.0; // 基础半径
+                                    double maxRadius = 15.0; // 最大半径
+                                    int waveCount = 3; // 冲击波层数
+                                    int particlesPerWave = 80; // 每层粒子数
+                                    double speed = 0.4; // 粒子速度
+                                    // 生成多层冲击波
+                                    for (int wave = 0; wave < waveCount; wave++) {
+                                        double radius = baseRadius + (maxRadius - baseRadius) * wave / (waveCount - 1);
+                                        for (int i = 0; i < particlesPerWave; i++) {
+                                            double angle = 2 * Math.PI * i / particlesPerWave;
+                                            double randomOffset = 0.3 * (level.random.nextDouble() - 0.5);
+                                            double xOffset = radius * Math.cos(angle) + randomOffset;
+                                            double zOffset = radius * Math.sin(angle) + randomOffset;
+                                            double motionX = xOffset * speed / radius;
+                                            double motionZ = zOffset * speed / radius;
+                                            //高度变化
+                                            double yOffset = 0.5 * Math.sin(angle * 2 + wave * 0.5);
+                                            level.sendParticles(
+                                                    ModParticle.PHANTOM_WING_FLAME.get(),
+                                                    centerX + xOffset,
+                                                    centerY + 0.1 + yOffset,
+                                                    centerZ + zOffset,
+                                                    1,
+                                                    motionX,
+                                                    0.05,
+                                                    motionZ,
+                                                    0.8
+                                            );
+                                        }
+                                    }
+                                    // 中心爆炸效果
+                                    level.sendParticles(
+                                            ModParticle.SOUL_LAVA.get(),
+                                            centerX,
+                                            centerY + 0.5,
+                                            centerZ,
+                                            50,
+                                            1.5, 0.5, 1.5,
+                                            0.7
+                                    );
+                                }
+                            }, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.73F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        createRadialAxeBlades(caster);
+                                    }, AnimationEvent.Side.BOTH))
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
+                    );
+            ANNIHILATOR_SKILL_2 =
+                    builder.nextAccessor("skill/annihilator_skill2",accessor -> new AvalonAttackAnimation(0.15F,accessor,Armatures.BIPED,1F,1
+                            , createSimplePhase(32,42,47, InteractionHand.MAIN_HAND,1.0F,1F,
+                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().rootJoint, EXSILIUMGLADIUS_ABBB_HIT),
+                            AttackAnimation.JointColliderPair.of(Armatures.BIPED.get().rootJoint, EXSILIUMGLADIUS_ABBB_HIT)))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, ModSounds.MALEDICTUS_MACE_SWING.get())
+                            .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.setter(MAX_VALUE))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) ->
+                                    {entitypatch.playSound(ModSounds.MALEDICTUS_SHORT_ROAR.get(),1,1,1);}, AnimationEvent.Side.SERVER),
+                                    AvalonEventUtils.simpleGroundSplit(37,2,0,0,0,3,true),
+                                    AvalonEventUtils.simpleGroundSplit(37,6,0,0,0,2,true),
+                                    AvalonEventUtils.simpleGroundSplit(37,10,0,0,0,2,true),
+                                    AvalonEventUtils.simpleGroundSplit(37,14,0,0,0,2,true),
+                                    AvalonEventUtils.simpleCameraShake(37,12,5,5,5),
+                                    AnimationEvent.InTimeEvent.create(0.55F, (entitypatch, self, params) -> {
+                                        if (!entitypatch.getOriginal().level().isClientSide()) {
+                                            LivingEntity attacker = entitypatch.getOriginal();
+                                            ServerLevel level = (ServerLevel) attacker.level();
+                                            Vec3 lookVec = attacker.getLookAngle(); // 获取玩家朝向向量
+
+                                            double centerX = attacker.getX();
+                                            double centerY = attacker.getY() + 0.5; // 调整为腰部高度
+                                            double centerZ = attacker.getZ();
+
+                                            double baseRadius = 8.0;
+                                            double maxRadius = 15.0;
+                                            int waveCount = 3;
+                                            int particlesPerWave = 80;
+                                            double speed = 0.4;
+
+                                            for (int wave = 0; wave < waveCount; wave++) {
+                                                double radius = baseRadius + (maxRadius - baseRadius) * wave / (waveCount - 1);
+                                                for (int i = 0; i < particlesPerWave; i++) {
+                                                    double angle = 2 * Math.PI * i / particlesPerWave;
+                                                    double randomOffset = 0.3 * (level.random.nextDouble() - 0.5);
+                                                    double xOffset = radius * Math.cos(angle) + randomOffset;
+                                                    double zOffset = radius * Math.sin(angle) + randomOffset;
+                                                    double motionX = xOffset * speed / radius;
+                                                    double motionZ = zOffset * speed / radius;
+                                                    double yOffset = 0.5 * Math.sin(angle * 2 + wave * 0.5);
+
+                                                    level.sendParticles(
+                                                            ModParticle.SOUL_LAVA.get(),
+                                                            centerX + xOffset,
+                                                            centerY + yOffset,
+                                                            centerZ + zOffset,
+                                                            1,
+                                                            motionX,
+                                                            0.05,
+                                                            motionZ,
+                                                            0.8
+                                                    );
+                                                }
+                                            }
+
+                                            level.sendParticles(
+                                                    ModParticle.PHANTOM_WING_FLAME.get(),
+                                                    centerX,
+                                                    centerY,
+                                                    centerZ,
+                                                    50,
+                                                    1.5, 0.5, 1.5,
+                                                    0.7
+                                            );
+
+                                            int segments = 5; // 共5段(10格距离)
+                                            double height = 6.0;
+                                            int verticalParticles = 25; // 垂直粒子数
+                                            int ringParticles = 15; // 每段顶部环形粒子数
+
+                                            for (int seg = 1; seg <= segments; seg++) {
+                                                double forwardDist = seg * 2.0; // 每2格一段
+                                                double segX = centerX + lookVec.x * forwardDist;
+                                                double segZ = centerZ + lookVec.z * forwardDist;
+
+                                                // 3.1 垂直粒子柱
+                                                for (int i = 0; i < verticalParticles; i++) {
+                                                    double yPos = centerY + (height * i / verticalParticles);
+                                                    double randomSpread = 0.4 * (level.random.nextDouble() - 0.5);
+
+                                                    // 垂直于视角方向的扩散
+                                                    double spreadX = lookVec.z * randomSpread;
+                                                    double spreadZ = -lookVec.x * randomSpread;
+
+                                                    level.sendParticles(
+                                                            ModParticle.SOUL_LAVA.get(),
+                                                            segX + spreadX,
+                                                            yPos,
+                                                            segZ + spreadZ,
+                                                            1,
+                                                            0, 0.08, 0, // 粒子向上飘散
+                                                            0.6
+                                                    );
+                                                }
+
+                                                // 3.2 顶部环形效果
+                                                for (int i = 0; i < ringParticles; i++) {
+                                                    double angle = 2 * Math.PI * i / ringParticles;
+                                                    double radius = 1.5;
+                                                    double xOffset = radius * Math.cos(angle);
+                                                    double zOffset = radius * Math.sin(angle);
+
+                                                    // 使环形始终面向玩家
+                                                    double worldX = segX + lookVec.z * xOffset - lookVec.x * zOffset;
+                                                    double worldZ = segZ + lookVec.x * xOffset + lookVec.z * zOffset;
+
+                                                    level.sendParticles(
+                                                            ModParticle.PHANTOM_WING_FLAME.get(),
+                                                            worldX,
+                                                            centerY + height,
+                                                            worldZ,
+                                                            1,
+                                                            0, 0.15, 0, // 更强的上浮速度
+                                                            0.7
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    }, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.73F, (entitypatch, self, params) -> {
+                                        if (!entitypatch.getOriginal().level().isClientSide()) {
+                                            LivingEntity attacker = entitypatch.getOriginal();
+                                            ServerLevel level = (ServerLevel) attacker.level();
+                                            // 冲击波参数
+                                            double centerX = attacker.getX();
+                                            double centerY = attacker.getY(); // 脚底位置
+                                            double centerZ = attacker.getZ();
+                                            double baseRadius = 8.0; // 基础半径
+                                            double maxRadius = 15.0; // 最大半径
+                                            int waveCount = 3; // 冲击波层数
+                                            int particlesPerWave = 80; // 每层粒子数
+                                            double speed = 0.4; // 粒子速度
+                                            // 生成多层冲击波
+                                            for (int wave = 0; wave < waveCount; wave++) {
+                                                double radius = baseRadius + (maxRadius - baseRadius) * wave / (waveCount - 1);
+                                                for (int i = 0; i < particlesPerWave; i++) {
+                                                    double angle = 2 * Math.PI * i / particlesPerWave;
+                                                    double randomOffset = 0.3 * (level.random.nextDouble() - 0.5);
+                                                    double xOffset = radius * Math.cos(angle) + randomOffset;
+                                                    double zOffset = radius * Math.sin(angle) + randomOffset;
+                                                    double motionX = xOffset * speed / radius;
+                                                    double motionZ = zOffset * speed / radius;
+                                                    //高度变化
+                                                    double yOffset = 0.5 * Math.sin(angle * 2 + wave * 0.5);
+                                                    level.sendParticles(
+                                                            ModParticle.PHANTOM_WING_FLAME.get(),
+                                                            centerX + xOffset,
+                                                            centerY + 0.1 + yOffset,
+                                                            centerZ + zOffset,
+                                                            1,
+                                                            motionX,
+                                                            0.05,
+                                                            motionZ,
+                                                            0.8
+                                                    );
+                                                }
+                                            }
+                                            // 中心爆炸效果
+                                            level.sendParticles(
+                                                    ModParticle.SOUL_LAVA.get(),
+                                                    centerX,
+                                                    centerY + 0.5,
+                                                    centerZ,
+                                                    50,
+                                                    1.5, 0.5, 1.5,
+                                                    0.7
+                                            );
+                                        }
+                                    }, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.73F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        createFiveClawAxeBlades(caster);
+                                    }, AnimationEvent.Side.BOTH)
+                            )
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
                     );
 
             INFERNAL_SKILL1 = builder.nextAccessor("skill/infernal_skill1", (accessor) -> new AttackAnimation(0.15F, accessor, Armatures.BIPED,

@@ -113,11 +113,12 @@ public class PECWeaponPresets {
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SNEAK, PECAnimations.BEDIVERE_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.SWIM, PECAnimations.BEDIVERE_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FLOAT, PECAnimations.BEDIVERE_IDLE)
-                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FALL, PECAnimations.BEDIVERE_IDLE);
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.FALL, PECAnimations.BEDIVERE_IDLE)
+                .comboCancel((style) -> false);
         return builder;
     };
 
-    public static final Function<Item, CapabilityItem.Builder> THE_ANNIHILATOR = (item) -> {
+    public static final Function<Item, CapabilityItem.Builder> DUAL_ANNIHILATOR = (item) -> {
         WeaponCapability.Builder builder = WeaponCapability.builder()
                 .category(CapabilityItem.WeaponCategories.UCHIGATANA)
                 .swingSound(EpicFightSounds.WHOOSH.get())
@@ -125,12 +126,19 @@ public class PECWeaponPresets {
                 .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
                 .collider(ColliderPreset.UCHIGATANA)
                 .canBePlacedOffhand(false)
-                .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.ANNIHILATOR_AUTO1, PECAnimations.ANNIHILATOR_AUTO2, PECAnimations.ANNIHILATOR_AUTO3, PECAnimations.ANNIHILATOR_AUTO4, EFNDualSwordAnimations.NF_DUAL_DASH, EFNDualSwordAnimations.NF_DUAL_AIRSLASH)
+                .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
+                        PECAnimations.ANNIHILATOR_AUTO1,
+                        PECAnimations.ANNIHILATOR_AUTO2,
+                        PECAnimations.ANNIHILATOR_AUTO3,
+                        PECAnimations.ANNIHILATOR_AUTO4,
+                        EFNDualSwordAnimations.NF_DUAL_DASH,
+                        EFNDualSwordAnimations.NF_DUAL_AIRSLASH)
                 .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemstack) -> PECSkills.ANNIHILATOR_INNATE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SWORD_DUAL_GUARD)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNDualSwordAnimations.NF_DUAL_IDLE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNDualSwordAnimations.NF_DUAL_WALK)
-                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNDualSwordAnimations.NF_DUAL_RUN);
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNDualSwordAnimations.NF_DUAL_RUN)
+                .comboCancel((style) -> false);
         return builder;
     };
 
@@ -201,7 +209,7 @@ public class PECWeaponPresets {
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "ceraunus"), CERAUNUS);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "infernal_forge"), INFERNAL_FORGE);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "gauntlet_of_guard"), GAUNTLET_OF_GUARD);
-        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_annihilator"), THE_ANNIHILATOR);
+        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "dual_annihilator"), DUAL_ANNIHILATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "soul_render"), SOUL_RENDER);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_incinerator"), THE_INCINERATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "wrath_of_the_desert"), WRATH_OF_THE_DESERT);
