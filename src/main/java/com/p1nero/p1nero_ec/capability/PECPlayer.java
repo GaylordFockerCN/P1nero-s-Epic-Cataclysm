@@ -49,6 +49,7 @@ public class PECPlayer {
         return itemStack.is(ModItems.CERAUNUS.get())
                 || itemStack.is(ModItems.INFERNAL_FORGE.get())
                 || itemStack.is(ModItems.GAUNTLET_OF_GUARD.get())
+                || itemStack.is(ModItems.THE_ANNIHILATOR.get())
                 || itemStack.is(ModItems.THE_INCINERATOR.get())
                 || itemStack.is(ModItems.SOUL_RENDER.get())
                 || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())

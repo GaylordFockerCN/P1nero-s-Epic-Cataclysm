@@ -12,6 +12,7 @@ import com.github.L_Ender.cataclysm.init.*;
 import com.github.L_Ender.cataclysm.items.Ceraunus;
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
+import com.hm.efn.gameasset.EFNAnimations;
 import com.hm.efn.gameasset.animations.EFNGreatSwordAnimations;
 import com.hm.efn.registries.EFNMobEffectRegistry;
 import com.hm.efn.util.EffectEntityInvoker;
@@ -84,10 +85,13 @@ import java.util.List;
 import java.util.Set;
 
 import static com.hm.efn.gameasset.animations.EFNClawAnimations_N.CLAW_AUTO3;
+import static com.hm.efn.gameasset.animations.EFNDualSwordAnimations.DUAL_SWORD_AUTO_3;
+import static com.hm.efn.gameasset.animations.EFNDualSwordAnimations.DUAL_SWORD_AUTO_4;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 import static com.p1nero.p1nero_ec.utils.VoidEffectInvoker.createForwardVoidRuneCluster;
+import static yesman.epicfight.api.animation.types.DodgeAnimation.DODGEABLE_SOURCE_VALIDATOR;
 import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -98,6 +102,11 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_3;
 
     public static AnimationManager.AnimationAccessor<DashAttackAnimation> INFERNAL_AUTO3;
+
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO1;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO2;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO3;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO4;
 
     public static AnimationManager.AnimationAccessor<StaticAnimation> BEDIVERE_IDLE;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO1;
@@ -632,6 +641,31 @@ public class PECAnimations {
                                         createMiniForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
                                     }, AnimationEvent.Side.BOTH))
             );
+
+            ANNIHILATOR_AUTO1 = builder.nextAccessor("combat/annihilator_auto1",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
+                            , createSimplePhase(15,21,24, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolL,null)
+                            , createSimplePhase(25,31,36, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolR,null))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    );
+            ANNIHILATOR_AUTO2 = builder.nextAccessor("combat/annihilator_auto2",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
+                            , createSimplePhase(16,22,25, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolR,null)
+                            , createSimplePhase(25,31,36, InteractionHand.MAIN_HAND,0.5F,1F,Armatures.BIPED.get().toolL,null))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    );
+            ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto3",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.8F,1
+                            , createSimplePhase(19,27,34, InteractionHand.MAIN_HAND,1.1F,1.5F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_3))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    );
+            ANNIHILATOR_AUTO4 = builder.nextAccessor("combat/annihilator_auto4",accessor -> new AvalonAttackAnimation(0.1F,accessor,Armatures.BIPED,0.7F,1
+                            , createSimplePhase(24,33,43, InteractionHand.MAIN_HAND,1.2F,1.2F,Armatures.BIPED.get().rootJoint, DUAL_SWORD_AUTO_4))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.SWING_SOUND, EpicFightSounds.WHOOSH_SHARP.get())
+                            .addProperty(AnimationProperty.AttackPhaseProperty.STUN_TYPE, StunType.HOLD)
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1F))
+                    );
 
             INFERNAL_SKILL1 = builder.nextAccessor("skill/infernal_skill1", (accessor) -> new AttackAnimation(0.15F, accessor, Armatures.BIPED,
                     new AttackAnimation.Phase(0.0F, 0.0F, 0.0F, 0.2F, 0.45F, 0.45F, Armatures.BIPED.get().rootJoint, ColliderPreset.STEEL_WHIRLWIND),

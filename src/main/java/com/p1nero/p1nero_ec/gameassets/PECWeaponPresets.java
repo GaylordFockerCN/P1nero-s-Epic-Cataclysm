@@ -7,10 +7,7 @@ import com.p1nero.p1nero_ec.capability.item.CursedBowCapability;
 import com.p1nero.p1nero_ec.capability.item.TidalClawCapability;
 import com.p1nero.p1nero_ec.capability.item.WrathOfTheDesertCapability;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.Tiers;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import yesman.epicfight.api.animation.LivingMotions;
@@ -20,10 +17,8 @@ import yesman.epicfight.api.collider.OBBCollider;
 import yesman.epicfight.api.forgeevent.WeaponCapabilityPresetRegistryEvent;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.ColliderPreset;
-import yesman.epicfight.gameasset.EpicFightSkills;
 import yesman.epicfight.gameasset.EpicFightSounds;
 import yesman.epicfight.particle.EpicFightParticles;
-import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.item.CapabilityItem;
 import yesman.epicfight.world.capabilities.item.RangedWeaponCapability;
 import yesman.epicfight.world.capabilities.item.WeaponCapability;
@@ -122,6 +117,23 @@ public class PECWeaponPresets {
         return builder;
     };
 
+    public static final Function<Item, CapabilityItem.Builder> THE_ANNIHILATOR = (item) -> {
+        WeaponCapability.Builder builder = WeaponCapability.builder()
+                .category(CapabilityItem.WeaponCategories.UCHIGATANA)
+                .swingSound(EpicFightSounds.WHOOSH.get())
+                .hitSound(EpicFightSounds.BLUNT_HIT.get())
+                .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
+                .collider(ColliderPreset.UCHIGATANA)
+                .canBePlacedOffhand(false)
+                .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.ANNIHILATOR_AUTO1, PECAnimations.ANNIHILATOR_AUTO2, PECAnimations.ANNIHILATOR_AUTO3, PECAnimations.ANNIHILATOR_AUTO4, EFNDualSwordAnimations.NF_DUAL_DASH, EFNDualSwordAnimations.NF_DUAL_AIRSLASH)
+                .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemstack) -> PECSkills.ANNIHILATOR_INNATE)
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SWORD_DUAL_GUARD)
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, EFNDualSwordAnimations.NF_DUAL_IDLE)
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, EFNDualSwordAnimations.NF_DUAL_WALK)
+                .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, EFNDualSwordAnimations.NF_DUAL_RUN);
+        return builder;
+    };
+
     public static final Function<Item, CapabilityItem.Builder> SOUL_RENDER = (item) ->
             WeaponCapability.builder().category(CapabilityItem.WeaponCategories.SWORD)
                     .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
@@ -189,6 +201,7 @@ public class PECWeaponPresets {
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "ceraunus"), CERAUNUS);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "infernal_forge"), INFERNAL_FORGE);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "gauntlet_of_guard"), GAUNTLET_OF_GUARD);
+        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_annihilator"), THE_ANNIHILATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "soul_render"), SOUL_RENDER);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_incinerator"), THE_INCINERATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "wrath_of_the_desert"), WRATH_OF_THE_DESERT);

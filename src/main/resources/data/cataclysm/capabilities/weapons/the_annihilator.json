@@ -1,0 +1,11 @@
+{
+  "type": "p1nero_ec:the_annihilator",
+  "attributes": {
+    "common": {
+      "impact": 4.5,
+      "armor_negation":10.0,
+      "max_strikes":3,
+      "speed_bonus": 0.3
+    }
+  }
+}

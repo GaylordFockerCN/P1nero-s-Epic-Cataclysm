@@ -18,6 +18,7 @@ public class PECSkills {
     public static Skill SOUL_RENDER_INNATE;
     public static Skill TIDAL_CLAW_INNATE;
     public static Skill GAUNTLET_GUARD_INNATE;
+    public static Skill ANNIHILATOR_INNATE;
 
     @SubscribeEvent
     public static void buildSkills(SkillBuildEvent event) {
@@ -32,5 +33,6 @@ public class PECSkills {
         THE_INCINERATOR_INNATE = registryWorker.build("the_incinerator_innate", TheIncineratorInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         TIDAL_CLAW_INNATE = registryWorker.build("tidal_claw_innate", TidalClawsInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         GAUNTLET_GUARD_INNATE = registryWorker.build("gauntlet_guard_innate", GauntletGuardInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
+        ANNIHILATOR_INNATE = registryWorker.build("annihilator_innate", AnnihilatorInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
     }
 }
