@@ -13,6 +13,8 @@
   "skill.p1nero_ec.infernal_forge.desc3": "Press %s to leap forward and smash the ground with full force, erupting extreme lava energy for wide-range bombardment, consuming %d Skill Points",
   "skill.p1nero_ec.dual_annihilator.desc1": "Press %s to smash the ground forward with full force, summoning multi-directional AXE BLADE attacks, consuming %d Skill Points",
   "skill.p1nero_ec.dual_annihilator.desc2": "Press %s to perform a powerful upward slash forward, summoning wide-range claw-shaped AXE BLADE attacks, consuming %d Skill Points",
+  "skill.p1nero_ec.astrape.desc1": "Press %s to release an enhanced torrent forward, generating lightning strikes along the path and summoning Thunderfall Canglings, consuming %d Skill Points",
+  "skill.p1nero_ec.astrape.desc2": "Press %s to summon extremely wide-range lightning strikes and numerous Thunderfall Canglings at the target location, consuming %d Skill Points",
   "skill.p1nero_ec.gauntlet_of_guard.desc2": "Press %s to unleash rapid consecutive strikes forward while summoning void runes, consuming %d Skill Points",
   "skill.p1nero_ec.gauntlet_of_guard.desc3": "Press %s to leap forward and smash the ground with full force, summoning wide-range void runes and generating abyssal lasers, consuming %d Skill Points",
   "skill.p1nero_ec.soul_render.desc1": "Press %s to dash forward, leaving phantom halberds along the path, consuming %d Skill Points",

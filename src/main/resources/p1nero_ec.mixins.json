@@ -6,6 +6,8 @@
   "refmap": "p1nero_ec.refmap.json",
   "mixins": [
     "AbyssBlastEntityMixin",
+    "AstrapeClientMixin",
+    "AstrapeMixin",
     "CeraunusMixin",
     "DodgeLocationIndicatorMixin",
     "GauntletOfGuardClientMixin",

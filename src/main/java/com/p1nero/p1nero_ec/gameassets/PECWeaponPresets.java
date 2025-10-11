@@ -101,8 +101,16 @@ public class PECWeaponPresets {
                 .swingSound(EpicFightSounds.WHOOSH.get())
                 .hitSound(EpicFightSounds.BLUNT_HIT.get())
                 .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
+                .canBePlacedOffhand(false)
                 .collider(ColliderPreset.SWORD)
-                .newStyleCombo(CapabilityItem.Styles.TWO_HAND, PECAnimations.BEDIVERE_AUTO1, PECAnimations.BEDIVERE_AUTO2, PECAnimations.BEDIVERE_AUTO3, PECAnimations.BEDIVERE_AUTO4, PECAnimations.BEDIVERE_AUTO5, EFNClawAnimations_N.NF_CLAW_AUTO1, Animations.FIST_AIR_SLASH)
+                .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
+                        PECAnimations.BEDIVERE_AUTO1,
+                        PECAnimations.BEDIVERE_AUTO2,
+                        PECAnimations.BEDIVERE_AUTO3,
+                        PECAnimations.BEDIVERE_AUTO4,
+                        PECAnimations.BEDIVERE_AUTO5,
+                        EFNClawAnimations_N.NF_CLAW_AUTO1,
+                        Animations.FIST_AIR_SLASH)
                 .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemstack) -> PECSkills.GAUNTLET_GUARD_INNATE)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SWORD_DUAL_GUARD)
                 .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, PECAnimations.BEDIVERE_IDLE)
@@ -163,6 +171,28 @@ public class PECWeaponPresets {
                     .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, Animations.BIPED_RUN_SPEAR)
                     .comboCancel((style) -> false);
 
+    public static final Function<Item, CapabilityItem.Builder> ASTRAPE = (item) ->
+            WeaponCapability.builder().category(CapabilityItem.WeaponCategories.SWORD)
+                    .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
+                    .collider(new MultiOBBCollider(3, 0.7, 0.7, 1.3F, 0.0F, 0.0F, -1.3F))
+                    .swingSound(EpicFightSounds.WHOOSH_BIG.get())
+                    .hitSound(EpicFightSounds.BLADE_HIT.get())
+                    .hitParticle(EpicFightParticles.HIT_BLADE.get())
+                    .canBePlacedOffhand(false)
+                    .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.ASTRAPE_INNATE))
+                    .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
+                            Animations.SPEAR_TWOHAND_AUTO1,
+                            Animations.SPEAR_TWOHAND_AUTO2,
+                            PECAnimations.ASTRAPE_AUTO3,
+                            PECAnimations.ASTRAPE_DASH,
+                            Animations.SPEAR_TWOHAND_AIR_SLASH)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.BLOCK, Animations.SPEAR_GUARD)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.IDLE, Animations.BIPED_HOLD_SPEAR)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.LANDING_RECOVERY, Animations.BIPED_HOLD_SPEAR)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.WALK, Animations.BIPED_WALK_SPEAR)
+                    .livingMotionModifier(CapabilityItem.Styles.TWO_HAND, LivingMotions.RUN, Animations.BIPED_RUN_SPEAR)
+                    .comboCancel((style) -> false);
+
     public static final Function<Item, CapabilityItem.Builder> THE_INCINERATOR = (item) ->
             WeaponCapability.builder().category(CapabilityItem.WeaponCategories.GREATSWORD)
                     .styleProvider((entityPatch) -> CapabilityItem.Styles.TWO_HAND)
@@ -211,6 +241,7 @@ public class PECWeaponPresets {
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "gauntlet_of_guard"), GAUNTLET_OF_GUARD);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "dual_annihilator"), DUAL_ANNIHILATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "soul_render"), SOUL_RENDER);
+        event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "astrape"), ASTRAPE);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "the_incinerator"), THE_INCINERATOR);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "wrath_of_the_desert"), WRATH_OF_THE_DESERT);
         event.getTypeEntry().put(ResourceLocation.fromNamespaceAndPath(PECMod.MOD_ID, "cursed_bow"), CURSED_BOW);

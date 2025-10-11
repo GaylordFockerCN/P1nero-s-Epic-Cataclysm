@@ -35,7 +35,7 @@ public class PECMod {
                     infernal_forge.class,
                     Gauntlet_of_Guard.class,
                     The_Annihilator.class
-                    );
+            );
 
         }
     }

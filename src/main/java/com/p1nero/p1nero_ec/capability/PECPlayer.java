@@ -34,6 +34,7 @@ public class PECPlayer {
                 || itemStack.is(ModItems.THE_ANNIHILATOR.get())
                 || itemStack.is(ModItems.THE_INCINERATOR.get())
                 || itemStack.is(ModItems.SOUL_RENDER.get())
+                || itemStack.is(ModItems.ASTRAPE.get())
                 || itemStack.is(ModItems.WRATH_OF_THE_DESERT.get())
                 || itemStack.is(ModItems.TIDAL_CLAWS.get());
     }

@@ -16,6 +16,7 @@ public class PECSkills {
     public static Skill WRATH_OF_THE_DESERT_INNATE;
     public static Skill THE_INCINERATOR_INNATE;
     public static Skill SOUL_RENDER_INNATE;
+    public static Skill ASTRAPE_INNATE;
     public static Skill TIDAL_CLAW_INNATE;
     public static Skill GAUNTLET_GUARD_INNATE;
     public static Skill ANNIHILATOR_INNATE;
@@ -30,6 +31,7 @@ public class PECSkills {
         INFERNAL_INNATE = registryWorker.build("infernal_innate", InfernalForgeInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         WRATH_OF_THE_DESERT_INNATE = registryWorker.build("wrath_of_the_desert_innate", Wrath_of_the_desertInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         SOUL_RENDER_INNATE = registryWorker.build("soul_render_innate", SoulRenderInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
+        ASTRAPE_INNATE = registryWorker.build("astrape_innate", AstrapeInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         THE_INCINERATOR_INNATE = registryWorker.build("the_incinerator_innate", TheIncineratorInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         TIDAL_CLAW_INNATE = registryWorker.build("tidal_claw_innate", TidalClawsInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());
         GAUNTLET_GUARD_INNATE = registryWorker.build("gauntlet_guard_innate", GauntletGuardInnateSkill::new, PECWeaponInnateSkillBase.createBuilder());

@@ -27,7 +27,7 @@ public abstract class TakeDamageEventAttackMixin extends AbstractPlayerEvent<Ser
     @Inject(method = "setParried", at = @At("HEAD"), remap = false)
     private void pec$setParry(boolean parried, CallbackInfo ci) {
         if (!this.parried && parried) {
-            if(PECConfig.CUSTOM_CHARGE.get()) {
+            if (PECConfig.CUSTOM_CHARGE.get()) {
                 return;
             }
             if (!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(this.getPlayerPatch().getOriginal().getMainHandItem())) {

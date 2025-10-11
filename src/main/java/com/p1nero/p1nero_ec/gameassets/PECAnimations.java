@@ -25,6 +25,7 @@ import com.p1nero.p1nero_ec.PECMod;
 import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.utils.PECEffectConditionParticleTrail;
 import com.p1nero.p1nero_ec.utils.PECParticleEffectInvoker;
+import com.p1nero.p1nero_ec.utils.ScyllaEffectInvoker;
 import com.p1nero.p1nero_ec.utils.VoidEffectInvoker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -40,6 +41,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -98,6 +100,7 @@ import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GRO
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECAnimations {
     public static final Collider CERAUNUS_SKILL = new OBBCollider(1.7, 1.7, 1.7, 0.0, 0.0, 0.0);
+    public static final Collider ASTRAPE_SKILL = new OBBCollider(1, 1, 1.4, 0.0, 1.0, -0.5);
     public static final Collider INFERNAL_SKILL2_BOX = new OBBCollider(2, 2, 5.5, 0.0, 0.8, -4);
     public static final Collider INFERNAL_SKILL3_BOX = new OBBCollider(2.5, 2.5, 2.5, 0.0, 0.0, 0.0);
     public static final Collider BEDIVERE_1 = new OBBCollider(0.95, 0.95, 1, 0.0, 0.8, -0.8);
@@ -115,6 +118,10 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_AUTO4;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ANNIHILATOR_SKILL_2;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> ASTRAPE_AUTO3;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> ASTRAPE_DASH;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> ASTRAPE_SKILL1;
+    public static AnimationManager.AnimationAccessor<AttackAnimation> ASTRAPE_SKILL2;
     public static AnimationManager.AnimationAccessor<StaticAnimation> BEDIVERE_IDLE;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> BEDIVERE_AUTO2;
@@ -640,6 +647,116 @@ public class PECAnimations {
                                 caster.getLookAngle();
                                 createMiniForwardFlameJet(world, caster.getX(), caster.getY(), caster.getZ(), caster, caster.getYRot());
                             }, AnimationEvent.Side.BOTH))
+            );
+
+            ASTRAPE_AUTO3 = builder.nextAccessor("combat/astrape_auto3", (accessor) ->
+                    new AttackAnimation(0.05F, 0.0F, 0.5F, 0.6F, 0.95F, null, Armatures.BIPED.get().toolR, accessor, Armatures.BIPED)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.BLADE_RUSH_SKILL)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.HIT_SOUND, EpicFightSounds.BLADE_RUSH_FINISHER.get())
+                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 1F)
+                            .addProperty(AnimationProperty.StaticAnimationProperty.POSE_MODIFIER, Animations.ReusableSources.COMBO_ATTACK_DIRECTION_MODIFIER)
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.55F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createFanSpearBarrage(caster, 3, 5, 100.0f, 15.0f, 4.0f);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(0.35F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        entityPatch.playSound(SoundEvents.TRIDENT_RIPTIDE_2, 0, 0);
+                                        ScyllaEffectInvoker.createFanLightningStorms(caster, 3.5, 7, 120);
+                                    }, AnimationEvent.Side.BOTH))
+            );
+
+            ASTRAPE_DASH = builder.nextAccessor("combat/astrape_dash", (accessor) ->
+                    new AttackAnimation(0.05F, 0.2F, 0.35F, 1.0F, 1.2F, ASTRAPE_SKILL, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(10))
+                            .addProperty(AnimationProperty.ActionAnimationProperty.RESET_PLAYER_COMBO_COUNTER, false)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_BEGIN, MoveCoordFunctions.RAW_COORD)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.NO_GRAVITY_TIME, TimePairList.create(0.2F, 1.1F))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.4F))
+                            .addEvents(AnimationProperty.StaticAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(Animations.ReusableSources.RESTORE_BOUNDING_BOX, AnimationEvent.Side.BOTH))
+                            .addEvents(AnimationProperty.StaticAnimationProperty.TICK_EVENTS, AnimationEvent.SimpleEvent.create(Animations.ReusableSources.RESIZE_BOUNDING_BOX, AnimationEvent.Side.BOTH).params(EntityDimensions.scalable(0.6F, 1.0F)))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.05F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createForwardLightningStorm(caster, 0.5);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(1F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createForwardLightningStorm(caster, 1);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InPeriodEvent.create(0.35F, 1.0F, (entitypatch, animation, params) -> {
+                                        Vec3 pos = entitypatch.getOriginal().position();
+                                        for (int x = -1; x <= 1; x += 2) {
+                                            for (int z = -1; z <= 1; z += 2) {
+                                                Vec3 rand = new Vec3(Math.random() * x, Math.random(), Math.random() * z).normalize().scale(2.0D);
+                                                entitypatch.getOriginal().level().addParticle(EpicFightParticles.TSUNAMI_SPLASH.get(), pos.x + rand.x, pos.y + rand.y - 1.0D, pos.z + rand.z, rand.x * 0.1D, rand.y * 0.1D, rand.z * 0.1D);
+                                            }
+                                        }
+                                    }, AnimationEvent.Side.CLIENT))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.35F, (entitypatch, animation, params) -> {
+                                entitypatch.playSound(SoundEvents.TRIDENT_RIPTIDE_3, 0, 0);
+                            }, AnimationEvent.Side.CLIENT), AnimationEvent.InTimeEvent.create(0.35F, (entitypatch, animation, params) -> {
+                                entitypatch.setAirborneState(true);
+                            }, AnimationEvent.Side.SERVER))
+            );
+
+            ASTRAPE_SKILL1 = builder.nextAccessor("skill/astrape_skill_1", (accessor) ->
+                    new AttackAnimation(0.05F, 0.2F, 0.35F, 0.65F, 0.75F, ASTRAPE_SKILL, Armatures.BIPED.get().rootJoint, accessor, Armatures.BIPED)
+                            .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(10))
+                            .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_BEGIN, MoveCoordFunctions.RAW_COORD_WITH_X_ROT)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.COORD_SET_TICK, null)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.MOVE_VERTICAL, true)
+                            .addProperty(AnimationProperty.ActionAnimationProperty.NO_GRAVITY_TIME, TimePairList.create(0.15F, 0.85F))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.15F))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.POSE_MODIFIER, Animations.ReusableSources.ROOT_X_MODIFIER)
+                            .addEvents(AnimationProperty.StaticAnimationProperty.ON_END_EVENTS, AnimationEvent.SimpleEvent.create(Animations.ReusableSources.RESTORE_BOUNDING_BOX, AnimationEvent.Side.BOTH))
+                            .addEvents(AnimationProperty.StaticAnimationProperty.TICK_EVENTS, AnimationEvent.SimpleEvent.create(Animations.ReusableSources.RESIZE_BOUNDING_BOX, AnimationEvent.Side.BOTH).params(EntityDimensions.scalable(0.6F, 1.0F)))
+                            .addEvents(AnimationEvent.InPeriodEvent.create(0.3F, 0.65F, (entityPatch, self, params) -> {
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        ScyllaEffectInvoker.createFocusedSpearBeam(caster, 2, 35.0f);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InPeriodEvent.create(0F, 1F, (entityPatch, self, params) -> {
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        ScyllaEffectInvoker.createForwardLightningStorm(caster, 1);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InPeriodEvent.create(0.35F, 1.0F, (entitypatch, animation, params) -> {
+                                        Vec3 pos = entitypatch.getOriginal().position();
+
+                                        for (int x = -1; x <= 1; x += 2) {
+                                            for (int z = -1; z <= 1; z += 2) {
+                                                Vec3 rand = new Vec3(Math.random() * x, Math.random(), Math.random() * z).normalize().scale(2.0D);
+                                                entitypatch.getOriginal().level().addParticle(EpicFightParticles.TSUNAMI_SPLASH.get(), pos.x + rand.x, pos.y + rand.y - 1.0D, pos.z + rand.z, rand.x * 0.1D, rand.y * 0.1D, rand.z * 0.1D);
+                                            }
+                                        }
+                                    }, AnimationEvent.Side.CLIENT))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.35F, (entitypatch, animation, params) -> {
+                                entitypatch.playSound(SoundEvents.TRIDENT_RIPTIDE_3, 0, 0);
+                            }, AnimationEvent.Side.CLIENT), AnimationEvent.InTimeEvent.create(0.35F, (entitypatch, animation, params) -> {
+                                entitypatch.setAirborneState(true);
+                            }, AnimationEvent.Side.SERVER))
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
+            );
+
+            ASTRAPE_SKILL2 = builder.nextAccessor("skill/astrape_skill_2", (accessor) ->
+                    new AttackAnimation(0.15F, accessor, Armatures.BIPED,
+                            new AttackAnimation.Phase(0.0F, 0.0F, 0.3F, 0.36F, 1.0F, Float.MAX_VALUE, Armatures.BIPED.get().toolR, null),
+                            new AttackAnimation.Phase(InteractionHand.MAIN_HAND, Armatures.BIPED.get().rootJoint, null))
+                            .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(10))
+                            .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.25F))
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.35F, ScyllaEffectInvoker.SUMMON_THUNDER_UPGRADED, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, animation, params) -> {
+                                        entitypatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), 0, 0);
+                                    }, AnimationEvent.Side.CLIENT))
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
             ANNIHILATOR_AUTO1 = builder.nextAccessor("combat/annihilator_auto1", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 0.7F, 1

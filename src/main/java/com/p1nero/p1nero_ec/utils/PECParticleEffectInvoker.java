@@ -12,10 +12,8 @@ import net.minecraft.world.phys.Vec3;
 import yesman.epicfight.api.animation.AnimationPlayer;
 import yesman.epicfight.api.animation.Joint;
 import yesman.epicfight.api.animation.property.AnimationEvent;
-import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.utils.math.Vec3f;
 import yesman.epicfight.gameasset.Armatures;
-import yesman.epicfight.model.armature.HumanoidArmature;
 
 import static com.hm.efn.util.ParticleEffectInvoker.spawnCustomParticle;
 
