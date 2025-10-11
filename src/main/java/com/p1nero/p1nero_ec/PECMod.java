@@ -26,7 +26,17 @@ public class PECMod {
         bus.addListener(this::commonSetup);
         context.registerConfig(ModConfig.Type.COMMON, PECConfig.SPEC);
         if (EpicFightSharedConstants.isPhysicalClient()) {
-            registerWeaponCategorizedItemClasses(Tidal_Claws.class, Soul_Render.class, The_Incinerator.class, Ceraunus.class, Wrath_of_the_desert.class);
+            registerWeaponCategorizedItemClasses(
+                    Tidal_Claws.class,
+                    Soul_Render.class,
+                    The_Incinerator.class,
+                    Ceraunus.class,
+                    Wrath_of_the_desert.class,
+                    infernal_forge.class,
+                    Gauntlet_of_Guard.class,
+                    The_Annihilator.class
+                    );
+
         }
     }
 

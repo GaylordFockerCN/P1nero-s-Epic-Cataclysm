@@ -46,23 +46,6 @@ public class ScanAttackAnimation extends AttackAnimation {
         super(transitionTime, antic, preDelay, contact, recovery, hand, collider, colliderJoint, accessor, armature);
     }
 
-    @Nullable
-    public static LivingEntity getTarget(LivingEntityPatch<?> entityPatch) {
-        if (entityPatch.getTarget() != null) {
-            return entityPatch.getTarget();
-        }
-        return getNearestScannedTarget(entityPatch);
-    }
-
-    @Nullable
-    public static LivingEntity getNearestScannedTarget(LivingEntityPatch<?> entityPatch) {
-        if (entityPatch.getCurrentlyAttackTriedEntities().isEmpty()) {
-            return null;
-        }
-        Entity entity = entityPatch.getCurrentlyAttackTriedEntities().get(0);
-        return entity instanceof LivingEntity living ? living : null;
-    }
-
     @Override
     public void begin(LivingEntityPatch<?> entitypatch) {
         entitypatch.removeHurtEntities();
@@ -70,19 +53,9 @@ public class ScanAttackAnimation extends AttackAnimation {
     }
 
     @Override
-    protected Vec3 getCoordVector(LivingEntityPatch<?> entitypatch, AssetAccessor<? extends DynamicAnimation> dynamicAnimation) {
-        Vec3 vec3 = super.getCoordVector(entitypatch, dynamicAnimation);
-        if (entitypatch.shouldBlockMoving() && this.getProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE).orElse(false)) {
-            vec3 = vec3.scale(0.0F);
-        }
-
-        return vec3;
-    }
-
-    @Override
     protected void attackTick(LivingEntityPatch<?> entityPatch, AssetAccessor<? extends DynamicAnimation> animation) {
         AnimationPlayer player = entityPatch.getAnimator().getPlayerFor(this.getAccessor());
-        if (player == null) {
+        if(player == null) {
             return;
         }
         float prevElapsedTime = player.getPrevElapsedTime();
@@ -92,7 +65,7 @@ public class ScanAttackAnimation extends AttackAnimation {
         Phase phase = this.getPhaseByTime(animation.get().isLinkAnimation() ? 0.0F : elapsedTime);
 
         LivingEntity target = entityPatch.getTarget();
-        if (target == null) {
+        if(target == null) {
             target = getNearestScannedTarget(entityPatch);
         }
         if (target != null && elapsedTime < phase.contact) {
@@ -113,6 +86,33 @@ public class ScanAttackAnimation extends AttackAnimation {
 
     }
 
+    @Override
+    protected Vec3 getCoordVector(LivingEntityPatch<?> entitypatch, AssetAccessor<? extends DynamicAnimation> dynamicAnimation) {
+        Vec3 vec3 = super.getCoordVector(entitypatch, dynamicAnimation);
+        if (entitypatch.shouldBlockMoving() && this.getProperty(AnimationProperty.ActionAnimationProperty.CANCELABLE_MOVE).orElse(false)) {
+            vec3 = vec3.scale(0.0F);
+        }
+
+        return vec3;
+    }
+
+    @Nullable
+    public static LivingEntity getTarget(LivingEntityPatch<?> entityPatch) {
+        if(entityPatch.getTarget() != null) {
+            return entityPatch.getTarget();
+        }
+        return getNearestScannedTarget(entityPatch);
+    }
+
+    @Nullable
+    public static LivingEntity getNearestScannedTarget(LivingEntityPatch<?> entityPatch) {
+        if(entityPatch.getCurrentlyAttackTriedEntities().isEmpty()) {
+            return null;
+        }
+        Entity entity = entityPatch.getCurrentlyAttackTriedEntities().get(0);
+        return entity instanceof LivingEntity living ? living : null;
+    }
+
     protected void searchNearestEntity(LivingEntityPatch<?> entityPatch, float prevElapsedTime, float elapsedTime, EntityState prevState, EntityState state, Phase phase) {
         LivingEntity entity = entityPatch.getOriginal();
         float prevPoseTime = prevState.attacking() ? prevElapsedTime : phase.preDelay;
@@ -120,7 +120,7 @@ public class ScanAttackAnimation extends AttackAnimation {
         List<Entity> list = this.getPhaseByTime(elapsedTime).getCollidingEntities(entityPatch, this, prevPoseTime, poseTime, this.getPlaySpeed(entityPatch, this));
         if (!list.isEmpty()) {
             HitEntityList hitEntities = new HitEntityList(entityPatch, list, phase.getProperty(AnimationProperty.AttackPhaseProperty.HIT_PRIORITY).orElse(HitEntityList.Priority.DISTANCE));
-            while (hitEntities.next()) {
+            while(hitEntities.next()) {
                 Entity target = hitEntities.getEntity();
                 LivingEntity trueEntity = this.getTrueEntity(target);
                 if (trueEntity != null && trueEntity.isAlive() && !entityPatch.getCurrentlyAttackTriedEntities().contains(trueEntity) && !entityPatch.isTargetInvulnerable(target) && (target instanceof LivingEntity || target instanceof PartEntity) && entity.hasLineOfSight(target)) {

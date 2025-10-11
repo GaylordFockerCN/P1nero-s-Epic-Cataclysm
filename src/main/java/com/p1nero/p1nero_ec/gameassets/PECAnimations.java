@@ -2202,7 +2202,7 @@ public class PECAnimations {
     public static AnimationEvent.E0 shootPhantomArrow(float damageRate, boolean shouldClear) {
         return (entityPatch, animation, params) -> {
             LivingEntity living = entityPatch.getOriginal();
-            LivingEntity target = entityPatch.getTarget();
+            LivingEntity target = ScanAttackAnimation.getTarget(entityPatch);
             if (target == null) {
                 if (!entityPatch.getCurrentlyAttackTriedEntities().isEmpty() && entityPatch.getCurrentlyAttackTriedEntities().get(0) instanceof LivingEntity living1) {
                     target = living1;
@@ -2284,7 +2284,7 @@ public class PECAnimations {
     public static AnimationEvent.E0 shootCursedSandstorm(float damageRate, boolean shouldClear) {
         return (entityPatch, animation, params) -> {
             LivingEntity self = entityPatch.getOriginal();
-            LivingEntity target = entityPatch.getTarget();
+            LivingEntity target = ScanAttackAnimation.getTarget(entityPatch);
             if (target == null) {
                 if (!entityPatch.getCurrentlyAttackTriedEntities().isEmpty() && entityPatch.getCurrentlyAttackTriedEntities().get(0) instanceof LivingEntity living1) {
                     target = living1;

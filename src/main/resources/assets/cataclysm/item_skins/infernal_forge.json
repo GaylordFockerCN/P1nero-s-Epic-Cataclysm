@@ -1,0 +1,11 @@
+{
+  "transforms": {
+    "mainhand": {
+      "Tool_R": {
+        "translation": [0.0, 0.0, -0.9],
+        "rotation": [-90.0, 0.0, 0.0],
+        "scale": [1, 1, 1]
+      }
+    }
+  }
+}
