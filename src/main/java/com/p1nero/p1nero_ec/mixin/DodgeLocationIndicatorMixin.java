@@ -38,6 +38,9 @@ public abstract class DodgeLocationIndicatorMixin extends LivingEntity {
     @Inject(method = "hurt", at = @At("HEAD"))
     private void pec$hurt(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (this.entitypatch instanceof ServerPlayerPatch serverPlayerPatch) {
+            if(PECConfig.CUSTOM_CHARGE.get()) {
+                return;
+            }
             if (!PECConfig.GLOBAL_CHARGE.get() && !PECPlayer.isValidWeapon(serverPlayerPatch.getOriginal().getMainHandItem())) {
                 return;
             }
