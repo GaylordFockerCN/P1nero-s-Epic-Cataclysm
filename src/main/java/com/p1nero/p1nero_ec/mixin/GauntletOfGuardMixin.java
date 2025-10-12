@@ -12,29 +12,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import yesman.epicfight.client.ClientEngine;
-import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
-
-import static yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch.PlayerMode.EPICFIGHT;
 
 @Mixin(Gauntlet_of_Guard.class)
 public class GauntletOfGuardMixin {
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void cancelUse(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        LocalPlayerPatch playerpatch = ClientEngine.getInstance().getPlayerPatch();
-        if (playerpatch != null && playerpatch.getPlayerMode().equals(EPICFIGHT)) {
-            cir.setReturnValue(InteractionResultHolder.pass(player.getItemInHand(hand)));
-        }
+        cir.setReturnValue(InteractionResultHolder.pass(player.getItemInHand(hand)));
     }
 
     @Inject(method = "onUseTick", at = @At("HEAD"), cancellable = true)
     private void cancelOnUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int count, CallbackInfo ci) {
         if (livingEntity instanceof Player) {
-            LocalPlayerPatch playerpatch = ClientEngine.getInstance().getPlayerPatch();
-            if (playerpatch != null && playerpatch.getPlayerMode().equals(EPICFIGHT)) {
-                ci.cancel();
-            }
+            ci.cancel();
         }
     }
 }
