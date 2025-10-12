@@ -9,7 +9,7 @@
 			"lifetime": 25,
 			"joint": "Tool_L",
 			"item_skin_hand": "off_hand",
-			"texture_path": "efn:textures/trail/trail2.png",
+			"texture_path": "p1nero_ec:textures/particle/soul_trail2.png",
 			"particle_type": "efn:bloom_trail"
 		},
 		{
@@ -21,7 +21,7 @@
 			"lifetime":25,
 			"joint": "Tool_R",
 			"item_skin_hand": "main_hand",
-			"texture_path": "efn:textures/trail/trail1.png",
+			"texture_path": "p1nero_ec:textures/particle/soul_trail.png",
 			"particle_type": "efn:bloom_trail"
 		}
 	]

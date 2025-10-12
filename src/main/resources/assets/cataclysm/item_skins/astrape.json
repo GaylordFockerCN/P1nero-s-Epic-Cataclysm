@@ -1,0 +1,11 @@
+{
+    "trail": {
+    	"color": [80, 180, 160],
+    	"begin_pos": [0.0, -0.1, 1.2],
+    	"end_pos": [0.0, -0.1, -2.3],
+    	"lifetime": 6,
+		"interpolations": 4,
+    	"texture_path": "p1nero_ec:textures/particle/astrape_trail.png",
+		"particle_type": "efn:bloom_trail"
+    }
+}
