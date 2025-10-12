@@ -12,8 +12,8 @@ import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.client.renderer.patched.item.RenderItemBase;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
-public class RenderGauntletGuard extends RenderItemBase {
-    public RenderGauntletGuard(JsonElement jsonElement) {
+public class RenderDual extends RenderItemBase {
+    public RenderDual(JsonElement jsonElement) {
         super(jsonElement);
     }
 
