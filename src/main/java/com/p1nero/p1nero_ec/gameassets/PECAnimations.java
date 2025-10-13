@@ -2158,7 +2158,7 @@ public class PECAnimations {
             LivingEntity entity = entityPatch.getOriginal();
             Vec3 startPos = AvalonAnimationUtils.getJointWorldPos(entityPatch, Armatures.BIPED.get().rootJoint);
             startPos = startPos.add(entity.getViewVector(1.0F).normalize());
-            Abyss_Blast_Entity deathBeam = new Abyss_Blast_Entity(ModEntities.ABYSS_BLAST.get(), entity.level(), entity, startPos.x, startPos.y, startPos.z, (float) ((entityPatch.getYRot() + 90) * Math.PI / 180.0), (float) ((double) (-entity.getXRot()) * Math.PI / (double) 180.0F), 60, 90, (float) CMConfig.AbyssBlastdamage, (float) CMConfig.AbyssBlastHpdamage);
+            Abyss_Blast_Entity deathBeam = new Abyss_Blast_Entity(ModEntities.ABYSS_BLAST.get(), entity.level(), entity, startPos.x, startPos.y, startPos.z, (float) ((entityPatch.getYRot() + 90) * Math.PI / 180.0), (float) ((double) (-entity.getXRot()) * Math.PI / (double) 180.0F), 60, 90, (float) 5, (float) 0.04);
             entity.level().playSound(null, entity, ModSounds.ABYSS_BLAST_ONLY_SHOOT.get(), SoundSource.HOSTILE, 4.0F, 1.0F);
             entity.level().addFreshEntity(deathBeam);
         };
@@ -2171,7 +2171,7 @@ public class PECAnimations {
             entity.level().getEntitiesOfClass(LivingEntity.class, (new AABB(center, center)).inflate(10)).forEach(target -> {
                 float rotation = (float) Mth.atan2(target.getZ() - entity.getZ(), target.getX() - entity.getX());
                 if (target != entity) {
-                    entity.level().addFreshEntity(new Abyss_Blast_Portal_Entity(entity.level(), target.getX(), target.getY(), target.getZ(), rotation, 0, (float) CMConfig.AbyssBlastdamage, (float) CMConfig.AbyssBlastHpdamage, entity));
+                    entity.level().addFreshEntity(new Abyss_Blast_Portal_Entity(entity.level(), target.getX(), target.getY(), target.getZ(), rotation, 0, (float) 5, (float) 0.04, entity));
                 }
                 entityPatch.playSound(SoundEvents.END_PORTAL_SPAWN, 0.5F, 1.0F, 1.0F);
             });
