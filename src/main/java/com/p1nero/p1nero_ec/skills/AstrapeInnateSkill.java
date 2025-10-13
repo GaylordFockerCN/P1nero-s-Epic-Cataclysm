@@ -1,5 +1,6 @@
 package com.p1nero.p1nero_ec.skills;
 
+import com.p1nero.p1nero_ec.capability.PECPlayer;
 import com.p1nero.p1nero_ec.client.KeyMappings;
 import com.p1nero.p1nero_ec.gameassets.PECAnimations;
 import net.minecraft.client.KeyMapping;
@@ -15,6 +16,24 @@ import java.util.List;
 public class AstrapeInnateSkill extends PECWeaponInnateSkillBase {
     public AstrapeInnateSkill(SkillBuilder<? extends Skill> builder) {
         super(builder);
+    }
+
+    @Override
+    protected void tryExecuteSkill1(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
+        if (PECPlayer.consumeSkillPoint(serverPlayerPatch.getOriginal(), 2)) {
+            executeSkill1(serverPlayerPatch, container);
+        } else {
+            onSkillPointNotEnough(container, 2);
+        }
+    }
+
+    @Override
+    protected void tryExecuteSkill2(ServerPlayerPatch serverPlayerPatch, SkillContainer container) {
+        if (PECPlayer.consumeSkillPoint(serverPlayerPatch.getOriginal(), 3)) {
+            executeSkill2(serverPlayerPatch, container);
+        } else {
+            onSkillPointNotEnough(container, 3);
+        }
     }
 
     @Override

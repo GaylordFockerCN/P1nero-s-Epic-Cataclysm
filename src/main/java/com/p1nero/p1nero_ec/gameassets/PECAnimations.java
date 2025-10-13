@@ -2212,8 +2212,8 @@ public class PECAnimations {
                     baseSpawnPos.z,
                     rotation,
                     0,
-                    (float) CMConfig.AbyssBlastdamage,
-                    (float) CMConfig.AbyssBlastHpdamage,
+                    (float) 5,
+                    (float) 0.05,
                     entity
             ));
 

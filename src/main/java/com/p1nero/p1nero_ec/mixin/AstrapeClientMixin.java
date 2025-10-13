@@ -22,10 +22,10 @@ public class AstrapeClientMixin {
         tooltip.add(Component.translatable("skill.p1nero_ec.desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("skill.p1nero_ec.astrape.desc1",
                 KeyMappings.SKILL_1.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.GOLD),
-                1).withStyle(ChatFormatting.AQUA));
+                2).withStyle(ChatFormatting.AQUA));
         tooltip.add(Component.translatable("skill.p1nero_ec.astrape.desc2",
                 KeyMappings.SKILL_2.getTranslatedKeyMessage().copy().withStyle(ChatFormatting.GOLD),
-                2).withStyle(ChatFormatting.AQUA));
+                3).withStyle(ChatFormatting.AQUA));
 
         ci.cancel();
     }

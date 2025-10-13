@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,5 +34,10 @@ public class TheAnnihilatorMixin {
         if (livingEntity instanceof Player) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
+    private void cancelGetUseAnimation(ItemStack stack, CallbackInfoReturnable<UseAnim> cir) {
+        cir.setReturnValue(UseAnim.NONE);
     }
 }
