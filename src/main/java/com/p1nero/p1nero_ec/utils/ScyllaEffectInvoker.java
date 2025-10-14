@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -102,6 +103,60 @@ public class ScyllaEffectInvoker {
 
                 ScreenShake_Entity.ScreenShake(level, original.position(), 25, 0.15f, 0, 20);
             }
+        }
+    };
+
+    public static final AnimationEvent.E0 SUMMON_THUNDER = (entitypatch, animation, params) -> {
+        if (!entitypatch.isLogicalClient()) {
+            Object patt173405$temp = animation.get();
+            if (patt173405$temp instanceof AttackAnimation) {
+                AttackAnimation attackAnimation = (AttackAnimation)patt173405$temp;
+                AttackAnimation.Phase phase = attackAnimation.phases[1];
+                int i = (int)ValueModifier.calculator().attach((ValueModifier)phase.getProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER).orElse(ValueModifier.setter(3.0F))).getResult(0.0F);
+                float damage = ValueModifier.calculator().attach((ValueModifier)phase.getProperty(AnimationProperty.AttackPhaseProperty.DAMAGE_MODIFIER).orElse(ValueModifier.setter(8.0F))).getResult(0.0F);
+                LivingEntity original = (LivingEntity)entitypatch.getOriginal();
+                ServerLevel level = (ServerLevel)original.level();
+                float total = damage + ExtraDamageInstance.SWEEPING_EDGE_ENCHANTMENT.create(new float[0]).get(original, original.getItemInHand(InteractionHand.MAIN_HAND), (LivingEntity)null, damage);
+                List<Entity> list = level.getEntities(original, original.getBoundingBox().inflate(10.0, 4.0, 10.0), (ex) -> {
+                    return !(ex.distanceToSqr(original) > 100.0) && !ex.isAlliedTo(original) && ((LivingEntity)entitypatch.getOriginal()).hasLineOfSight(ex);
+                });
+                list = HitEntityList.Priority.HOSTILITY.sort(entitypatch, list);
+                int count = 0;
+
+                while(count < i && count < list.size()) {
+                    Entity e = (Entity)list.get(count++);
+                    BlockPos blockpos = e.blockPosition();
+
+                    createMultipleLightningBolts(level, original, e, blockpos, entitypatch, attackAnimation, phase, total);
+                    LightningBolt lightningbolt = (LightningBolt)EntityType.LIGHTNING_BOLT.create(level);
+                    lightningbolt.setVisualOnly(true);
+                    lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
+                    lightningbolt.setDamage(0.0F);
+                    ServerPlayer var19;
+                    if (entitypatch instanceof ServerPlayerPatch) {
+                        ServerPlayerPatch serverPlayerPatch = (ServerPlayerPatch)entitypatch;
+                        var19 = (ServerPlayer)serverPlayerPatch.getOriginal();
+                    } else {
+                        var19 = null;
+                    }
+
+                    lightningbolt.setCause(var19);
+                    DamageSource dmgSource = new DamageSource(e.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.LIGHTNING_BOLT), entitypatch.getOriginal());
+                    EpicFightDamageSource damageSource = attackAnimation.getEpicFightDamageSource(dmgSource, entitypatch, e, phase).setUsedItem(((LivingEntity)entitypatch.getOriginal()).getItemInHand(InteractionHand.MAIN_HAND));
+                    e.hurt(damageSource, total);
+                    e.thunderHit(level, lightningbolt);
+                    level.addFreshEntity(lightningbolt);
+                }
+
+                if (count > 0) {
+                    if (level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && level.random.nextFloat() < 0.08F && level.getThunderLevel(1.0F) < 1.0F) {
+                        level.setWeatherParameters(0, Mth.randomBetweenInclusive(level.random, 12000, 180000), true, true);
+                    }
+
+                    original.playSound(SoundEvents.TRIDENT_THUNDER, 5.0F, 1.0F);
+                }
+            }
+
         }
     };
 
@@ -224,20 +279,41 @@ public class ScyllaEffectInvoker {
     public static void createFanLightningStorms(Level world, LivingEntity caster, double distance, int count, float spreadAngle, float damage, float hpDamage, float size) {
         if (world == null || world.isClientSide() || caster == null) return;
 
-        Vec3 lookVec = caster.getLookAngle();
-        float baseRotation = caster.getYRot() * ((float) Math.PI / 180F);
+        float baseYaw = caster.getYRot();
 
         for (int i = 0; i < count; i++) {
-            float angle = -spreadAngle / 2 + (spreadAngle * i / (count - 1));
-            double angleRad = angle * (Math.PI / 180.0);
-            Vec3 direction = lookVec.yRot((float) angleRad).normalize();
+            float horizontalAngle = -spreadAngle / 2 + (spreadAngle * i / (count - 1));
+
+            double spawnX = caster.getX();
+            double spawnY = caster.getY() + caster.getBbHeight() * 0.7F;
+            double spawnZ = caster.getZ();
+
+            double horizontalRad = Math.toRadians(baseYaw + horizontalAngle);
+            double verticalRad = 0;
+
+            Vec3 direction = new Vec3(
+                    -Math.sin(horizontalRad) * Math.cos(verticalRad),
+                    Math.sin(verticalRad),
+                    Math.cos(horizontalRad) * Math.cos(verticalRad)
+            ).normalize();
 
             Vec3 spawnPos = caster.position().add(direction.x * distance, 0, direction.z * distance);
-            float rotation = baseRotation + (float) angleRad;
 
-            spawnLightningStorm(world, spawnPos.x, spawnPos.y, spawnPos.z, caster.getY() + 3, rotation, 0, damage, hpDamage, caster, size);
+            float rotation = (float) Math.atan2(direction.z, direction.x);
+
+            spawnLightningStorm(world,
+                    spawnPos.x, spawnPos.y, spawnPos.z,
+                    caster.getY() + 3,
+                    rotation,
+                    0,
+                    damage,
+                    hpDamage,
+                    caster,
+                    size
+            );
         }
     }
+
 
     public static void createCircleLightningStorms(Level world, LivingEntity caster, double radius, int count, float damage, float hpDamage, float size) {
         if (world == null || world.isClientSide() || caster == null) return;
@@ -437,9 +513,9 @@ public class ScyllaEffectInvoker {
                     }
                 } else {
                     Lightning_Spear_Entity lightningSpear = spawnLightningSpear(world, caster, direction, spawnX, spawnY, spawnZ, damage,
-                            (float) CMConfig.ScyllaLightningAreaDamage,
-                            (float) CMConfig.ScyllaLightningStormHpDamage,
-                            1.5F);
+                            (float) 3,
+                            (float) 0.025,
+                            2F);
                     if (lightningSpear != null) {
                         lightningSpear.setYRot(yRot);
                         lightningSpear.setXRot(xRot);

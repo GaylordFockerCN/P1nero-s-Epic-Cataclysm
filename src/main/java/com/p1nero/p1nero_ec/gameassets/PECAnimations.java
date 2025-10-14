@@ -67,6 +67,7 @@ import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.collider.OBBCollider;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.AttackResult;
+import yesman.epicfight.api.utils.HitEntityList;
 import yesman.epicfight.api.utils.LevelUtil;
 import yesman.epicfight.api.utils.TimePairList;
 import yesman.epicfight.api.utils.math.MathUtils;
@@ -712,8 +713,8 @@ public class PECAnimations {
                                         createDirectionalLightningStormLine(level, attacker,
                                                 spawnX, spawnZ,
                                                 directionX, directionZ,
-                                                8.0,
-                                                8,
+                                                15.0,
+                                                15,
                                                 1.0
                                         );
                                     }
@@ -756,12 +757,14 @@ public class PECAnimations {
                                         LivingEntity caster = entityPatch.getOriginal();
                                         ScyllaEffectInvoker.createFanSpearBarrage(caster, 3, 5, 100.0f, 15.0f, 4.0f);
                                     }, AnimationEvent.Side.BOTH),
-                                    AnimationEvent.InTimeEvent.create(0.35F, (entityPatch, self, params) -> {
+                                    AnimationEvent.InTimeEvent.create(0.05F, (entityPatch, self, params) -> {
                                         entityPatch.getOriginal().level();
                                         LivingEntity caster = entityPatch.getOriginal();
-                                        entityPatch.playSound(SoundEvents.TRIDENT_RIPTIDE_2, 0, 0);
                                         ScyllaEffectInvoker.createFanLightningStorms(caster, 3.5, 7, 120);
-                                    }, AnimationEvent.Side.BOTH))
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(0.2F, (entitypatch, animation, params) -> {
+                                        entitypatch.playSound(SoundEvents.TRIDENT_RIPTIDE_2, 0, 0);
+                                    }, AnimationEvent.Side.CLIENT))
             );
 
             ASTRAPE_DASH = builder.nextAccessor("combat/astrape_dash", (accessor) ->
@@ -847,9 +850,128 @@ public class PECAnimations {
                             new AttackAnimation.Phase(InteractionHand.MAIN_HAND, Armatures.BIPED.get().rootJoint, null))
                             .addProperty(AnimationProperty.AttackPhaseProperty.MAX_STRIKES_MODIFIER, ValueModifier.adder(10))
                             .addProperty(AnimationProperty.StaticAnimationProperty.PLAY_SPEED_MODIFIER, ((dynamicAnimation, livingEntityPatch, v, v1, v2) -> 1.25F))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.35F, ScyllaEffectInvoker.SUMMON_THUNDER_UPGRADED, AnimationEvent.Side.SERVER),
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.05F, (entityPatch, self, params) -> {
+                                        LivingEntity target = entityPatch.getTarget();
+                                        LivingEntity caster = entityPatch.getOriginal();
+
+                                        if (target == null) {
+                                            List<Entity> nearbyEntities = caster.level().getEntities(caster,
+                                                    caster.getBoundingBox().inflate(15.0D),
+                                                    (e) -> e instanceof LivingEntity && !e.isAlliedTo(caster)
+                                            );
+
+                                            if (!nearbyEntities.isEmpty()) {
+                                                HitEntityList hitList = new HitEntityList(entityPatch, nearbyEntities, HitEntityList.Priority.HOSTILITY);
+                                                if (hitList.next()) {
+                                                    target = (LivingEntity) hitList.getEntity();
+                                                }
+                                            }
+                                        }
+
+                                        if (target != null) {
+                                            if (!caster.level().isClientSide()) {
+                                                ServerLevel level = (ServerLevel) caster.level();
+                                                double centerX = target.getX();
+                                                double centerY = target.getY();
+                                                double centerZ = target.getZ();
+                                                double baseRadius = 8.0;
+                                                double maxRadius = 15.0;
+                                                int waveCount = 3;
+                                                int particlesPerWave = 80;
+                                                double speed = 0.4;
+
+                                                for (int wave = 0; wave < waveCount; wave++) {
+                                                    double radius = baseRadius + (maxRadius - baseRadius) * wave / (waveCount - 1);
+                                                    for (int i = 0; i < particlesPerWave; i++) {
+                                                        double angle = 2 * Math.PI * i / particlesPerWave;
+                                                        double randomOffset = 0.3 * (level.random.nextDouble() - 0.5);
+                                                        double xOffset = radius * Math.cos(angle) + randomOffset;
+                                                        double zOffset = radius * Math.sin(angle) + randomOffset;
+                                                        double motionX = xOffset * speed / radius;
+                                                        double motionZ = zOffset * speed / radius;
+
+                                                        double yOffset = 0.5 * Math.sin(angle * 2 + wave * 0.5);
+                                                        level.sendParticles(ParticleTypes.SMOKE, centerX + xOffset, centerY + 0.1 + yOffset, centerZ + zOffset, 1, motionX, 0.05, motionZ, 0.8);
+                                                    }
+                                                }
+
+                                                int rune = 7;
+                                                int time = 4;
+                                                for (int i = 0; i < rune; ++i) {
+                                                    float throwAngle = (float) i * (float) Math.PI / (float) (rune / 2);
+
+                                                    for (int k = 0; k < 5; ++k) {
+                                                        double d2 = (double) 1.75F * (double) (k + 1);
+                                                        int d3 = time * (k + 1) - 9;
+                                                        spawnLightning(target, target.getX() + (double) Mth.cos(throwAngle) * (double) 1.25F * d2, target.getZ() + (double) Mth.sin(throwAngle) * (double) 1.25F * d2, target.getY() - 5, target.getY() + (double) 2.0F, throwAngle, d3, 2.0F);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }, AnimationEvent.Side.SERVER),
+
+                                    AnimationEvent.InTimeEvent.create(0.35F, (entityPatch, self, params) -> {
+                                        LivingEntity target = entityPatch.getTarget();
+                                        LivingEntity caster = entityPatch.getOriginal();
+
+                                        if (target == null) {
+                                            List<Entity> nearbyEntities = caster.level().getEntities(caster,
+                                                    caster.getBoundingBox().inflate(15.0D),
+                                                    (e) -> e instanceof LivingEntity && !e.isAlliedTo(caster)
+                                            );
+
+                                            if (!nearbyEntities.isEmpty()) {
+                                                HitEntityList hitList = new HitEntityList(entityPatch, nearbyEntities, HitEntityList.Priority.HOSTILITY);
+                                                if (hitList.next()) {
+                                                    target = (LivingEntity) hitList.getEntity();
+                                                }
+                                            }
+                                        }
+
+                                        if (target != null) {
+                                            if (!caster.level().isClientSide()) {
+                                                ServerLevel level = (ServerLevel) caster.level();
+                                                float yawRadians = (float) Math.toRadians(90.0F + entityPatch.getYRot());
+                                                double vecX = Math.cos(yawRadians);
+                                                double vecZ = Math.sin(yawRadians);
+                                                double vec = 2.0F;
+                                                double spawnX = target.getX() + vecX * vec;
+                                                double spawnY = target.getY();
+                                                double spawnZ = target.getZ() + vecZ * vec;
+                                                int numberOfWaves = 12;
+                                                float angleStep = 30.0F;
+                                                double firstAngleOffset = (double) (numberOfWaves - 1) / (double) 2.0F * (double) angleStep;
+
+                                                createRandomDirectionalSpearBarrage(level, caster, target,
+                                                        spawnX, spawnY, spawnZ,
+                                                        numberOfWaves, angleStep, firstAngleOffset);
+
+                                                for (int k = 0; k < numberOfWaves; ++k) {
+                                                    double angle = (double) target.getYRot() - firstAngleOffset + (double) ((float) k * angleStep);
+                                                    double rad = Math.toRadians(angle);
+
+                                                    double directionX = -Math.sin(rad);
+                                                    double directionZ = Math.cos(rad);
+
+                                                    createDirectionalLightningStormLine(level, caster,
+                                                            spawnX, spawnZ,
+                                                            directionX, directionZ,
+                                                            15.0,
+                                                            15,
+                                                            1.0
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    }, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.35F, ScyllaEffectInvoker.SUMMON_THUNDER, AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.35F, FRACTURE_TARGET_GROUNDSLAM_NOSMOKE, AnimationEvent.Side.BOTH)
+                                            .params(new Vec3f(0.0F, 0.1F, 0.0F), Armatures.BIPED.get().toolR, 4D, 0.5F),
                                     AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, animation, params) -> {
                                         entitypatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), 0, 0);
+                                    }, AnimationEvent.Side.CLIENT),
+                                    AnimationEvent.InTimeEvent.create(0.35F, (entitypatch, animation, params) -> {
+                                        entitypatch.playSound(SoundEvents.TRIDENT_THUNDER, 0, 0);
                                     }, AnimationEvent.Side.CLIENT))
                             .newTimePair(0.0F, 1.5F)
                             .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
@@ -2884,6 +3006,120 @@ public class PECAnimations {
         return OpenMatrix4f.transform(JointTf, Vec3.ZERO);
     }
 
+    private static void createRandomDirectionalSpearBarrage(ServerLevel level, LivingEntity caster, LivingEntity target,
+                                                            double startX, double startY, double startZ,
+                                                            int numberOfDirections, float angleStep, double firstAngleOffset) {
+        float baseDamage = (float) 3;
+        double baseDistance = 6.0;
+
+        for (int k = 0; k < numberOfDirections; ++k) {
+            double angle = (double) target.getYRot() - firstAngleOffset + (double) ((float) k * angleStep);
+            double rad = Math.toRadians(angle);
+
+            double spawnX = target.getX() + Math.cos(rad) * baseDistance;
+            double spawnZ = target.getZ() + Math.sin(rad) * baseDistance;
+            double spawnY = target.getY() + target.getBbHeight() * 0.7;
+
+            Vec3 direction = new Vec3(
+                    target.getX() - spawnX,
+                    target.getY(0.5) - spawnY,
+                    target.getZ() - spawnZ
+            ).normalize();
+
+            boolean isWaterSpear = level.random.nextBoolean();
+
+            double offsetX = spawnX + (level.random.nextDouble() - 0.5) * 1.5;
+            double offsetY = spawnY + (level.random.nextDouble() - 0.5) * 1.0;
+            double offsetZ = spawnZ + (level.random.nextDouble() - 0.5) * 1.5;
+
+            float yRot = (float) (Mth.atan2(direction.z, direction.x) * (180F / Math.PI)) + 90F;
+            float xRot = (float) -(Mth.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)) * (180F / Math.PI));
+
+            if (isWaterSpear) {
+                Water_Spear_Entity waterSpear = ScyllaEffectInvoker.spawnWaterSpear(level, caster, direction, offsetX, offsetY, offsetZ, baseDamage);
+                if (waterSpear != null) {
+                    waterSpear.setYRot(yRot);
+                    waterSpear.setXRot(xRot);
+                    waterSpear.accelerationPower = 0.25D;
+                    waterSpear.setTotalBounces(2);
+                }
+            } else {
+                Lightning_Spear_Entity lightningSpear = ScyllaEffectInvoker.spawnLightningSpear(level, caster, direction, offsetX, offsetY, offsetZ, baseDamage,
+                        (float) 2,
+                        (float) 0.02,
+                        2F);
+                if (lightningSpear != null) {
+                    lightningSpear.setYRot(yRot);
+                    lightningSpear.setXRot(xRot);
+                    lightningSpear.accelerationPower = 0.25D;
+                }
+            }
+
+            if (level.random.nextFloat() < 0.25f) {
+                double extraOffsetX = spawnX + (level.random.nextDouble() - 0.5) * 1.0;
+                double extraOffsetY = spawnY + (level.random.nextDouble() - 0.5) * 0.5;
+                double extraOffsetZ = spawnZ + (level.random.nextDouble() - 0.5) * 1.0;
+
+                if (!isWaterSpear) {
+                    Water_Spear_Entity extraWaterSpear = ScyllaEffectInvoker.spawnWaterSpear(level, caster, direction, extraOffsetX, extraOffsetY, extraOffsetZ, baseDamage * 0.8f);
+                    if (extraWaterSpear != null) {
+                        extraWaterSpear.setYRot(yRot);
+                        extraWaterSpear.setXRot(xRot);
+                        extraWaterSpear.accelerationPower = 0.2D;
+                    }
+                } else {
+                    Lightning_Spear_Entity extraLightningSpear = ScyllaEffectInvoker.spawnLightningSpear(level, caster, direction, extraOffsetX, extraOffsetY, extraOffsetZ, baseDamage * 0.8f,
+                            (float) 2,
+                            (float) 0.02,
+                            2F);
+                    if (extraLightningSpear != null) {
+                        extraLightningSpear.setYRot(yRot);
+                        extraLightningSpear.setXRot(xRot);
+                        extraLightningSpear.accelerationPower = 0.2D;
+                    }
+                }
+            }
+        }
+
+        createVerticalSpearBarrage(level, caster, target, baseDamage);
+    }
+
+    private static void createVerticalSpearBarrage(ServerLevel level, LivingEntity caster, LivingEntity target, float baseDamage) {
+        int verticalSpearCount = 6;
+        double height = 8.0;
+
+        for (int i = 0; i < verticalSpearCount; i++) {
+            double offsetX = target.getX() + (level.random.nextDouble() - 0.5) * 3.0;
+            double offsetY = target.getY() + height;
+            double offsetZ = target.getZ() + (level.random.nextDouble() - 0.5) * 3.0;
+
+            Vec3 direction = new Vec3(0, -1, 0);
+
+            float yRot = 0;
+            float xRot = 90.0F;
+
+            if (i % 2 == 0) {
+                Water_Spear_Entity waterSpear = ScyllaEffectInvoker.spawnWaterSpear(level, caster, direction, offsetX, offsetY, offsetZ, baseDamage);
+                if (waterSpear != null) {
+                    waterSpear.setYRot(yRot);
+                    waterSpear.setXRot(xRot);
+                    waterSpear.accelerationPower = 0.3D;
+                }
+            } else {
+                Lightning_Spear_Entity lightningSpear = ScyllaEffectInvoker.spawnLightningSpear(level, caster, direction, offsetX, offsetY, offsetZ, baseDamage,
+                        (float) 2,
+                        (float) 0.01,
+                        2.0F);
+                if (lightningSpear != null) {
+                    lightningSpear.setYRot(yRot);
+                    lightningSpear.setXRot(xRot);
+                    lightningSpear.accelerationPower = 0.3D;
+                }
+            }
+        }
+    }
+
+
     public static final AnimationEvent.E4<Vec3f, Joint, Double, Float> FRACTURE_GROUNDSLAM_NOSMOKE = (entitypatch, animation, params) -> {
         Vec3 position = ((LivingEntity)entitypatch.getOriginal()).position();
         OpenMatrix4f modelTransform = entitypatch.getArmature().getBoundTransformFor(((StaticAnimation)animation.get()).getPoseByTime(entitypatch, (Float)params.fourth(), 1.0F), (Joint)params.second()).mulFront(OpenMatrix4f.createTranslation((float)position.x, (float)position.y, (float)position.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(entitypatch.getModelMatrix(1.0F))));
@@ -2904,6 +3140,31 @@ public class PECAnimations {
         }
 
         LevelUtil.circleSlamFracture((LivingEntity)entitypatch.getOriginal(), level, slamStartPos, (Double)params.third(), false, true);
+    };
+
+    public static final AnimationEvent.E4<Vec3f, Joint, Double, Float> FRACTURE_TARGET_GROUNDSLAM_NOSMOKE = (entitypatch, animation, params) -> {
+        LivingEntity target = entitypatch.getTarget();
+        if (target != null) {
+            Vec3 position = ((LivingEntity)entitypatch.getTarget()).position();
+            OpenMatrix4f modelTransform = entitypatch.getArmature().getBoundTransformFor(((StaticAnimation) animation.get()).getPoseByTime(entitypatch, (Float) params.fourth(), 1.0F), (Joint) params.second()).mulFront(OpenMatrix4f.createTranslation((float) position.x, (float) position.y, (float) position.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(entitypatch.getModelMatrix(1.0F))));
+            Level level = ((LivingEntity) entitypatch.getOriginal()).level();
+            Vec3 weaponEdge = OpenMatrix4f.transform(modelTransform, ((Vec3f) params.first()).toDoubleVector());
+            BlockHitResult hitResult = level.clip(new ClipContext(position.add(0.0, 0.1, 0.0), weaponEdge, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entitypatch.getOriginal()));
+            Vec3 slamStartPos;
+            if (hitResult.getType() == HitResult.Type.BLOCK) {
+                Direction direction = hitResult.getDirection();
+                BlockPos collidePos = hitResult.getBlockPos().offset(direction.getStepX(), direction.getStepY(), direction.getStepZ());
+                if (!LevelUtil.canTransferShockWave(level, collidePos, level.getBlockState(collidePos))) {
+                    collidePos = collidePos.below();
+                }
+
+                slamStartPos = new Vec3((double) collidePos.getX(), (double) collidePos.getY(), (double) collidePos.getZ());
+            } else {
+                slamStartPos = weaponEdge.subtract(0.0, 1.0, 0.0);
+            }
+
+            LevelUtil.circleSlamFracture((LivingEntity) entitypatch.getOriginal(), level, slamStartPos, (Double) params.third(), false, true);
+        }
     };
 
 }
