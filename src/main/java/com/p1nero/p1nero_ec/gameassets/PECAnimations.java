@@ -757,7 +757,7 @@ public class PECAnimations {
                                         LivingEntity caster = entityPatch.getOriginal();
                                         ScyllaEffectInvoker.createFanSpearBarrage(caster, 3, 5, 100.0f, 15.0f, 4.0f);
                                     }, AnimationEvent.Side.BOTH),
-                                    AnimationEvent.InTimeEvent.create(0.05F, (entityPatch, self, params) -> {
+                                    AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, self, params) -> {
                                         entityPatch.getOriginal().level();
                                         LivingEntity caster = entityPatch.getOriginal();
                                         ScyllaEffectInvoker.createFanLightningStorms(caster, 3.5, 7, 120);
