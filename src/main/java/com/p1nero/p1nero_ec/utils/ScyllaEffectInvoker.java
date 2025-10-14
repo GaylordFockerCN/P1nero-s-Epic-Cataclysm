@@ -195,6 +195,32 @@ public class ScyllaEffectInvoker {
         spawnLightningStorm(world, spawnPos.x, spawnPos.y, spawnPos.z, caster.getY() + 3, rotation, 0, damage, hpDamage, caster, size);
     }
 
+    public static void createForwardLightningStormLine(Level world, LivingEntity caster, double baseDistance, double maxDistance, int count, double stepDistance, float damage, float hpDamage, float size) {
+        if (world == null || world.isClientSide() || caster == null) return;
+        Vec3 lookVec = caster.getLookAngle();
+        float baseRotation = caster.getYRot() * ((float) Math.PI / 180F);
+
+        double actualBaseDistance = Math.min(baseDistance, maxDistance);
+
+        for (int i = 0; i < count; i++) {
+            double currentDistance = actualBaseDistance + (stepDistance * i);
+            if (currentDistance > maxDistance) break; // 不超过最大距离
+
+            Vec3 spawnPos = caster.position().add(lookVec.x * currentDistance, 0, lookVec.z * currentDistance);
+
+            spawnLightningStorm(world,
+                    spawnPos.x, spawnPos.y, spawnPos.z,
+                    caster.getY() + 3,
+                    baseRotation,
+                    0,
+                    3,
+                    hpDamage,
+                    caster,
+                    2.5f
+            );
+        }
+    }
+
     public static void createFanLightningStorms(Level world, LivingEntity caster, double distance, int count, float spreadAngle, float damage, float hpDamage, float size) {
         if (world == null || world.isClientSide() || caster == null) return;
 
@@ -590,7 +616,7 @@ public class ScyllaEffectInvoker {
 
     public static void createFocusedSpearBeam(Level world, LivingEntity caster, int spearCount, float convergenceDistance) {
         createFocusedSpearBeam(world, caster, spearCount, convergenceDistance,
-                (float) CMConfig.ScyllaSpearDamage);
+                (float) 5);
     }
 
     public static void createForwardDualSpears(LivingEntity caster, int spearCount, float spreadAngle, float distance) {
@@ -622,6 +648,13 @@ public class ScyllaEffectInvoker {
                 (float) 3,
                 (float) 0.02,
                 2.5F);
+    }
+
+    public static void createForwardLightningStormLine(Level world, LivingEntity caster, double baseDistance, double maxDistance, int count, double stepDistance) {
+        createForwardLightningStormLine(world, caster, baseDistance, maxDistance, count, stepDistance,
+                (float) 3,
+                (float) 0.02,
+                2.3F);
     }
 
     public static void createCircleLightningStorms(Level world, LivingEntity caster, double radius, int count) {
@@ -683,6 +716,10 @@ public class ScyllaEffectInvoker {
 
     public static void createFanLightningStorms(LivingEntity caster, double distance, int count, float spreadAngle) {
         createFanLightningStorms(caster.level(), caster, distance, count, spreadAngle);
+    }
+
+    public static void createForwardLightningStormLine(LivingEntity caster, double baseDistance, double maxDistance, int count, double stepDistance) {
+        createForwardLightningStormLine(caster.level(), caster, baseDistance, maxDistance, count, stepDistance);
     }
 
     public static void createCircleLightningStorms(LivingEntity caster, double radius, int count) {
@@ -985,4 +1022,33 @@ public class ScyllaEffectInvoker {
         }
     }
 
+    public static void createDirectionalLightningStormLine(ServerLevel level, LivingEntity caster,
+                                                            double startX, double startZ,
+                                                            double dirX, double dirZ,
+                                                            double distance, int count, double stepDistance) {
+        double length = Math.sqrt(dirX * dirX + dirZ * dirZ);
+        double normX = dirX / length;
+        double normZ = dirZ / length;
+
+        float rotation = (float) Math.atan2(normZ, normX);
+
+        for (int i = 0; i < count; i++) {
+            double currentDistance = stepDistance * i;
+            if (currentDistance > distance) break;
+
+            double spawnX = startX + normX * currentDistance;
+            double spawnZ = startZ + normZ * currentDistance;
+
+            ScyllaEffectInvoker.spawnLightningStorm(level,
+                    spawnX, caster.getY(), spawnZ,
+                    caster.getY() + 3,
+                    rotation,
+                    i * 2,
+                    (float) 4,
+                    (float) 0.02,
+                    caster,
+                    2.0F
+            );
+        }
+    }
 }

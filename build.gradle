@@ -151,8 +151,7 @@ dependencies {
     implementation fg.deobf("curse.maven:epic-fight-skill-tree-1295882:7035166")
     implementation fg.deobf("curse.maven:epic-fight-invincible-1184379:7018600")
     implementation fg.deobf("curse.maven:epic-fight-avalon-1268823:7058350")
-    implementation fg.deobf("curse.maven:epicfight-nightfall-1307848:7055981")
-
+    implementation fg.deobf("curse.maven:epicfight-nightfall-1307848:7102758")
 
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6906993")
     implementation fg.deobf("curse.maven:curios-309927:6418456")

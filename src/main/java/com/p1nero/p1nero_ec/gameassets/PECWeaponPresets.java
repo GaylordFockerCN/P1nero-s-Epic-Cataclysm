@@ -62,9 +62,9 @@ public class PECWeaponPresets {
                     .hitParticle(EpicFightParticles.HIT_BLUNT.get())
                     .canBePlacedOffhand(false)
                     .newStyleCombo(CapabilityItem.Styles.TWO_HAND,
-                            EFNAnimations.ARC_AUTO1,
-                            EFNAnimations.ARC_AUTO2,
-                            EFNAnimations.ARC_AUTO3,
+                            PECAnimations.ARC_AUTO1,
+                            PECAnimations.ARC_AUTO2,
+                            PECAnimations.ARC_AUTO3,
                             Animations.GREATSWORD_DASH,
                             Animations.GREATSWORD_DASH)
                     .innateSkill(CapabilityItem.Styles.TWO_HAND, (itemStack -> PECSkills.CERAUNUS_INNATE))

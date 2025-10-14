@@ -47,9 +47,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,6 +67,7 @@ import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.collider.OBBCollider;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.AttackResult;
+import yesman.epicfight.api.utils.LevelUtil;
 import yesman.epicfight.api.utils.TimePairList;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
@@ -93,9 +97,9 @@ import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_1;
 import static com.hm.efn.gameasset.animations.EFNLanceAnimations.MEEN_LANCE_CHARGE3;
 import static com.merlin204.avalon.util.AvalonAnimationUtils.createSimplePhase;
 import static com.p1nero.p1nero_ec.utils.AxeBladeInvoker.*;
+import static com.p1nero.p1nero_ec.utils.ScyllaEffectInvoker.createDirectionalLightningStormLine;
 import static com.p1nero.p1nero_ec.utils.VoidEffectInvoker.createForwardVoidRuneCluster;
 import static java.lang.Integer.MAX_VALUE;
-import static yesman.epicfight.gameasset.Animations.ReusableSources.FRACTURE_GROUND_SIMPLE;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class PECAnimations {
@@ -134,6 +138,9 @@ public class PECAnimations {
     public static AnimationManager.AnimationAccessor<ScanAttackAnimation> BOW_SKILL2;
     public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_SKILL3;
     public static AnimationManager.AnimationAccessor<AttackAnimation> BOW_DASH_ATTACK;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ARC_AUTO1;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ARC_AUTO2;
+    public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> ARC_AUTO3;
     public static AnimationManager.AnimationAccessor<ActionAnimation> CERAUNUS_SKILL1;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> CERAUNUS_SKILL2;
     public static AnimationManager.AnimationAccessor<AvalonAttackAnimation> CERAUNUS_SKILL3;
@@ -462,6 +469,52 @@ public class PECAnimations {
                                     }, AnimationEvent.Side.BOTH))
             );
 
+            ARC_AUTO1 =
+                    builder.nextAccessor("combat/arc_auto1", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 1F, 1
+                                    , createSimplePhase(27, 50, 55, InteractionHand.MAIN_HAND, 0.8F, 1F, Armatures.BIPED.get().toolR, null)
+                            )
+                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.9F)
+                    );
+
+            ARC_AUTO2 =
+                    builder.nextAccessor("combat/arc_auto2", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 1F, 1
+                                    , createSimplePhase(29, 53, 55, InteractionHand.MAIN_HAND, 0.8F, 1F, Armatures.BIPED.get().toolR, null)
+                            )
+                            .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.9F)
+                            .addEvents(AvalonEventUtils.simpleCameraShake(35, 15, 3, 1, 2),
+                                    AnimationEvent.InTimeEvent.create(0.35F, (entityPatch, self, params) -> {
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        caster.getLookAngle();
+                                        ScyllaEffectInvoker.createFocusedSpearBeam(caster, 7, 15.0f);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createForwardLightningStormLine(caster,1.5F,8,8,1);
+                                    }, AnimationEvent.Side.BOTH))
+                    );
+            ARC_AUTO3 =
+                    builder.nextAccessor("combat/arc_auto3", accessor -> new AvalonAttackAnimation(0.1F, accessor, Armatures.BIPED, 1F, 1
+                                    , createSimplePhase(27, 54, 60, InteractionHand.MAIN_HAND, 0.8F, 1F, Armatures.BIPED.get().toolR, null)
+                            )
+                                    .addProperty(AnimationProperty.AttackAnimationProperty.BASIS_ATTACK_SPEED, 0.9F)
+                            .addEvents(AvalonEventUtils.simpleCameraShake(35, 15, 3, 1, 2),
+                                    AnimationEvent.InTimeEvent.create(0.18F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createFanSpearBarrage(caster, 3, 5, 100.0f, 15.0f, 4.0f);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(0.18F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createFanLightningStorms(caster, 3.5, 7, 120);
+                                    }, AnimationEvent.Side.BOTH),
+                                    AnimationEvent.InTimeEvent.create(0.1F, (entityPatch, self, params) -> {
+                                        entityPatch.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), 0, 0);
+                                    }, AnimationEvent.Side.BOTH))
+
+                    );
+
             CERAUNUS_SKILL1 = builder.nextAccessor("skill/ceraunus_skill1", (accessor) ->
                     new ActionAnimation(0.15F, 1.5F, accessor, Armatures.BIPED)
                             .addProperty(AnimationProperty.AttackAnimationProperty.ATTACK_SPEED_FACTOR, 0.0F)
@@ -469,7 +522,13 @@ public class PECAnimations {
                             .addStateRemoveOld(EntityState.TURNING_LOCKED, true)
                             .newTimePair(0.0F, 1.5F)
                             .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
-                            .addEvents(AnimationEvent.InTimeEvent.create(0.5F, shootCeraunus(), AnimationEvent.Side.SERVER)));
+                            .addEvents(AnimationEvent.InTimeEvent.create(0.5F, shootCeraunus(), AnimationEvent.Side.SERVER),
+                                    AnimationEvent.InTimeEvent.create(0.35F, (entityPatch, self, params) -> {
+                                        entityPatch.getOriginal().level();
+                                        LivingEntity caster = entityPatch.getOriginal();
+                                        ScyllaEffectInvoker.createForwardLightningStormLine(caster,2.5F,25,25,1);
+                                    }, AnimationEvent.Side.BOTH))
+            );
 
             CERAUNUS_SKILL2 = builder.nextAccessor("skill/ceraunus_skill2", accessor -> new AvalonAttackAnimation(0.15F, accessor, Armatures.BIPED, 2F, 2F, createSimplePhase(45, 53, 80, InteractionHand.MAIN_HAND, 1.2F, 1.2F, Armatures.BIPED.get().toolR, null))
                     .addProperty(AnimationProperty.AttackPhaseProperty.PARTICLE, EpicFightParticles.HIT_BLADE)
@@ -485,7 +544,13 @@ public class PECAnimations {
                                         , entity.getZ()
                                         , Double.longBitsToDouble(entity.getId())
                                         , 0, 0);
-                            }, AnimationEvent.Side.CLIENT), AvalonEventUtils.simpleCameraShake(40, 50, 5, 4, 5),
+                            }, AnimationEvent.Side.CLIENT),
+                            AvalonEventUtils.simpleCameraShake(40, 50, 5, 4, 5),
+                            AnimationEvent.InPeriodEvent.create(0.3F, 0.65F, (entityPatch, self, params) -> {
+                                LivingEntity caster = entityPatch.getOriginal();
+                                caster.getLookAngle();
+                                ScyllaEffectInvoker.createFocusedSpearBeam(caster, 2, 35.0f);
+                            }, AnimationEvent.Side.BOTH),
                             AnimationEvent.InTimeEvent.create(0.6F, (entitypatch, self, params) -> {
                                 if (!entitypatch.getOriginal().level().isClientSide()) {
                                     LivingEntity attacker = entitypatch.getOriginal();
@@ -539,9 +604,24 @@ public class PECAnimations {
                                         WaveEntity.setYRot(-((float) (Mth.atan2(dx, dz) * (180D / Math.PI))));
                                         level.addFreshEntity(WaveEntity);
                                     }
+                                    for (int k = 0; k < numberOfWaves; ++k) {
+                                        double angle = (double) attacker.getYRot() - firstAngleOffset + (double) ((float) k * angleStep);
+                                        double rad = Math.toRadians(angle);
+
+                                        double directionX = -Math.sin(rad);
+                                        double directionZ = Math.cos(rad);
+
+                                        createDirectionalLightningStormLine(level, attacker,
+                                                spawnX, spawnZ,
+                                                directionX, directionZ,
+                                                15.0,
+                                                15,
+                                                1.0
+                                        );
+                                    }
                                 }
                             }, AnimationEvent.Side.SERVER),
-                            AvalonEventUtils.simpleGroundSplit(40, 2, 0, 0, 0, 3F, true),
+                            ParticleEffectInvoker.simpleGroundSplit(40, 2, 0, 0, 0, 3F, true),
                             AvalonEventUtils.simpleCameraShake(40, 40, 3, 3, 3)
                     )
             );
@@ -622,10 +702,26 @@ public class PECAnimations {
                                         WaveEntity.setYRot(-((float) (Mth.atan2(dx, dz) * (180D / Math.PI))));
                                         level.addFreshEntity(WaveEntity);
                                     }
+                                    for (int k = 0; k < numberOfWaves; ++k) {
+                                        double angle = (double) attacker.getYRot() - firstAngleOffset + (double) ((float) k * angleStep);
+                                        double rad = Math.toRadians(angle);
+
+                                        double directionX = -Math.sin(rad);
+                                        double directionZ = Math.cos(rad);
+
+                                        createDirectionalLightningStormLine(level, attacker,
+                                                spawnX, spawnZ,
+                                                directionX, directionZ,
+                                                8.0,
+                                                8,
+                                                1.0
+                                        );
+                                    }
                                 }
                             }, AnimationEvent.Side.SERVER),
-                            AnimationEvent.InTimeEvent.create(0.3F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.3F, 0.0F), Armatures.BIPED.get().toolR, 2D, 0.5F),
-                            AnimationEvent.InTimeEvent.create(1.4F, Animations.ReusableSources.FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.3F, 0.0F), Armatures.BIPED.get().rootJoint, 4D, 0.55F),
+                            AnimationEvent.InTimeEvent.create(0.3F, FRACTURE_GROUNDSLAM_NOSMOKE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.3F, 0.0F), Armatures.BIPED.get().toolR, 2D, 0.5F),
+                            AnimationEvent.InTimeEvent.create(1.4F, FRACTURE_GROUNDSLAM_NOSMOKE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.3F, 0.0F), Armatures.BIPED.get().rootJoint, 4D, 0.55F),
+                            AnimationEvent.InTimeEvent.create(1.4F, ScyllaEffectInvoker.SUMMON_THUNDER_UPGRADED, AnimationEvent.Side.SERVER),
                             AvalonEventUtils.simpleCameraShake(80, 40, 4, 4, 4)
                     )
             );
@@ -1146,7 +1242,7 @@ public class PECAnimations {
                     .addEvents(AvalonEventUtils.simpleCameraShake(60, 40, 4, 4, 7),
                             PECParticleEffectInvoker.createLavaRingEffect(30, 70),
                             PECParticleEffectInvoker.createMagmaEruption(65),
-                            AnimationEvent.InTimeEvent.create(0.9F, FRACTURE_GROUND_SIMPLE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.0F, 0.0F), Armatures.BIPED.get().toolR, 5D, 0F),
+                            AnimationEvent.InTimeEvent.create(0.9F, FRACTURE_GROUNDSLAM_NOSMOKE, AnimationEvent.Side.CLIENT).params(new Vec3f(0.0F, 0.0F, 0.0F), Armatures.BIPED.get().toolR, 5D, 0F),
                             AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {
                                 entitypatch.playSound(SoundEvents.FIRECHARGE_USE, 0, 0);
                             }, AnimationEvent.Side.CLIENT),
@@ -2787,5 +2883,27 @@ public class PECAnimations {
 
         return OpenMatrix4f.transform(JointTf, Vec3.ZERO);
     }
+
+    public static final AnimationEvent.E4<Vec3f, Joint, Double, Float> FRACTURE_GROUNDSLAM_NOSMOKE = (entitypatch, animation, params) -> {
+        Vec3 position = ((LivingEntity)entitypatch.getOriginal()).position();
+        OpenMatrix4f modelTransform = entitypatch.getArmature().getBoundTransformFor(((StaticAnimation)animation.get()).getPoseByTime(entitypatch, (Float)params.fourth(), 1.0F), (Joint)params.second()).mulFront(OpenMatrix4f.createTranslation((float)position.x, (float)position.y, (float)position.z).mulBack(OpenMatrix4f.createRotatorDeg(180.0F, Vec3f.Y_AXIS).mulBack(entitypatch.getModelMatrix(1.0F))));
+        Level level = ((LivingEntity)entitypatch.getOriginal()).level();
+        Vec3 weaponEdge = OpenMatrix4f.transform(modelTransform, ((Vec3f)params.first()).toDoubleVector());
+        BlockHitResult hitResult = level.clip(new ClipContext(position.add(0.0, 0.1, 0.0), weaponEdge, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entitypatch.getOriginal()));
+        Vec3 slamStartPos;
+        if (hitResult.getType() == HitResult.Type.BLOCK) {
+            Direction direction = hitResult.getDirection();
+            BlockPos collidePos = hitResult.getBlockPos().offset(direction.getStepX(), direction.getStepY(), direction.getStepZ());
+            if (!LevelUtil.canTransferShockWave(level, collidePos, level.getBlockState(collidePos))) {
+                collidePos = collidePos.below();
+            }
+
+            slamStartPos = new Vec3((double)collidePos.getX(), (double)collidePos.getY(), (double)collidePos.getZ());
+        } else {
+            slamStartPos = weaponEdge.subtract(0.0, 1.0, 0.0);
+        }
+
+        LevelUtil.circleSlamFracture((LivingEntity)entitypatch.getOriginal(), level, slamStartPos, (Double)params.third(), false, true);
+    };
 
 }
