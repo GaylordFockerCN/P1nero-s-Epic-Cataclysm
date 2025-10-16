@@ -735,7 +735,6 @@ public class PECAnimations {
                                 entitypatch.playSound(SoundEvents.BLAZE_SHOOT, 0, 0);
                             }, AnimationEvent.Side.CLIENT),
                             PECParticleEffectInvoker.createForwardMagmaEruption(27),
-                            ParticleEffectInvoker.createLavaRingEffect(15, 30),
                             ParticleEffectInvoker.simpleGroundSplit(27, 2, 0, 0, 0, 2, true),
                             ParticleEffectInvoker.simpleGroundSplit(27, 4, 0, 0, 0, 2, true),
                             AnimationEvent.InTimeEvent.create(0.3F, (entityPatch, self, params) -> {
@@ -1297,8 +1296,7 @@ public class PECAnimations {
                             AnimationEvent.InTimeEvent.create(0.1F, (entitypatch, self, params) -> {
                                 entitypatch.playSound(SoundEvents.FIRECHARGE_USE, 0, 0);
                             }, AnimationEvent.Side.CLIENT),
-                            AvalonEventUtils.particleTrail(20, 75, InteractionHand.MAIN_HAND, new Vec3(0, 0, -1.5F), new Vec3(0, 0, -1.8F), 6, 4, ParticleTypes.SMALL_FLAME, 0.6F),
-                            ParticleEffectInvoker.createLavaRingEffect(0, 50),
+                            AvalonEventUtils.particleTrail(20, 75, InteractionHand.MAIN_HAND, new Vec3(0, 0, -1.5F), new Vec3(0, 0, -1.8F), 4, 2, ParticleTypes.SMALL_FLAME, 0.3F),
                             AnimationEvent.InTimeEvent.create(0.95F, (entityPatch, self, params) -> {
                                 Level world = entityPatch.getOriginal().level();
                                 LivingEntity caster = entityPatch.getOriginal();
