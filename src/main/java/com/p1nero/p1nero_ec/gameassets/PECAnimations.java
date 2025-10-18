@@ -448,6 +448,8 @@ public class PECAnimations {
                                 caster.getLookAngle();
                                 VoidEffectInvoker.createVoidRuneRing(world, caster.getX(), caster.getY(), caster.getZ(), caster);
                             }, AnimationEvent.Side.BOTH))
+                    .newTimePair(0.0F, 1.5F)
+                    .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
             BEDIVERE_SKILL_B = builder.nextAccessor("skill/bedivere_skill_b", (accessor) ->
@@ -468,6 +470,8 @@ public class PECAnimations {
                                         caster.getLookAngle();
                                         VoidEffectInvoker.createVoidRuneInGaps(world, caster);
                                     }, AnimationEvent.Side.BOTH))
+                            .newTimePair(0.0F, 1.5F)
+                            .addStateRemoveOld(EntityState.ATTACK_RESULT, (damageSource -> AttackResult.ResultType.BLOCKED))
             );
 
             ARC_AUTO1 =
