@@ -1,11 +1,13 @@
 package com.p1nero.p1nero_ec.client;
 
 import com.p1nero.p1nero_ec.PECMod;
+import com.p1nero.p1nero_ec.capability.DataManager;
 import com.p1nero.p1nero_ec.capability.PECPlayer;
 import com.p1nero.p1nero_ec.skills.PECWeaponInnateSkillBase;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -18,6 +20,8 @@ import yesman.epicfight.network.EpicFightNetworkManager;
 import yesman.epicfight.network.client.CPSkillRequest;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.skill.SkillSlots;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.item.CapabilityItem;
 import yesman.epicfight.world.entity.eventlistener.SkillCastEvent;
 
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = {Dist.CLIENT})
@@ -46,38 +50,36 @@ public class KeyMappings {
                 return;
             }
             LocalPlayerPatch localPlayerPatch = ClientEngine.getInstance().getPlayerPatch();
-            if (localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase pecWeaponInnateSkillBase && PECPlayer.isValidWeapon(localPlayerPatch.getOriginal().getMainHandItem())) {
-                LocalPlayer player = localPlayerPatch.getOriginal();
-                if (SKILL_1.consumeClick()) {
-                    if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-                        sendExecuteRequest(localPlayerPatch, 1);
-                    }
-                    if (pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_1)) {
-                        lockHotkeys();
-                    }
+            if (localPlayerPatch != null && localPlayerPatch.getSkill(SkillSlots.WEAPON_INNATE).getSkill() instanceof PECWeaponInnateSkillBase pecWeaponInnateSkillBase) {
+                ItemStack itemStack = localPlayerPatch.getOriginal().getMainHandItem();
+                CapabilityItem capabilityItem = EpicFightCapabilities.getItemCapability(localPlayerPatch.getOriginal().getMainHandItem()).orElse(CapabilityItem.EMPTY);
+                if(!PECPlayer.isValidWeapon(itemStack) || capabilityItem.getInnateSkill(localPlayerPatch, itemStack) != pecWeaponInnateSkillBase) {
+                    return;
                 }
-                if (SKILL_2.consumeClick()) {
+                testKey(SKILL_1, Minecraft.getInstance().options.keyHotbarSlots[0], pecWeaponInnateSkillBase, 1, localPlayerPatch);
+                testKey(SKILL_2, Minecraft.getInstance().options.keyHotbarSlots[1], pecWeaponInnateSkillBase, 2, localPlayerPatch);
+                testKey(SKILL_3, Minecraft.getInstance().options.keyHotbarSlots[2], pecWeaponInnateSkillBase, 3, localPlayerPatch);
+            }
+        }
+
+        /**
+         * 如果按键重复，则消耗数字键，防止按一次同时触发释放和切换物品
+         */
+        public static void testKey(KeyMapping custom, KeyMapping hotbar, PECWeaponInnateSkillBase pecWeaponInnateSkillBase, int id, LocalPlayerPatch localPlayerPatch) {
+            KeyMapping keyMapping = custom.getKey().getValue() == hotbar.getKey().getValue() ? hotbar : custom;
+            while (keyMapping.consumeClick()) {
+                if (pecWeaponInnateSkillBase.hasSkillKeyIn(custom)) {
                     if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-                        sendExecuteRequest(localPlayerPatch, 2);
+                        sendExecuteRequest(localPlayerPatch, id);
                     }
-                    if (pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_2)) {
-                        lockHotkeys();
-                    }
-                }
-                if (SKILL_3.consumeClick()) {
-                    if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().isPaused()) {
-                        sendExecuteRequest(localPlayerPatch, 3);
-                    }
-                    if (pecWeaponInnateSkillBase.hasSkillKeyIn(SKILL_3)) {
-                        lockHotkeys();
-                    }
+                    lockHotkeys();
                 }
             }
         }
 
         public static void lockHotkeys() {
             for (int i = 0; i < 9; ++i) {
-                while (Minecraft.getInstance().options.keyHotbarSlots[i].consumeClick()) ;
+                while (Minecraft.getInstance().options.keyHotbarSlots[i].consumeClick());
             }
         }
 

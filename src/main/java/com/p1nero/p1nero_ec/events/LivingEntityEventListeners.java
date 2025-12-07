@@ -13,6 +13,9 @@ import yesman.epicfight.world.damagesource.StunType;
 @Mod.EventBusSubscriber(modid = PECMod.MOD_ID)
 public class LivingEntityEventListeners {
 
+    /**
+     * 灾变硬直buff兼容
+     */
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity living = event.getEntity();
@@ -23,4 +26,5 @@ public class LivingEntityEventListeners {
             }
         }
     }
+
 }

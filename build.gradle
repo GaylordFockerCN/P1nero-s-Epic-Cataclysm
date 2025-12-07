@@ -13,6 +13,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id("me.modmuss50.mod-publish-plugin") version "1.1.0"
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -138,6 +139,12 @@ repositories {
         }
     }
 
+    exclusiveContent {
+        forRepository { maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" } }
+        forRepositories(fg.repository)
+        filter { includeGroup "maven.modrinth" }
+    }
+
     flatDir {
         dir 'libs'
     }
@@ -147,11 +154,10 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:epic-fight-mod-405076:7046104")
-    implementation fg.deobf("curse.maven:epic-fight-skill-tree-1295882:7035166")
-    implementation fg.deobf("curse.maven:epic-fight-invincible-1184379:7018600")
-    implementation fg.deobf("curse.maven:epic-fight-avalon-1268823:7058350")
-    implementation fg.deobf("curse.maven:epicfight-nightfall-1307848:7102758")
+    implementation fg.deobf("maven.modrinth:epic-fight:${epicfight_version}")
+    implementation fg.deobf("maven.modrinth:epic-fight-invincible-lib:${invincible_lib_version}")
+    implementation fg.deobf("curse.maven:epic-fight-avalon-1268823:7225899")
+    implementation fg.deobf("libs:EpicFightNightfall:2.4")
 
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6906993")
     implementation fg.deobf("curse.maven:curios-309927:6418456")
@@ -197,4 +203,39 @@ tasks.named('jar', Jar).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+def getFullModVersion() {
+    return "${mod_version}-mc${minecraft_version}-forge"
+}
+
+publishMods {
+    def releaseNotesFile = project.file("RELEASE_NOTES.md")
+    def releaseNotesContent = releaseNotesFile.text
+
+    changelog = """
+|**Tested against:**
+|- **Forge:** ${forge_version}
+|- **Minecraft:** ${minecraft_version}
+|- **Epic Fight:** ${epicfight_version}
+|
+|${releaseNotesContent}
+""".stripMargin().trim()
+
+    modLoaders.add("forge")
+    type = BETA
+    displayName = getFullModVersion()
+    file = tasks.jar.archiveFile
+
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_TOKEN")
+        projectId = "1325059"
+        minecraftVersions.add(minecraft_version)
+        projectSlug = "p1neros-epic-x-cataclysm"
+
+        requires("epic-fight-mod")
+        requires("epicfight-nightfall")
+        requires("lendercataclysm")
+    }
+
 }

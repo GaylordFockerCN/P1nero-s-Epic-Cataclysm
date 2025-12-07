@@ -27,7 +27,6 @@
     "CursedBowClientMixin",
     "GauntletOfGuardClientMixin",
     "InfernalForgeClientMixin",
-    "LocalPlayerPatchAccessor",
     "MixinMinecraft",
     "Player_Ceraunus_RendererMixin",
     "Soul_RenderClientMixin",

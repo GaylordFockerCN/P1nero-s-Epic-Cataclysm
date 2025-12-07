@@ -1,7 +1,7 @@
 package com.p1nero.p1nero_ec.mixin;
 
 import com.github.L_Ender.cataclysm.items.Wrath_of_the_desert;
-import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
+import com.p1nero.invincible.api.animation.types.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.client.KeyMappings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;

@@ -21,8 +21,8 @@ import com.merlin204.avalon.epicfight.animations.AvalonAttackAnimation;
 import com.merlin204.avalon.particle.AvalonParticles;
 import com.merlin204.avalon.util.AvalonAnimationUtils;
 import com.merlin204.avalon.util.AvalonEventUtils;
+import com.p1nero.invincible.api.animation.types.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.PECMod;
-import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
 import com.p1nero.p1nero_ec.utils.PECEffectConditionParticleTrail;
 import com.p1nero.p1nero_ec.utils.PECParticleEffectInvoker;
 import com.p1nero.p1nero_ec.utils.ScyllaEffectInvoker;
@@ -2552,7 +2552,7 @@ public class PECAnimations {
             hommingArrowEntity.pickup = AbstractArrow.Pickup.DISALLOWED;
             hommingArrowEntity.setCritArrow(true);
             Vec3 playerPosition = living.position();
-            float finalYal = entityPatch.getCameraYRot();
+            float finalYal = entityPatch.getYRot();
             if (target != null) {
                 Vec3 targetPosition = target.position();
                 finalYal = (float) MathUtils.getYRotOfVector(targetPosition.subtract(playerPosition));

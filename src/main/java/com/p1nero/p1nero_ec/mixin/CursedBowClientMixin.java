@@ -1,7 +1,7 @@
 package com.p1nero.p1nero_ec.mixin;
 
 import com.github.L_Ender.cataclysm.items.Cursed_bow;
-import com.p1nero.p1nero_ec.animations.ScanAttackAnimation;
+import com.p1nero.invincible.api.animation.types.ScanAttackAnimation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;

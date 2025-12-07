@@ -23,7 +23,6 @@ public class PECPacketHandler {
         register(PersistentDoubleDataSyncPacket.class, PersistentDoubleDataSyncPacket::decode);
         register(PersistentStringDataSyncPacket.class, PersistentStringDataSyncPacket::decode);
 
-        register(SetTargetPacket.class, SetTargetPacket::decode);
         register(SyncPECPlayerPacket.class, SyncPECPlayerPacket::decode);
         register(AddAvlEntityAfterImageParticle.class, AddAvlEntityAfterImageParticle::decode);
     }
